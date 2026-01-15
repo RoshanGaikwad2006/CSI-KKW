@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 
-const uri = "mongodb+srv://sarthakp8074_db_user:JfSovTLpEyjdtT5C@cluster-csi.cz17liw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-CSI";
+const uri = "mongodb+srv://sarthakp8074_db_user:eIra0uMgdxNJea5x@cluster-csi.cz17liw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-CSI";
 const client = new MongoClient(uri);
 
 export default async function handler(req, res) {
@@ -24,8 +24,15 @@ export default async function handler(req, res) {
       
       res.json(activeTest);
     } else {
+      // Get question count from testmetadata config
+      const testMetadata = db.collection("testmetadata");
+      const activeTest = await testMetadata.findOne({ status: "active" });
+      const questionCount = activeTest?.config?.totalQuestions || 15;
+      
       const questions = db.collection("tests");
-      const questionsData = await questions.find({}).toArray();
+      const questionsData = await questions.aggregate([
+        { $sample: { size: questionCount } }
+      ]).toArray();
       
       const formattedQuestions = questionsData.map((q, index) => ({
         id: index,

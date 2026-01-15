@@ -12,7 +12,9 @@ const Test = (): JSX.Element => {
     const [violations, setViolations] = useState(0);
     const [testStarted, setTestStarted] = useState(false);
     const [testCompleted, setTestCompleted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isBlurred, setIsBlurred] = useState(false);
+    const [showViolationMessage, setShowViolationMessage] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userInfo, setUserInfo] = useState<{username: string; password: string; secretCode: string} | null>(null);
     const [questions, setQuestions] = useState<TestQuestion[]>([]);
@@ -20,6 +22,8 @@ const Test = (): JSX.Element => {
     const [testMetadata, setTestMetadata] = useState<any>(null);
     const [countdownTime, setCountdownTime] = useState<number>(0);
     const [testStatus, setTestStatus] = useState<'loading' | 'waiting' | 'ready' | 'active' | 'ended'>('loading');
+    const [isOnline, setIsOnline] = useState(typeof window !== 'undefined' ? navigator.onLine : true);
+    const [offlineQueue, setOfflineQueue] = useState<any[]>([]);
 
     const testRef = useRef<HTMLDivElement>(null);
 
@@ -95,9 +99,14 @@ const Test = (): JSX.Element => {
         } else if (nowTime >= startTimeMs && nowTime <= endTimeMs) {
             console.log('✅ Test is ready to start');
             setTestStatus('ready');
-            setTimeLeft(metadata.schedule.duration);
+            // Give 45 minutes from login, but cap at schedule end time
+            const fortyFiveMinutes = 45 * 60; // 45 minutes in seconds
+            const remainingScheduleTime = Math.floor((endTimeMs - nowTime) / 1000);
+            const timeAllowed = Math.min(fortyFiveMinutes, remainingScheduleTime);
+            setTimeLeft(timeAllowed);
+            console.log(`Time allowed: ${timeAllowed}s (45min: ${fortyFiveMinutes}s, remaining: ${remainingScheduleTime}s)`);
         } else {
-            console.log('❌ Test has ended');
+            console.log('❌ Test period has ended');
             setTestStatus('ended');
         }
         
@@ -122,14 +131,56 @@ const Test = (): JSX.Element => {
         }
     }, [testStatus, countdownTime]);
 
-    // Timer
+    // Timer - counts down allocated time (30 min or remaining schedule time)
     useEffect(() => {
         if (!testStarted || testCompleted) return;
 
         const timer = setInterval(() => {
             setTimeLeft(prev => {
                 if (prev <= 1) {
-                    submitTest();
+                    // Auto-submit with current data when time runs out
+                    const initialTime = 45 * 60;
+                    const timeSpent = initialTime - 1; // Almost full time used
+                    const actualQuestionCount = testMetadata?.config?.totalQuestions || questions.length;
+                    const presentedQuestions = questions.slice(0, actualQuestionCount);
+                    
+                    const testData = {
+                        username: userInfo?.username,
+                        answers,
+                        timeSpent,
+                        violations,
+                        totalQuestions: presentedQuestions.length,
+                        questions: presentedQuestions
+                    };
+
+                    // Submit immediately on timeout
+                    (async () => {
+                        try {
+                            setIsSubmitting(true);
+                            const response = await fetch('/api/submit-test', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(testData)
+                            });
+                            
+                            if (response.ok && userInfo?.username) {
+                                await fetch('/api/clear-draft', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ username: userInfo.username })
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Timeout submission error:', error);
+                        } finally {
+                            setTestCompleted(true);
+                            setIsSubmitting(false);
+                            if (document.fullscreenElement) {
+                                document.exitFullscreen?.();
+                            }
+                        }
+                    })();
+                    
                     return 0;
                 }
                 return prev - 1;
@@ -137,17 +188,79 @@ const Test = (): JSX.Element => {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [testStarted, testCompleted]);
+    }, [testStarted, testCompleted, answers, questions, testMetadata, userInfo, violations]);
 
     const addViolation = useCallback(() => {
         setViolations(prev => {
             const newCount = prev + 1;
+            setShowViolationMessage(true);
+            setTimeout(() => setShowViolationMessage(false), 3000);
+            
             if (newCount >= 3) {
-                submitTest();
+                console.log('🚨 3 violations reached! Submitting test immediately...');
+                console.log('Test data:', { username: userInfo?.username, violations: newCount, answers: Object.keys(answers).length });
+                
+                // Immediate submission without async complications
+                const initialTime = 45 * 60; // 45 minutes in seconds
+                const timeSpent = initialTime - timeLeft;
+                const actualQuestionCount = testMetadata?.config?.totalQuestions || questions.length;
+                const presentedQuestions = questions.slice(0, actualQuestionCount);
+                const testData = {
+                    username: userInfo?.username,
+                    answers,
+                    timeSpent,
+                    violations: newCount,
+                    totalQuestions: presentedQuestions.length,
+                    questions: presentedQuestions
+                };
+
+                // Use async/await for clearer flow
+                (async () => {
+                    try {
+                        if (isSubmitting) return; // Prevent double submission
+                        setIsSubmitting(true);
+                        
+                        console.log('📤 Sending submission request...');
+                        const response = await fetch('/api/submit-test', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(testData)
+                        });
+                        
+                        console.log('📡 Response status:', response.status);
+                        if (response.ok) {
+                            console.log('✅ Test submitted successfully due to violations');
+                            // Clear draft after successful submission
+                            if (userInfo?.username) {
+                                await fetch('/api/clear-draft', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ username: userInfo.username })
+                                });
+                            }
+                        } else {
+                            console.error('❌ Submission failed:', response.statusText);
+                        }
+                    } catch (error) {
+                        console.error('💥 Submission error:', error);
+                    } finally {
+                        console.log('🏁 Setting test as completed');
+                        setTestCompleted(true);
+                        setIsSubmitting(false);
+                        if (document.fullscreenElement) {
+                            document.exitFullscreen?.();
+                        }
+                    }
+                })();
             }
+            
             return newCount;
         });
-    }, []);
+    }, [testMetadata, timeLeft, userInfo, answers, questions.length]);
+
+
 
     const enterFullscreen = async () => {
         try {
@@ -187,10 +300,12 @@ const Test = (): JSX.Element => {
                 return;
             }
             
-            // Disable F12, Ctrl+Shift+I, Ctrl+U
+            // Disable F12, Ctrl+Shift+I, Ctrl+U, Alt+Tab
             if (e.key === 'F12' || 
                 (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-                (e.ctrlKey && e.key === 'u')) {
+                (e.ctrlKey && e.key === 'u') ||
+                (e.altKey && e.key === 'Tab') ||
+                e.key === 'Alt') {
                 e.preventDefault();
                 addViolation();
             }
@@ -209,6 +324,12 @@ const Test = (): JSX.Element => {
             setIsBlurred(false);
         };
 
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+            e.returnValue = 'Are you sure you want to leave? Your test progress will be lost.';
+            return 'Are you sure you want to leave? Your test progress will be lost.';
+        };
+
         // Add event listeners
         document.addEventListener('visibilitychange', handleVisibilityChange);
         document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -216,6 +337,7 @@ const Test = (): JSX.Element => {
         document.addEventListener('contextmenu', handleContextMenu);
         window.addEventListener('blur', handleBlur);
         window.addEventListener('focus', handleFocus);
+        window.addEventListener('beforeunload', handleBeforeUnload);
 
         return () => {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -224,6 +346,7 @@ const Test = (): JSX.Element => {
             document.removeEventListener('contextmenu', handleContextMenu);
             window.removeEventListener('blur', handleBlur);
             window.removeEventListener('focus', handleFocus);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, [testStarted, addViolation]);
 
@@ -231,6 +354,8 @@ const Test = (): JSX.Element => {
         console.log('🚀 Starting test...');
         await enterFullscreen();
         setTestStarted(true);
+        // Save draft when test starts
+        setTimeout(saveDraft, 100);
     };
 
     const fetchQuestions = async () => {
@@ -242,6 +367,8 @@ const Test = (): JSX.Element => {
             if (data.questions) {
                 console.log('✅ Questions loaded:', data.questions.length);
                 setQuestions(data.questions);
+                // Save draft immediately after questions are loaded
+                setTimeout(saveDraft, 100);
             } else {
                 console.error('❌ No questions received from API');
             }
@@ -252,77 +379,244 @@ const Test = (): JSX.Element => {
         }
     };
 
-    const saveProgress = async () => {
-        if (!userInfo?.username || !testStarted) return;
+    const processOfflineQueue = async () => {
+        if (offlineQueue.length === 0) return;
         
-        const progressData = {
+        console.log(`📤 Processing ${offlineQueue.length} queued requests`);
+        const successful = [];
+        
+        for (const request of offlineQueue) {
+            try {
+                await fetch(request.url, request.options);
+                successful.push(request);
+                console.log('✅ Synced queued request');
+            } catch (error) {
+                console.error('❌ Failed to sync request:', error);
+            }
+        }
+        
+        // Remove successful requests from queue
+        setOfflineQueue(prev => prev.filter(item => !successful.includes(item)));
+        
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('offlineQueue');
+        }
+    };
+
+    const saveDraft = async () => {
+        if (!userInfo?.username) return;
+        
+        const initialTime = 45 * 60; // 45 minutes in seconds
+        const timeSpent = initialTime - timeLeft;
+        const draftData = {
             username: userInfo.username,
             answers,
             flaggedQuestions: Array.from(flaggedQuestions),
             currentQuestion,
-            timeLeft,
+            timeSpent,
             violations,
-            testStarted
+            testStarted,
+            questions
+        };
+        
+        const requestData = {
+            url: '/api/save-draft',
+            options: {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(draftData)
+            }
         };
         
         try {
-            await fetch('/api/save-progress', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(progressData)
-            });
+            if (!isOnline) throw new Error('Offline');
+            await fetch(requestData.url, requestData.options);
+            console.log('✅ Draft saved to server');
         } catch (error) {
-            console.error('Failed to save progress:', error);
+            console.log('💾 Saving draft locally (offline)');
+            setOfflineQueue(prev => {
+                const updated = prev.filter(item => item.type !== 'draft');
+                return [...updated, { ...requestData, type: 'draft', timestamp: Date.now() }];
+            });
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('testDraft', JSON.stringify(draftData));
+                localStorage.setItem('offlineQueue', JSON.stringify(offlineQueue));
+            }
         }
     };
 
-    const loadProgress = async (username: string) => {
+    const loadDraft = async (username: string) => {
         try {
-            const response = await fetch(`/api/load-progress/${username}`);
+            const response = await fetch(`/api/load-draft?username=${username}`);
             if (response.ok) {
                 const data = await response.json();
-                if (data.progress) {
-                    setAnswers(data.progress.answers || {});
-                    setFlaggedQuestions(new Set(data.progress.flaggedQuestions || []));
-                    setCurrentQuestion(data.progress.currentQuestion || 0);
-                    setTimeLeft(data.progress.timeLeft || 3600);
-                    setViolations(data.progress.violations || 0);
-                    setTestStarted(data.progress.testStarted || false);
-                    console.log('✅ Progress restored');
+                if (data.draft) {
+                    setAnswers(data.draft.answers || {});
+                    setFlaggedQuestions(new Set(data.draft.flaggedQuestions || []));
+                    setCurrentQuestion(data.draft.currentQuestion || 0);
+                    // Calculate timeLeft from timeSpent
+                    const initialTime = 45 * 60; // 45 minutes in seconds
+                    const timeSpent = data.draft.timeSpent || 0;
+                    const remainingTime = Math.max(0, initialTime - timeSpent);
+                    setTimeLeft(remainingTime);
+                    setViolations(data.draft.violations || 0);
+                    setTestStarted(data.draft.testStarted || false);
+                    if (data.draft.questions && data.draft.questions.length > 0) {
+                        setQuestions(data.draft.questions);
+                        console.log('✅ Draft restored with saved questions:', data.draft.questions.length);
+                        return true; // Indicate questions were restored
+                    } else {
+                        console.log('✅ Draft restored without questions');
+                    }
                 }
             }
         } catch (error) {
-            console.error('Failed to load progress:', error);
+            console.error('Failed to load draft:', error);
         }
+        return false; // Indicate no questions were restored
     };
 
-    const handleLogin = (credentials: { username: string; password: string; secretCode: string }) => {
+    const checkTestStatus = async (username: string) => {
+        try {
+            const response = await fetch(`/api/check-test-status?username=${username}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.testCompleted) {
+                    setTestCompleted(true);
+                    return true;
+                }
+            }
+        } catch (error) {
+            console.error('Failed to check test status:', error);
+        }
+        return false;
+    };
+
+    const handleLogin = async (credentials: { username: string; password: string; secretCode: string }) => {
         console.log('👤 User logged in:', credentials.username);
         setUserInfo(credentials);
         setIsLoggedIn(true);
-        // Set userInfo first, then fetch metadata (which needs username)
-        setTimeout(() => {
+        
+        // Restore offline data
+        if (typeof window !== 'undefined') {
+            const offlineDraft = localStorage.getItem('testDraft');
+            const savedQueue = localStorage.getItem('offlineQueue');
+            
+            if (offlineDraft) {
+                try {
+                    const draftData = JSON.parse(offlineDraft);
+                    if (draftData.username === credentials.username) {
+                        console.log('📱 Restoring offline progress');
+                        setAnswers(draftData.answers || {});
+                        setFlaggedQuestions(new Set(draftData.flaggedQuestions || []));
+                        setCurrentQuestion(draftData.currentQuestion || 0);
+                        const initialTime = 45 * 60;
+                        const timeSpent = draftData.timeSpent || 0;
+                        const remainingTime = Math.max(0, initialTime - timeSpent);
+                        setTimeLeft(remainingTime);
+                        setViolations(draftData.violations || 0);
+                        setTestStarted(draftData.testStarted || false);
+                        if (draftData.questions) setQuestions(draftData.questions);
+                    }
+                } catch (error) {
+                    console.error('Failed to restore offline draft:', error);
+                }
+            }
+            
+            if (savedQueue) {
+                try {
+                    const queueData = JSON.parse(savedQueue);
+                    setOfflineQueue(queueData);
+                } catch (error) {
+                    console.error('Failed to restore offline queue:', error);
+                }
+            }
+        }
+        
+        // Check if test is already completed
+        const isCompleted = await checkTestStatus(credentials.username);
+        if (isCompleted) return;
+        
+        // Load other data
+        setTimeout(async () => {
             fetchTestMetadata();
-            fetchQuestions();
-            loadProgress(credentials.username);
+            const questionsRestored = await loadDraft(credentials.username);
+            // Only fetch new questions if no questions were restored from draft
+            if (!questionsRestored) {
+                fetchQuestions();
+            }
         }, 100);
     };
 
     const handleAnswer = (questionId: number, answer: string) => {
         setAnswers(prev => ({ ...prev, [questionId]: answer }));
+        // Auto-save draft on answer change
+        setTimeout(saveDraft, 100);
     };
 
-    // Auto-save progress every 30 seconds
+    // Network connectivity monitoring
     useEffect(() => {
-        if (!testStarted) return;
-        const interval = setInterval(saveProgress, 30000);
-        return () => clearInterval(interval);
-    }, [testStarted, answers, flaggedQuestions, currentQuestion, timeLeft, violations]);
+        if (typeof window === 'undefined') return;
+        
+        const checkConnectivity = async () => {
+            try {
+                const response = await fetch('/api/ping', { 
+                    method: 'GET',
+                    cache: 'no-cache',
+                    signal: AbortSignal.timeout(5000)
+                });
+                const wasOffline = !isOnline;
+                setIsOnline(response.ok);
+                if (wasOffline && response.ok) {
+                    console.log('🌐 Connection restored, processing offline queue');
+                    processOfflineQueue();
+                }
+            } catch (error) {
+                console.log('🔌 Connection lost');
+                setIsOnline(false);
+            }
+        };
 
-    // Save on answer change
+        const handleOnline = () => {
+            console.log('🌐 Browser detected online');
+            checkConnectivity();
+        };
+        
+        const handleOffline = () => {
+            console.log('🔌 Browser detected offline');
+            setIsOnline(false);
+        };
+
+        // Initial check
+        checkConnectivity();
+        
+        // Periodic connectivity check every 10 seconds
+        const interval = setInterval(checkConnectivity, 10000);
+        
+        // Browser events as backup
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, [isOnline]);
+
+    // Auto-save draft every 10 seconds
     useEffect(() => {
-        if (testStarted) saveProgress();
-    }, [answers, flaggedQuestions]);
+        if (!userInfo?.username) return;
+        const interval = setInterval(saveDraft, 10000);
+        return () => clearInterval(interval);
+    }, [userInfo, answers, flaggedQuestions, currentQuestion, timeLeft, violations, testStarted, questions]);
+
+    // Save draft when timeLeft changes (every second during test)
+    useEffect(() => {
+        if (testStarted && userInfo?.username) {
+            saveDraft();
+        }
+    }, [timeLeft]);
 
     const toggleFlag = (questionId: number) => {
         setFlaggedQuestions(prev => {
@@ -334,6 +628,8 @@ const Test = (): JSX.Element => {
             }
             return newSet;
         });
+        // Auto-save draft on flag change
+        setTimeout(saveDraft, 100);
     };
 
     const goToQuestion = (questionIndex: number) => {
@@ -341,8 +637,8 @@ const Test = (): JSX.Element => {
     };
 
     const getQuestionStatus = (questionIndex: number) => {
-        if (answers[questionIndex]) return 'answered';
         if (flaggedQuestions.has(questionIndex)) return 'flagged';
+        if (answers[questionIndex]) return 'answered';
         return 'unanswered';
     };
 
@@ -359,14 +655,25 @@ const Test = (): JSX.Element => {
     };
 
     const submitTest = async () => {
+        if (isSubmitting || testCompleted) {
+            console.log('Submission blocked - already submitting or completed');
+            return;
+        }
+        
+        console.log('Starting test submission...');
+        setIsSubmitting(true);
         try {
-            const timeSpent = (testMetadata?.schedule?.duration || 3600) - timeLeft;
+            const initialTime = 45 * 60; // 45 minutes in seconds
+            const timeSpent = initialTime - timeLeft;
+            const actualQuestionCount = testMetadata?.config?.totalQuestions || questions.length;
+            const presentedQuestions = questions.slice(0, actualQuestionCount);
             const testData = {
                 username: userInfo?.username,
                 answers,
                 timeSpent,
                 violations,
-                totalQuestions: questions.length
+                totalQuestions: presentedQuestions.length,
+                questions: presentedQuestions
             };
 
             const response = await fetch('/api/submit-test', {
@@ -379,16 +686,25 @@ const Test = (): JSX.Element => {
 
             if (response.ok) {
                 console.log('Test results saved successfully');
+                // Clear draft after successful submission
+                if (userInfo?.username) {
+                    await fetch('/api/clear-draft', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: userInfo.username })
+                    });
+                }
             } else {
                 console.error('Failed to save test results');
             }
         } catch (error) {
             console.error('Error submitting test:', error);
-        }
-
-        setTestCompleted(true);
-        if (document.fullscreenElement) {
-            document.exitFullscreen?.();
+        } finally {
+            setTestCompleted(true);
+            setIsSubmitting(false);
+            if (document.fullscreenElement) {
+                document.exitFullscreen?.();
+            }
         }
     };
 
@@ -427,12 +743,12 @@ const Test = (): JSX.Element => {
         );
     }
 
-    if (testStatus === 'ended') {
+    if (testStatus === 'ended' && !testCompleted) {
         return (
             <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
                 <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-                    <h1 className="text-2xl font-bold mb-6">Test Ended</h1>
-                    <p className="text-gray-600">The test period has expired.</p>
+                    <h1 className="text-2xl font-bold mb-6">Test Period Ended</h1>
+                    <p className="text-gray-600">The test period has expired. You can no longer take this test.</p>
                 </div>
             </div>
         );
@@ -476,12 +792,12 @@ const Test = (): JSX.Element => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Test Already Completed!</h1>
-                        <p className="text-gray-600">You have already submitted this test, {userInfo?.username}.</p>
+                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Test Completed!</h1>
+                        <p className="text-gray-600">You have submitted this test, {userInfo?.username}.</p>
                     </div>
                     
                     <p className="text-sm text-gray-500 mb-4">
-                        You cannot retake the test. Your previous submission has been recorded.
+                        You cannot retake the test. Your submission has been recorded.
                     </p>
                     
                     <button
@@ -523,7 +839,7 @@ const Test = (): JSX.Element => {
         <div ref={testRef} className="min-h-screen bg-gray-100 select-none">
             
             {/* Violation Warning Overlay */}
-            {isBlurred && (
+            {showViolationMessage && (
                 <div className="fixed inset-0 bg-red-600 bg-opacity-90 flex items-center justify-center z-50">
                     <div className="bg-white p-8 rounded-lg text-center max-w-md">
                         <div className="text-red-600 text-6xl mb-4">⚠️</div>
@@ -541,9 +857,16 @@ const Test = (): JSX.Element => {
                 </div>
             )}
             
+            {/* Connection Status */}
+            {!isOnline && (
+                <div className="fixed top-0 left-0 right-0 bg-orange-600 text-white text-center py-2 z-50 animate-pulse">
+                    <span className="font-semibold">🔌 OFFLINE - Progress saved locally ({offlineQueue.length} pending)</span>
+                </div>
+            )}
+            
             {/* Fullscreen Warning */}
             {!isFullscreen && testStarted && (
-                <div className="fixed top-0 left-0 right-0 bg-red-600 text-white text-center py-2 z-40">
+                <div className={`fixed left-0 right-0 bg-red-600 text-white text-center py-2 z-40 ${!isOnline ? 'top-10' : 'top-0'}`}>
                     <span className="font-semibold">⚠️ FULLSCREEN REQUIRED - Press F11 or click the fullscreen button</span>
                 </div>
             )}
@@ -575,9 +898,10 @@ const Test = (): JSX.Element => {
                         )}
                         <button
                             onClick={submitTest}
-                            className="text-sm bg-orange-600 text-white px-3 py-1 rounded hover:bg-orange-700"
+                            disabled={isSubmitting}
+                            className="text-sm bg-orange-600 text-white px-3 py-1 rounded hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            End Test
+                            {isSubmitting ? 'Ending...' : 'End Test'}
                         </button>
                     </div>
                 </div>
@@ -648,9 +972,10 @@ const Test = (): JSX.Element => {
                             {currentQuestion === questions.length - 1 ? (
                                 <button
                                     onClick={submitTest}
-                                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                    disabled={isSubmitting}
+                                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    Submit Test
+                                    {isSubmitting ? 'Submitting...' : 'Submit Test'}
                                 </button>
                             ) : (
                                 <button
