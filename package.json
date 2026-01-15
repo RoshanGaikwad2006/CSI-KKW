@@ -49,5 +49,16 @@
   },
   "alias": {
     "@/*": "./src/components/ui/$1"
-  }
+  },
+  "main": "next.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sarthak2477/CSI-KKWIEER.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sarthak2477/CSI-KKWIEER/issues"
+  },
+  "homepage": "https://github.com/Sarthak2477/CSI-KKWIEER#readme"
 }

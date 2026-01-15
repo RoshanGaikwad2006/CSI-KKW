@@ -34,7 +34,7 @@ export default function Snackbar({ event }: SnackbarProps) {
         console.log(`Registered for: ${event.title}`);
 
         // Open the URL in a new tab
-        window.open("https://shorturl.at/o64YZ", "_blank");
+        window.open("https://forms.gle/wKDSxzc9jmQknyBS7", "_blank");
 
         // Keep the snackbar behavior
         setOpen(true);

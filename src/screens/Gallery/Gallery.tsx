@@ -78,14 +78,24 @@ const EVENTS: Event[] = [
         photoCount: 12
     },
     {
-        id: "eyantran",
-        name: "E-Yantran Initiative",
-        date: "June 2025",
+        id: "eyantran-2024",
+        name: "E-Yantran 2024-25",
+        date: "January 2025",
         location: "",
         category: "Activity",
         description: "",
         coverImage: "/images/eyantran.jpg",
         photoCount: 6
+    },
+    {
+        id: "eyantran-2026",
+        name: "E-Yantran 2026",
+        date: "20th Jan 2026 - 23rd Jan 2026",
+        location: "Campus Wide",
+        category: "Activity",
+        description: "Largest E-Waste Awareness & Collection Mega Drive",
+        coverImage: "/images/Eyantran2026.jpeg",
+        photoCount: 1
     },
     {
         id: "professional-connect",

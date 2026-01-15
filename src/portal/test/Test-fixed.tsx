@@ -324,6 +324,7 @@ const Test = (): JSX.Element => {
         );
     }
 
+    // MAIN TEST VIEW
     return (
         <div ref={testRef} className="min-h-screen bg-gray-100 select-none">
             <div className="bg-white shadow-sm border-b px-6 py-4">
@@ -409,19 +410,36 @@ const Test = (): JSX.Element => {
 
                         <div className="flex space-x-4">
                             {currentQuestion === questions.length - 1 ? (
-                                <button
-                                    onClick={submitTest}
-                                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                                >
-                                    Submit Test
-                                </button>
+                                <>
+                                    <button
+                                        onClick={submitTest}
+                                        className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                    >
+                                        Submit Test
+                                    </button>
+                                    {/* NEW: End Test Button on every question */}
+                                    <button
+                                        onClick={submitTest}
+                                        className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                    >
+                                        End Test Now
+                                    </button>
+                                </>
                             ) : (
-                                <button
-                                    onClick={nextQuestion}
-                                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                                >
-                                    Next
-                                </button>
+                                <>
+                                    <button
+                                        onClick={nextQuestion}
+                                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                    >
+                                        Next
+                                    </button>
+                                    <button
+                                        onClick={submitTest}
+                                        className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                    >
+                                        End Test Now
+                                    </button>
+                                </>
                             )}
                         </div>
                     </div>

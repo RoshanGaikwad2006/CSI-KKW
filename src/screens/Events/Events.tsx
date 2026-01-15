@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Calendar,
   MapPin,
@@ -21,17 +21,30 @@ const Events = () => {
 
   const events = [
     {
+      id: 7,
+      title: "E-Yantran 2026",
+      category: "upcoming",
+      date: "2026-01-20",
+      time: "9:00 AM",
+      location: "Campus Wide",
+      description:
+        "Largest E-Waste Awareness & Collection Mega Drive. Volunteer registrations are open",
+      image: "/images/Eyantran2026.jpeg",
+      attendees: null,
+      featured: true,
+    },
+    {
       id: 6,
       title: "Campus to Corporate 4.0",
-      category: "upcoming",
+      category: "competitions",
       date: "2025-09-28",
       time: "9:00 AM",
       location: "Multiple Labs",
       description:
         "Take the leap from learning to career readiness! Gain real-world experience, expert mentorship, and certificates that set you apart.",
       image: "/images/c2c.png",
-      attendees: null,
-      featured: true,
+      attendees: 150,
+      featured: false,
     },
     {
       id: 1,
@@ -254,7 +267,7 @@ const Events = () => {
                     className="mt-6 w-full py-3 px-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 
     border border-gray-600 bg-transparent text-blue-600 
     transition-colors duration-300 hover:bg-blue-600 hover:border-blue-600 hover:text-white"
-                    onClick={()=>window.open("https://shorturl.at/o64YZ", "_blank")}
+                    onClick={()=>window.open("https://forms.gle/wKDSxzc9jmQknyBS7", "_blank")}
                   >
                     Register Now
                   </button>

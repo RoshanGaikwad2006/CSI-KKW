@@ -2,8 +2,6 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { useRouter } from "next/router";
-import { eventService, Event as ApiEvent } from "../../../../services/eventService";
-import { useState, useEffect } from "react";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -23,6 +21,14 @@ type Event = {
 const DESCRIPTION_LIMIT = 120;
 
 const staticEvents: Event[] = [
+  {
+    id: 7,
+    title: "E-Yantran 2026",
+    description:
+      "Largest E-Waste Awareness & Collection Mega Drive. Volunteer registrations are open",
+    image: "/images/eyantran.png",
+    status: "upcoming",
+  },
   {
     id: 1,
     title: "CSI Installation Ceremony",
@@ -45,31 +51,12 @@ const staticEvents: Event[] = [
     description:
       "Take the leap from learning to career readiness! Gain real-world experience, expert mentorship, and certificates that set you apart.",
     image: "/images/c2c.png",
-    status: "upcoming",
+    status: "past",
   }
 ];
 
 export const EventsCarousel = (): JSX.Element => {
   const router = useRouter();
-  const [apiEvents, setApiEvents] = useState<ApiEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
-    try {
-      setLoading(true);
-      const response = await eventService.getAllEvents({ limit: 6 });
-      setApiEvents(response.data.events || []);
-    } catch (error) {
-      console.error('Error fetching events:', error);
-      setApiEvents([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const displayEvents = staticEvents;
 

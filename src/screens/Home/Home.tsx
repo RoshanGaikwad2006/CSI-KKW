@@ -62,11 +62,11 @@ export const Home = (): JSX.Element => {
     <div className="flex flex-col items-center w-full min-h-screen bg-transparent relative z-10">
       <Snackbar event={{
         id: 6,
-        title: "Campus to Corporate 4.0",
-        category: "upcoming", date: "2025-09-28",
-        time: "9:00 AM", location: "Multiple Labs",
-        description: "Take the leap from learning to career readiness! Gain real-world experience, expert mentorship, and certificates that set you apart.",
-        image: "/images/c2c.png",
+        title: "E-Yantran 2026",
+        category: "upcoming", date: "2026-01-15",
+        time: "9:00 AM", location: "Campus Wide",
+        description: "Largest E-Waste Awareness & Collection Mega Drive. Volunteer registrations are open",
+        image: "/images/eyantran.png",
         attendees: null,
         featured: true,
       }} />
