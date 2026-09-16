@@ -1,77 +1,149 @@
-# Google Drive & Google Sheets Integration Guide for Vision Week
+# Google Drive & Google Sheets Integration Guide (Handling 400+ Registrations)
 
-This guide explains how to connect your **Vision Week 2026 Registration Form** so that student submissions automatically populate a Google Spreadsheet inside your **Google Drive** in real-time.
+This guide provides the complete, production-hardened setup to connect your CSI website forms to **Google Drive** and **Google Sheets** for handling **400+ registrations** smoothly without collisions, race conditions, or dropped submissions.
 
 ---
 
-## Step 1: Create a Google Spreadsheet in Google Drive
+## 🏗️ Architecture Overview
 
-1. Go to your [Google Drive](https://drive.google.com).
-2. Click **New** → **Google Sheets** (or open an existing spreadsheet).
-3. Name it: `CSI KKWIEER - Vision Week 2026 Registrations`.
-4. In **Row 1**, add the following column headers:
+```mermaid
+flowchart LR
+    A["Student Submits Form"] --> B["/api/event-register"]
+    B -->|1. Primary Backup| C["MongoDB Atlas (Cluster-CSI)"]
+    B -->|2. Webhook Dispatch| D["Google Apps Script Web App"]
+    D -->|3. Thread-Safe Lock| E["Google Sheet in Google Drive"]
+    E --> F["Real-time Committee Access"]
+```
+
+---
+
+## Step 1: Create the Target Google Sheet in Google Drive
+
+1. Go to [Google Drive](https://drive.google.com).
+2. Inside your desired CSI folder, click **+ New** → **Google Sheets**.
+3. Name the sheet: `CSI KKWIEER - Event Registrations 2026`.
+4. In **Row 1**, set these 9 column headers:
 
 | A | B | C | D | E | F | G | H | I |
 |---|---|---|---|---|---|---|---|---|
-| **Timestamp** | **Full Name** | **Email** | **Phone** | **College** | **Department** | **Year** | **PRN** | **Track** |
+| **Ticket ID** | **Event Name** | **Full Name** | **Email** | **Contact Number** | **Department** | **Year** | **Reason / Notes** | **Timestamp** |
 
 ---
 
-## Step 2: Add the Google Apps Script Webhook
+## Step 2: Add Thread-Safe Google Apps Script (With LockService)
 
-1. Inside your Google Sheet, click on **Extensions** in the top menu → **Apps Script**.
-2. Delete any default code in the editor, and paste this script:
+When 400 students register, multiple students may click submit simultaneously. Standard scripts can drop rows or clash. The script below uses `LockService.getScriptLock()` to queue concurrent requests safely.
+
+1. In your Google Sheet, click **Extensions** → **Apps Script**.
+2. Replace all code with the following:
 
 ```javascript
+/**
+ * CSI KKWIEER Event Registration Webhook
+ * Handles concurrent student submissions safely using LockService.
+ */
 function doPost(e) {
+  // 1. Acquire Script Lock to prevent race conditions during traffic spikes
+  var lock = LockService.getScriptLock();
+  try {
+    // Wait up to 15 seconds for previous write to complete
+    lock.waitLock(15000);
+  } catch (lockError) {
+    return ContentService.createTextOutput(
+      JSON.stringify({ status: "error", message: "Server busy, please retry" })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var data = JSON.parse(e.postData.contents);
-    
-    // Append row to Google Sheet
+    var data;
+
+    // Parse JSON payload
+    if (e.postData && e.postData.contents) {
+      data = JSON.parse(e.postData.contents);
+    } else {
+      data = e.parameter;
+    }
+
+    var ticketId = data.ticketId || "CSI-EVT-" + Math.floor(1000 + Math.random() * 9000);
+    var eventTitle = data.eventTitle || "General Event";
+    var fullName = data.fullName || "N/A";
+    var email = data.email || "N/A";
+    var contact = "'" + (data.contactNumber || data.phone || "N/A"); // Prefix with ' to preserve leading zero
+    var dept = data.department || "N/A";
+    var year = data.year || "N/A";
+    var reason = data.reason || data.comments || "";
+    var timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
+    // 2. Append formatted row to Google Sheet
     sheet.appendRow([
-      new Date(),
-      data.fullName || "",
-      data.email || "",
-      data.phone || "",
-      data.college || "",
-      data.department || "",
-      data.year || "",
-      data.prn || "",
-      data.track || "",
-      data.comments || ""
+      ticketId,
+      eventTitle,
+      fullName,
+      email,
+      contact,
+      dept,
+      year,
+      reason,
+      timestamp
     ]);
-    
-    return ContentService.createTextOutput(JSON.stringify({ "success": true }))
-      .setMimeType(ContentService.MimeType.JSON);
+
+    // Optional: Send automated confirmation email using college quota (1500/day on Google Workspace)
+    /*
+    if (email && email.indexOf("@") !== -1) {
+      MailApp.sendEmail({
+        to: email,
+        subject: "Confirmation: " + eventTitle + " Registration",
+        htmlBody: "<p>Hi <b>" + fullName + "</b>,</p><p>Your registration for <b>" + eventTitle + "</b> is confirmed!</p><p><b>Ticket ID:</b> " + ticketId + "</p><p>Team CSI KKWIEER</p>"
+      });
+    }
+    */
+
+    return ContentService.createTextOutput(
+      JSON.stringify({ status: "success", ticketId: ticketId })
+    ).setMimeType(ContentService.MimeType.JSON);
+
   } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ "success": false, "error": error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(
+      JSON.stringify({ status: "error", message: error.toString() })
+    ).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    // Always release lock
+    lock.releaseLock();
   }
 }
 ```
 
 ---
 
-## Step 3: Deploy as a Web App
+## Step 3: Deploy as Web App
 
-1. In the top right corner of the Apps Script window, click the blue **Deploy** button → **New deployment**.
-2. Click the gear icon (Select type) next to "Select type" and choose **Web app**.
-3. Fill in the fields:
-   - **Description:** `Vision Week Webhook`
-   - **Execute as:** `Me (your email)`
-   - **Who has access:** **`Anyone`** *(Important: Must be "Anyone" so the website can post registrations without login)*
+1. Click the blue **Deploy** button (top right) → **New deployment**.
+2. Click the gear icon ⚙️ next to "Select type" → choose **Web app**.
+3. Configure:
+   - **Description**: `CSI Registrations Webhook 400`
+   - **Execute as**: `Me (your Google account)`
+   - **Who has access**: **`Anyone`** *(Essential so the website server can post entries)*
 4. Click **Deploy**.
-5. Copy the generated **Web App URL** (it looks like: `https://script.google.com/macros/s/AKfycbx.../exec`).
+5. Authorize permissions when prompted.
+6. Copy the **Web App URL** (looks like `https://script.google.com/macros/s/AKfycb.../exec`).
 
 ---
 
-## Step 4: Add URL to the Project
+## Step 4: Add to `.env.local`
 
-Open (or create) your `.env.local` file in the project root and add:
+In your project root, open `.env.local` and add:
 
-```bash
-GOOGLE_SCRIPT_WEBAPP_URL="https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec"
+```env
+GOOGLE_SCRIPT_WEBAPP_URL=https://script.google.com/macros/s/YOUR_COPIED_ID_HERE/exec
 ```
 
-*Note: Even without this URL set, every student registration is automatically saved safely in your **MongoDB Atlas** database in the `event_registrations` collection!*
+---
+
+## Step 5: Instant CSV Export for Attendance
+
+Even if Google Drive is offline or slow, all 400 registrations are automatically backed up in **MongoDB Atlas** (`event_registrations` collection).
+
+The committee desk can download an Excel-ready CSV anytime at:
+- `http://localhost:3000/api/export-registrations`
+- Or filtered by event: `http://localhost:3000/api/export-registrations?eventId=e-yantran-2026`

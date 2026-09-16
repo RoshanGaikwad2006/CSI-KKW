@@ -169,12 +169,12 @@ export const GallerySection: React.FC = () => {
                 </h3>
               </div>
 
-              <Button
+              <button
                 onClick={() => router.push("/gallery")}
-                className="bg-[#1D68F2] hover:bg-blue-700 text-white rounded-xl text-xs px-4 py-2"
+                className="bg-[#1D68F2] hover:bg-blue-700 text-white rounded-xl text-xs font-semibold px-4 py-2 transition-colors"
               >
                 View in Full Gallery
-              </Button>
+              </button>
             </div>
           </div>
         </div>
