@@ -5,8 +5,9 @@ const uri =
   process.env.MONGODB_URI ||
   "mongodb+srv://roshangaikwad2006_db_user:VZSn3qP6xIR2Pjxv@cluster0.qtasksf.mongodb.net/?retryWrites=true&w=majority";
 
-// Optional Google Apps Script Webhook URL (configured in .env.local or Google Drive setup)
-const GOOGLE_SCRIPT_WEBAPP_URL = process.env.GOOGLE_SCRIPT_WEBAPP_URL || "";
+const GOOGLE_SCRIPT_WEBAPP_URL =
+  process.env.GOOGLE_SCRIPT_WEBAPP_URL ||
+  "https://script.google.com/macros/s/AKfycbxM9ZEgALXG9q8lIVO-dkuxNdXGisQgufpdvt-z8Gak0h1Y34w9MylquFt9CPEY_lNH/exec";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
