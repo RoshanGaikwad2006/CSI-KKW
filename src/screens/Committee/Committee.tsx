@@ -29,231 +29,40 @@ const ALL_POSITIONS = [
   "Core Committee",
 ];
 
-// Complete committee members data for all years
+// Complete committee members data — 2026-27 batch
 const committeeMembers: CommitteeMember[] = [
-  // 2025 Members
-  {
-    id: "1",
-    name: "Ankit Khandelwal",
-    position: "President",
-    year: "2025",
-    image: "/images/2025/1Ankit.png",
-    linkedin:
-      "https://www.linkedin.com/in/ankit-khandelwal-002474295?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "2",
-    name: "Manasi Jadhav",
-    position: "Vice-President",
-    year: "2025",
-    image: "/images/2025/2Manasi.png",
-    linkedin: "https://www.linkedin.com/in/manasi-jadhav-3ba44228b/",
-  },
-  {
-    id: "3",
-    name: "Shweta Yeola",
-    position: "Secretary",
-    year: "2025",
-    image: "/images/2025/3Shweta.png",
-    linkedin: "http://www.linkedin.com/in/shweta-yeola-3a8075296/din:",
-  },
-  {
-    id: "4",
-    name: "Meghraj Bhavsar",
-    position: "Joint-Secretary",
-    year: "2025",
-    image: "/images/2025/4Meghraj.png",
-    linkedin:
-      "https://www.linkedin.com/in/meghraj-bhavsar-3449ba289?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "5",
-    name: "Atharva Jadhav",
-    position: "Treasurer",
-    year: "2025",
-    image: "/images/2025/5Atharva.png",
-    linkedin:
-      "https://www.linkedin.com/in/atharva-jadhav-73a997295?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "6",
-    name: "Sadique Khatib",
-    position: "Joint Treasurer",
-    year: "2025",
-    image: "/images/2025/6Sadique.png",
-    linkedin:
-      "https://www.linkedin.com/in/sadique-khatib-4175342a9?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "7",
-    name: "Akshada Kale",
-    position: "Editorial Team",
-    year: "2025",
-    image: "/images/2025/7Akshada.png",
-    linkedin:
-      "https://www.linkedin.com/in/sadique-khatib-4175342a9?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "8",
-    name: "Palak Lokwani",
-    position: "Editorial Team",
-    year: "2025",
-    image: "/images/2025/8Palak.png",
-    linkedin:
-      "https://www.linkedin.com/in/palak-lokwani-4137a2244?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "9",
-    name: "Deepali Patil",
-    position: "Social Media Team",
-    year: "2025",
-    image: "/images/2025/9Deepali.png",
-    linkedin:
-      "https://www.linkedin.com/in/deepali-patil-4a0a64211?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "10",
-    name: "Vaibhav Patil",
-    position: "Social Media Team",
-    year: "2025",
-    image: "/images/2025/10Vaibhav.png",
-    linkedin:
-      "https://www.linkedin.com/in/deepali-patil-4a0a64211?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "11",
-    name: "Shantanu Patil",
-    position: "Creative Team",
-    year: "2025",
-    image: "/images/2025/11Shantanu.png",
-    linkedin:
-      "https://www.linkedin.com/in/deepali-patil-4a0a64211?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "12",
-    name: "Prasad Borade",
-    position: "Creative Team",
-    year: "2025",
-    image: "/images/2025/12Prasad.png",
-    linkedin: "https://www.linkedin.com/in/prasad-borade-6a512b298",
-  },
-  {
-    id: "13",
-    name: "Dhruvesh Patil",
-    position: "Technical Team",
-    year: "2025",
-    image: "/images/2025/13Dhruvesh.png",
-    linkedin: "https://www.linkedin.com/in/dhruvesh-patil-a31917280",
-  },
-  {
-    id: "14",
-    name: "Sarthak Pawar",
-    position: "Technical Team",
-    year: "2025",
-    image: "/images/2025/14Sarthak.png",
-    linkedin: "https://www.linkedin.com/in/sarthak-pawar/",
-  },
-  {
-    id: "15",
-    name: "Yash Gatkal",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/15Yash.png",
-    linkedin: "https://www.linkedin.com/in/yash-gatkal-b55b18219",
-  },
-  {
-    id: "16",
-    name: "Hetavi Rampariya",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/16Hetavi.png",
-    linkedin:
-      "https://www.linkedin.com/in/hetavi-rampariya-130423296?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "17",
-    name: "Ayush Lad",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/17Ayush.png",
-    linkedin:
-      "https://www.linkedin.com/in/ayush-lad-163a05295?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_mediuim=android_app",
-  },
-  {
-    id: "18",
-    name: "Bhavesh Kale",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/18Bhavesh.png",
-    linkedin: "http://www.linkedin.com/in/bhaveshka23",
-  },
-  {
-    id: "19",
-    name: "Sanket Chaudhari",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/19Sanket.png",
-    linkedin: "https://www.linkedin.com/in/sanketchaudhari1035",
-  },
-  {
-    id: "20",
-    name: "Rutuja Nagare",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/20Rutuja.png",
-    linkedin:
-      "https://www.linkedin.com/in/rutuja-nagare-8916b5291?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "21",
-    name: "Piyush Sanap",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/21Piyush.png",
-    linkedin: "https://linkedin.com/in/piyush-sanap-577855329",
-  },
-  {
-    id: "22",
-    name: "Omkar More",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/22Omkar.png",
-    linkedin:
-      "https://www.linkedin.com/in/omkar-more-504417320?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
-  {
-    id: "23",
-    name: "Sakshi Malunjkar",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/23Sakshi.png",
-    linkedin: "https://www.linkedin.com/in/sakshi-malunjkar/",
-  },
-  {
-    id: "24",
-    name: "Deodatta Pagar",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/24Deodatta.png",
-    linkedin: "https://www.linkedin.com/in/deodatta-pagar/",
-  },
-  {
-    id: "25",
-    name: "Sanchita Rajurkar",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/25Sanchita.png",
-    linkedin: "http://linkedin.com/in/sanchita-rajurkar-840180297",
-  },
-  {
-    id: "26",
-    name: "Sneha Nikam",
-    position: "Core Committee",
-    year: "2025",
-    image: "/images/2025/26Sneha.png",
-    linkedin:
-      "https://www.linkedin.com/in/sneha-nikam-9778422a9?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-  },
+  // ── Core Officers ──
+  { id: "1",  name: "Kasturi Shinde",          position: "President",       year: "2026", image: "/images/2026/1.Kasturi Shinde.png" },
+  { id: "2",  name: "Rehan Rais Pinjari",       position: "Vice-President",  year: "2026", image: "/images/2026/2.Rehan Pinjari.png" },
+  { id: "3",  name: "Sneha Shelar",             position: "Secretary",       year: "2026", image: "/images/2026/3.Sneha Shelar.png" },
+  { id: "4",  name: "Rajas Mahajan",            position: "Joint-Secretary", year: "2026", image: "/images/2026/4.Rajas Mahajan.png" },
+  { id: "5",  name: "Bhumika Jadhav",           position: "Treasurer",       year: "2026", image: "/images/2026/5.Bhumika Jadhav.png" },
+  { id: "6",  name: "Soham Prasad Bagad",       position: "Joint Treasurer", year: "2026", image: "/images/2026/6.Soham Bagad.png" },
+  // ── Editorial Team ──
+  { id: "7",  name: "Tosha S. Choudhary",       position: "Editorial Team",  year: "2026", image: "/images/2026/7.Tosha Chaudhary.png" },
+  { id: "8",  name: "Simran Tupe",              position: "Editorial Team",  year: "2026", image: "/images/2026/8.Simran Tupe.png" },
+  // ── Social Media Team ──
+  { id: "9",  name: "Akanksha Deshmukh",        position: "Social Media Team", year: "2026", image: "/images/2026/9.Akanksha Deshmukh.png" },
+  { id: "10", name: "Anjali Sachin Karhale",    position: "Social Media Team", year: "2026", image: "/images/2026/10.Anjali Karhale.png" },
+  // ── Creative Team ──
+  { id: "11", name: "Sukhada Santosh Deshpande", position: "Creative Team",  year: "2026", image: "/images/2026/11.Sukhada Deshpande.png" },
+  { id: "12", name: "Sanjana Bharat Bagul",     position: "Creative Team",   year: "2026", image: "/images/2026/12.Sanjana Bagul.png" },
+  // ── Technical Team ──
+  { id: "13", name: "Roshan Gaikwad",           position: "Technical Team",  year: "2026", image: "/images/2026/13.Roshan Gaikwad.png" },
+  { id: "14", name: "Rehan Shaikh",             position: "Technical Team",  year: "2026", image: "/images/2026/14.Rehan Shaikh.png" },
+  // ── Core Committee ──
+  { id: "15", name: "Pratiksha Rahul Sonawane", position: "Core Committee",  year: "2026", image: "/images/2026/15.Pratiksha Sonawane.png" },
+  { id: "16", name: "Rohan Gaikwad",            position: "Core Committee",  year: "2026", image: "/images/2026/16.Rohan Gaikwad.png" },
+  { id: "17", name: "Raj Sankpal",              position: "Core Committee",  year: "2026", image: "/images/2026/17.Raj Sankpal.png" },
+  { id: "18", name: "Arjun Sarode",             position: "Core Committee",  year: "2026", image: "/images/2026/18.Arjun Sarode.png" },
+  { id: "19", name: "Shravani Yogesh Desai",    position: "Core Committee",  year: "2026", image: "/images/2026/19.Shravani Desai.png" },
+  { id: "20", name: "Hrutuja Patil",            position: "Core Committee",  year: "2026", image: "/images/2026/20.Hrutuja Patil.png" },
+  { id: "21", name: "Kalpesh Bire",             position: "Core Committee",  year: "2026", image: "/images/2026/21.Kalpesh Bire.png" },
+  { id: "22", name: "Devansh Kunal Bhatt",      position: "Core Committee",  year: "2026", image: "/images/2026/22.Devansh Bhatt.png" },
+  { id: "23", name: "Anurag Narayan Borse",     position: "Core Committee",  year: "2026", image: "/images/2026/23.Anurag Borse.png" },
+  { id: "24", name: "Nayana Mane",              position: "Core Committee",  year: "2026", image: "/images/2026/24.Nayana Mane.png" },
+  { id: "25", name: "Pratham Milind Bhandange", position: "Core Committee",  year: "2026", image: "/images/2026/25.Pratham Bhandange.png" },
+  { id: "26", name: "Radha Boraste",            position: "Core Committee",  year: "2026", image: "/images/2026/26.Radha Boraste.png" },
 ];
 
 // Lazy Loading Hook
@@ -349,7 +158,7 @@ const CustomButton: React.FC<{
 };
 
 export const Committee = (): JSX.Element => {
-  const [selectedYear, setSelectedYear] = useState("2025");
+  const [selectedYear, setSelectedYear] = useState("2026");
   const { visibleItems, loading, lastElementRef, resetVisibleItems } = useLazyLoading(12);
   const [currentVisibleItems, setCurrentVisibleItems] = useState(12);
 

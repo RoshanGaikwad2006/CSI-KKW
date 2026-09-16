@@ -85,61 +85,61 @@ export const defaultDishes: CarouselItem[] = [
   },
 ];
 
-// Default CSI Committee Member items for CSI KKWIEER animations
+// Default CSI Committee Member items — 2026-27 batch
 export const defaultCsiCommitteeItems: CarouselItem[] = [
   {
     tag: "#President",
-    titleLine1: "ANKIT KHANDELWAL",
-    titleLine2: "– CHAPTER PRESIDENT",
-    desc: "Leading the CSI KKWIEER Student Branch with vision, leadership, and technical excellence.",
-    img: "/images/2025/1Ankit.png",
+    titleLine1: "KASTURI SHINDE",
+    titleLine2: "– PRESIDENT",
+    desc: "Leading the CSI KKWIEER Student Branch with strategic vision, leadership, and technical excellence.",
+    img: "/images/2026/1.Kasturi Shinde.png",
     ctaText: "View Profile",
-    ctaUrl: "https://www.linkedin.com/in/ankit-khandelwal-002474295",
+    ctaUrl: "#",
   },
   {
-    tag: "#VicePresident",
-    titleLine1: "MANASI JADHAV",
+    tag: "#Vice-President",
+    titleLine1: "REHAN RAIS PINJARI",
     titleLine2: "– VICE PRESIDENT",
     desc: "Directing student engagement, event planning, and inter-collegiate technical initiatives.",
-    img: "/images/2025/2Manasi.png",
+    img: "/images/2026/2.Rehan Pinjari.png",
     ctaText: "View Profile",
-    ctaUrl: "https://www.linkedin.com/in/manasi-jadhav-3ba44228b/",
+    ctaUrl: "#",
   },
   {
     tag: "#Secretary",
-    titleLine1: "SHWETA YEOLA",
+    titleLine1: "SNEHA SHELAR",
     titleLine2: "– SECRETARY",
     desc: "Orchestrating chapter administration, team communication, and member records.",
-    img: "/images/2025/3Shweta.png",
+    img: "/images/2026/3.Sneha Shelar.png",
     ctaText: "View Profile",
-    ctaUrl: "https://www.linkedin.com/in/shweta-yeola-3a8075296/",
+    ctaUrl: "#",
   },
   {
-    tag: "#JointSecretary",
-    titleLine1: "MEGHRAJ BHAVSAR",
+    tag: "#Joint-Secretary",
+    titleLine1: "RAJAS MAHAJAN",
     titleLine2: "– JOINT SECRETARY",
     desc: "Coordinating logistical operations and technical workshop arrangements across departments.",
-    img: "/images/2025/4Meghraj.png",
+    img: "/images/2026/4.Rajas Mahajan.png",
     ctaText: "View Profile",
-    ctaUrl: "https://www.linkedin.com/in/meghraj-bhavsar-3449ba289",
+    ctaUrl: "#",
   },
   {
     tag: "#Treasurer",
-    titleLine1: "ATHARVA JADHAV",
+    titleLine1: "BHUMIKA JADHAV",
     titleLine2: "– TREASURER",
     desc: "Overseeing financial planning, event sponsorships, and budget management.",
-    img: "/images/2025/5Atharva.png",
+    img: "/images/2026/5.Bhumika Jadhav.png",
     ctaText: "View Profile",
-    ctaUrl: "https://www.linkedin.com/in/atharva-jadhav-73a997295",
+    ctaUrl: "#",
   },
   {
-    tag: "#JointTreasurer",
-    titleLine1: "SADIQUE KHATIB",
+    tag: "#Joint-Treasurer",
+    titleLine1: "SOHAM PRASAD BAGAD",
     titleLine2: "– JOINT TREASURER",
     desc: "Managing resource allocation and financial reporting for national and regional events.",
-    img: "/images/2025/6Sadique.png",
+    img: "/images/2026/6.Soham Bagad.png",
     ctaText: "View Profile",
-    ctaUrl: "https://www.linkedin.com/in/sadique-khatib-4175342a9",
+    ctaUrl: "#",
   },
 ];
 
@@ -302,12 +302,14 @@ export function CoverFlowCarousel({
                 onClick={() => !isCenter && goToSlide(idx)}
                 style={{
                   position: "absolute",
-                  width: "330px",
-                  height: "500px",
-                  borderRadius: "18px",
+                  width: "300px",
+                  height: "520px",
+                  borderRadius: "20px",
                   overflow: "hidden",
-                  backgroundColor: "#171311",
-                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  backgroundColor: "#ffffff",
+                  border: isCenter
+                    ? "1.5px solid rgba(29,110,245,0.22)"
+                    : "1px solid rgba(200,210,230,0.4)",
                   transform,
                   opacity,
                   zIndex,
@@ -315,171 +317,166 @@ export function CoverFlowCarousel({
                   transformOrigin: "center center",
                   transition: "all 800ms cubic-bezier(0.25, 1, 0.5, 1)",
                   boxShadow: isCenter
-                    ? `0 25px 60px rgba(0,0,0,0.9), 0 0 35px ${accentColor}40`
-                    : "0 15px 35px rgba(0,0,0,0.5)",
+                    ? `0 28px 60px rgba(0,0,0,0.22), 0 0 40px ${accentColor}22`
+                    : "0 12px 30px rgba(0,0,0,0.18)",
                   cursor: isCenter ? "default" : "pointer",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
               >
-                {/* Photo */}
-                <img
-                  src={item.img}
-                  alt={item.titleLine1}
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-
-                {/* Dark Vignette Overlay */}
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background:
-                      "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 25%, rgba(0,0,0,0.68) 60%, rgba(0,0,0,0.96) 100%)",
-                    pointerEvents: "none",
-                    zIndex: 10,
-                  }}
-                />
-
-                {/* Content Overlay */}
+                {/* ── Photo area: objectFit contain so full portrait is visible ── */}
                 <div
                   style={{
                     position: "relative",
                     width: "100%",
-                    height: "100%",
-                    padding: "20px 18px 22px",
+                    flex: "0 0 68%",
+                    backgroundColor: "#eef2fb",
                     display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    textAlign: "center",
-                    zIndex: 20,
-                    opacity: isCenter ? 1 : 0,
-                    transform: isCenter ? "translateY(0px)" : "translateY(16px)",
-                    transition: "opacity 500ms ease, transform 500ms ease",
-                    pointerEvents: isCenter ? "auto" : "none",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
                   }}
                 >
-                  {/* Tag */}
-                  <div style={{ textAlign: "right", width: "100%", paddingRight: "4px" }}>
+                  <img
+                    src={item.img}
+                    alt={item.titleLine1}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                      objectPosition: "center bottom",
+                      display: "block",
+                    }}
+                  />
+                  {/* Tag badge */}
+                  <div style={{ position: "absolute", top: "10px", right: "10px", zIndex: 2 }}>
                     <span
                       style={{
                         display: "inline-block",
-                        fontSize: "0.78rem",
-                        fontWeight: 600,
+                        fontSize: "0.65rem",
+                        fontWeight: 700,
                         letterSpacing: "0.06em",
-                        color: "rgba(255,255,255,0.9)",
-                        textShadow: "0 2px 6px rgba(0,0,0,0.8)",
+                        color: "#ffffff",
+                        background: accentColor,
+                        padding: "3px 9px",
+                        borderRadius: "999px",
+                        boxShadow: `0 2px 8px ${accentColor}55`,
+                        textTransform: "uppercase",
                       }}
                     >
                       {item.tag}
                     </span>
                   </div>
+                </div>
 
-                  {/* Body Content */}
+                {/* ── Text panel: clean white area below photo ── */}
+                <div
+                  style={{
+                    flex: "1 1 auto",
+                    backgroundColor: "#ffffff",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "12px 14px 14px",
+                    borderTop: "1px solid rgba(29,110,245,0.1)",
+                    gap: "5px",
+                    transition: "opacity 500ms ease",
+                  }}
+                >
+                  {/* Accent bar */}
                   <div
                     style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "3px",
-                      marginTop: "auto",
-                      paddingBottom: "4px",
+                      width: "26px",
+                      height: "2px",
+                      backgroundColor: accentColor,
+                      borderRadius: "2px",
+                      boxShadow: `0 0 5px ${accentColor}88`,
+                      marginBottom: "1px",
+                    }}
+                  />
+
+                  {/* Name */}
+                  <h2
+                    style={{
+                      fontSize: isCenter ? "0.95rem" : "0.82rem",
+                      fontWeight: 800,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.04em",
+                      color: "#0A192F",
+                      margin: 0,
+                      lineHeight: 1.2,
+                      textAlign: "center",
+                      transition: "font-size 400ms ease",
                     }}
                   >
-                    <h2
+                    {item.titleLine1}
+                  </h2>
+
+                  {/* Role */}
+                  {item.titleLine2 && (
+                    <span
                       style={{
-                        fontSize: "1.65rem",
-                        fontWeight: 900,
+                        fontSize: "0.68rem",
+                        fontWeight: 700,
                         textTransform: "uppercase",
-                        letterSpacing: "0.04em",
-                        color: "#ffffff",
-                        margin: 0,
-                        lineHeight: 1.1,
-                        textShadow: "0 3px 12px rgba(0,0,0,0.95)",
+                        letterSpacing: "0.09em",
+                        color: accentColor,
+                        lineHeight: 1.2,
                       }}
                     >
-                      {item.titleLine1}
-                    </h2>
+                      {item.titleLine2}
+                    </span>
+                  )}
 
-                    {item.titleLine2 && (
-                      <span
-                        style={{
-                          fontSize: "1.1rem",
-                          fontWeight: 700,
-                          textTransform: "uppercase",
-                          letterSpacing: "0.06em",
-                          color: "#f3f0ea",
-                          lineHeight: 1.2,
-                          textShadow: "0 3px 10px rgba(0,0,0,0.9)",
-                        }}
-                      >
-                        {item.titleLine2}
-                      </span>
-                    )}
-
-                    <div
+                  {/* Description — center card only */}
+                  {item.desc && isCenter && (
+                    <p
                       style={{
-                        width: "34px",
-                        height: "2px",
-                        backgroundColor: accentColor,
-                        borderRadius: "2px",
-                        margin: "5px auto 4px",
-                        boxShadow: `0 0 8px ${accentColor}`,
-                      }}
-                    />
-
-                    {item.desc && (
-                      <p
-                        style={{
-                          fontSize: "0.82rem",
-                          fontStyle: "italic",
-                          color: "rgba(255,255,255,0.9)",
-                          maxWidth: "280px",
-                          margin: "0 0 10px",
-                          lineHeight: 1.3,
-                          textShadow: "0 2px 8px rgba(0,0,0,0.9)",
-                        }}
-                      >
-                        {item.desc}
-                      </p>
-                    )}
-
-                    <a
-                      href={item.ctaUrl || "#"}
-                      onClick={(e) => {
-                        if (onCtaClick) {
-                          e.preventDefault();
-                          onCtaClick(item);
-                        } else if (item.ctaUrl && item.ctaUrl !== "#") {
-                          window.open(item.ctaUrl, "_blank");
-                        }
-                      }}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        padding: "7px 18px",
-                        borderRadius: "9999px",
-                        background: `linear-gradient(135deg, ${accentColor} 0%, #1D68F2 100%)`,
-                        color: "#ffffff",
-                        fontSize: "0.72rem",
-                        fontWeight: 800,
-                        letterSpacing: "0.14em",
-                        textTransform: "uppercase",
-                        textDecoration: "none",
-                        boxShadow: `0 4px 14px rgba(0,0,0,0.4), 0 0 15px ${accentColor}50`,
-                        cursor: "pointer",
-                        transition: "transform 200ms ease, box-shadow 200ms ease",
+                        fontSize: "0.68rem",
+                        color: "#64748b",
+                        maxWidth: "230px",
+                        margin: "2px 0 3px",
+                        lineHeight: 1.4,
+                        textAlign: "center",
                       }}
                     >
-                      <span>{item.ctaText || "View Profile"}</span>
-                      <ArrowRightIcon />
-                    </a>
-                  </div>
+                      {item.desc}
+                    </p>
+                  )}
+
+                  {/* LinkedIn button — center card only */}
+                  <a
+                    href={item.ctaUrl || "#"}
+                    onClick={(e) => {
+                      if (onCtaClick) {
+                        e.preventDefault();
+                        onCtaClick(item);
+                      } else if (item.ctaUrl && item.ctaUrl !== "#") {
+                        window.open(item.ctaUrl, "_blank");
+                      }
+                    }}
+                    style={{
+                      display: isCenter ? "inline-flex" : "none",
+                      alignItems: "center",
+                      gap: "5px",
+                      padding: "6px 14px",
+                      borderRadius: "9999px",
+                      background: `linear-gradient(135deg, ${accentColor} 0%, #1148ab 100%)`,
+                      color: "#ffffff",
+                      fontSize: "0.63rem",
+                      fontWeight: 800,
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      textDecoration: "none",
+                      boxShadow: `0 4px 12px ${accentColor}44`,
+                      cursor: "pointer",
+                      marginTop: "2px",
+                    }}
+                  >
+                    <span>{item.ctaText || "View Profile"}</span>
+                    <ArrowRightIcon />
+                  </a>
                 </div>
               </div>
             );

@@ -22,67 +22,57 @@ const ALL_POSITIONS = [
   "Secretary",
   "Joint-Secretary",
   "Treasurer",
-  "Joint Treasurer",
+  "Joint-Treasurer",
 ];
 
-// -------------------- Data --------------------
+// -------------------- Data (2026-27 Committee) --------------------
 const committeeMembers: CommitteeMember[] = [
   {
     id: "1",
-    name: "Ankit Khandelwal",
+    name: "Kasturi Shinde",
     position: "President",
-    year: "2025",
-    image: "/images/2025/1Ankit.png",
-    linkedin:
-      "https://www.linkedin.com/in/ankit-khandelwal-002474295?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    year: "2026",
+    image: "/images/2026/1.Kasturi Shinde.png",
     description: "Leading the CSI KKWIEER Student Branch with strategic vision, leadership, and technical excellence.",
   },
   {
     id: "2",
-    name: "Manasi Jadhav",
+    name: "Rehan Rais Pinjari",
     position: "Vice-President",
-    year: "2025",
-    image: "/images/2025/2Manasi.png",
-    linkedin: "https://www.linkedin.com/in/manasi-jadhav-3ba44228b/",
+    year: "2026",
+    image: "/images/2026/2.Rehan Pinjari.png",
     description: "Directing student engagement, event operations, and inter-collegiate technological partnerships.",
   },
   {
     id: "3",
-    name: "Shweta Yeola",
+    name: "Sneha Shelar",
     position: "Secretary",
-    year: "2025",
-    image: "/images/2025/3Shweta.png",
-    linkedin: "https://www.linkedin.com/in/shweta-yeola-3a8075296/",
+    year: "2026",
+    image: "/images/2026/3.Sneha Shelar.png",
     description: "Orchestrating chapter administration, official correspondence, and member documentation.",
   },
   {
     id: "4",
-    name: "Meghraj Bhavsar",
+    name: "Rajas Mahajan",
     position: "Joint-Secretary",
-    year: "2025",
-    image: "/images/2025/4Meghraj.png",
-    linkedin:
-      "https://www.linkedin.com/in/meghraj-bhavsar-3449ba289?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    year: "2026",
+    image: "/images/2026/4.Rajas Mahajan.png",
     description: "Coordinating logistical operations, venue management, and cross-department workshops.",
   },
   {
     id: "5",
-    name: "Atharva Jadhav",
+    name: "Bhumika Jadhav",
     position: "Treasurer",
-    year: "2025",
-    image: "/images/2025/5Atharva.png",
-    linkedin:
-      "https://www.linkedin.com/in/atharva-jadhav-73a997295?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    year: "2026",
+    image: "/images/2026/5.Bhumika Jadhav.png",
     description: "Overseeing financial planning, corporate sponsorships, and annual budget allocations.",
   },
   {
     id: "6",
-    name: "Sadique Khatib",
-    position: "Joint Treasurer",
-    year: "2025",
-    image: "/images/2025/6Sadique.png",
-    linkedin:
-      "https://www.linkedin.com/in/sadique-khatib-4175342a9?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    name: "Soham Prasad Bagad",
+    position: "Joint-Treasurer",
+    year: "2026",
+    image: "/images/2026/6.Soham Bagad.png",
     description: "Managing resource disbursement, accounting records, and event sponsorship reconciliation.",
   },
 ];
@@ -122,7 +112,7 @@ export const CommitteeMembersCarousel: React.FC = () => {
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-3">
             <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-            <span>Core Executive Board 2025-26</span>
+            <span>Core Executive Board 2026-27</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
@@ -137,7 +127,7 @@ export const CommitteeMembersCarousel: React.FC = () => {
         <div className="w-full max-w-7xl mx-auto mb-10 rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-[#0c0a09]/90">
           <CoverFlowCarousel
             items={coverFlowItems}
-            sectionLabel="CSI KKWIEER CORE LEADERSHIP"
+            sectionLabel="CSI KKWIEER CORE LEADERSHIP 2026-27"
             accentColor="#1D68F2"
             autoplay={true}
             autoplayDelay={3500}
