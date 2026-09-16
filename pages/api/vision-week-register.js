@@ -3,7 +3,7 @@ import { MongoClient } from "mongodb";
 // MongoDB Atlas URI (uses environment variable with existing cluster fallback)
 const uri =
   process.env.MONGODB_URI ||
-  "mongodb+srv://sarthakp8074_db_user:eIra0uMgdxNJea5x@cluster-csi.cz17liw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-CSI";
+  "mongodb+srv://roshangaikwad2006_db_user:VZSn3qP6xIR2Pjxv@cluster0.qtasksf.mongodb.net/?retryWrites=true&w=majority";
 
 // Optional Google Apps Script Webhook URL (configured in .env.local or Google Drive setup)
 const GOOGLE_SCRIPT_WEBAPP_URL = process.env.GOOGLE_SCRIPT_WEBAPP_URL || "";
