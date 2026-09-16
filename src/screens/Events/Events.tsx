@@ -1,299 +1,366 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import {
+  Search,
+  ChevronDown,
   Calendar,
   MapPin,
   Clock,
-  Sparkles,
   Users,
-  Award,
+  ArrowRight,
+  Filter,
+  Sparkles,
+  Layers,
+  Monitor,
 } from "lucide-react";
 import { Navbar } from "../../components/ui/navbar";
-import { useRouter } from "next/router";
+import { eventsData, EventItem } from "@/data/eventsData";
+import { EventDetailView } from "./components/EventDetailView";
+import { RegistrationSuccessView } from "./components/RegistrationSuccessView";
+import { ConfirmationEmailModal } from "./components/ConfirmationEmailModal";
+import { CaseStudyPresentation } from "./components/CaseStudyPresentation";
 
-const Events = () => {
+const CATEGORIES = [
+  { id: "all", label: "All Events" },
+  { id: "workshops", label: "Workshops" },
+  { id: "talks", label: "Talks" },
+  { id: "hackathons", label: "Hackathons" },
+  { id: "competitions", label: "Competitions" },
+  { id: "community", label: "Community" },
+  { id: "webinars", label: "Webinars" },
+];
+
+export const Events = (): JSX.Element => {
   const router = useRouter();
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [router.pathname]);
-
+  // Mode: "interactive" (default live flow) | "case-study" (multi-screen presentation)
+  const [viewMode, setViewMode] = useState<"interactive" | "case-study">("interactive");
+  
+  // Interactive Flow States:
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [registrationSuccessData, setRegistrationSuccessData] = useState<any | null>(null);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
-  const events = [
-    {
-      id: 7,
-      title: "E-Yantran 2026",
-      category: "upcoming",
-      date: "2026-01-20",
-      time: "9:00 AM",
-      location: "Campus Wide",
-      description:
-        "Largest E-Waste Awareness & Collection Mega Drive. Volunteer registrations are open",
-      image: "/images/Eyantran2026.jpeg",
-      attendees: null,
-      featured: true,
-    },
-    {
-      id: 6,
-      title: "Campus to Corporate 4.0",
-      category: "competitions",
-      date: "2025-09-28",
-      time: "9:00 AM",
-      location: "Multiple Labs",
-      description:
-        "Take the leap from learning to career readiness! Gain real-world experience, expert mentorship, and certificates that set you apart.",
-      image: "/images/c2c.png",
-      attendees: 150,
-      featured: false,
-    },
-    {
-      id: 1,
-      title: "CSI Installation Ceremony",
-      category: "all",
-      date: "2025-08-11",
-      time: "01:00 PM - 5:00 PM",
-      location: "JVN Hall",
-      description:
-        "Installation for the new board members of the CSI KKWIEER for academic year 2025-26.",
-      image: "/images/installation.jpg",
-      attendees: 45,
-    },
-    {
-      id: 2,
-      title: "Google Cohort Programme",
-      category: "talks",
-      date: "2025-08-05",
-      time: "10:00 AM - 12:00 PM",
-      location: "JVN Hall",
-      description:
-        "Cohort 2 Guidance Sessions, aimed at introducing students to cloud learning opportunities",
-      image: "/images/cohort.jpg",
-      attendees: 120,
-      featured: false,
-    },
-    {
-      id: 3,
-      title: "Campus To Corporate 3.0",
-      category: "competitions",
-      date: "2025-03-17",
-      time: "9:00 AM",
-      location: "Multiple Labs",
-      description:
-        "Campus to Corporate was a powerful-packed session filled with industry trends, career insights, and practical tips to help students transition from academic life to the corporate world with confidence.",
-      image: "/images/c2c.jpg",
-      attendees: 180,
-    },
-    {
-      id: 4,
-      title: "E-Yantran 2024-25",
-      category: "workshops",
-      date: "2025-01-28",
-      time: "9:00 AM",
-      location: "Multiple Labs",
-      description:
-        "Turn your trash into Treasure is what we followed in E-Yantran 2025. A flagship initiative, driving change through E-Waste awareness and collection, empowering communities for a sustainable future.",
-      image: "/images/eyantran.jpg",
-      attendees: 32,
-      featured: false,
-    },
-    
-  ];
+  // Check URL query parameters (e.g. /events?id=e-yantran-2026 or ?view=case-study)
+  useEffect(() => {
+    if (router.query.view === "case-study") {
+      setViewMode("case-study");
+    }
+    if (router.query.id && typeof router.query.id === "string") {
+      setSelectedEventId(router.query.id);
+    }
+  }, [router.query]);
 
-  const categories = [
-    {
-      id: "upcoming",
-      name: "Upcoming",
-      count: events.filter((e) => new Date(e.date) > new Date()).length,
-    },
-    { id: "all", name: "All Events", count: events.length },
-    {
-      id: "talks",
-      name: "Talks",
-      count: events.filter((e) => e.category === "talks").length,
-    },
-    {
-      id: "competitions",
-      name: "Competitions",
-      count: events.filter((e) => e.category === "competitions").length,
-    },
-    {
-      id: "workshops",
-      name: "Workshops",
-      count: events.filter((e) => e.category === "workshops").length,
-    },
-  ];
+  // Selected event object
+  const selectedEvent = eventsData.find((e) => e.id === selectedEventId) || null;
 
-  const filteredEvents =
-  activeCategory === "all"
-    ? events
-    : activeCategory === "upcoming"
-      ? events.filter((event) => event.category === "upcoming")
-      : events.filter((event) => event.category === activeCategory);
+  // Filtered events
+  const filteredEvents = eventsData.filter((event) => {
+    const matchesCategory =
+      activeCategory === "all" ||
+      event.category === activeCategory ||
+      (activeCategory === "competitions" && event.category === "hackathons");
 
+    const matchesSearch =
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (event.subtitle && event.subtitle.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      event.location.toLowerCase().includes(searchQuery.toLowerCase());
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return {
-      day: date.getDate(),
-      month: date.toLocaleDateString("en-US", { month: "short" }),
-      year: date.getFullYear(),
-    };
+    return matchesCategory && matchesSearch;
+  });
+
+  const handleSelectEvent = (id: string) => {
+    setSelectedEventId(id);
+    setRegistrationSuccessData(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const truncate = (text: string, limit: number) => {
-    if (text.length <= limit) return text;
-    return text.slice(0, limit) + "...";
+  const handleBackToEvents = () => {
+    setSelectedEventId(null);
+    setRegistrationSuccessData(null);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 relative overflow-hidden">
+    <div className="min-h-screen w-full bg-white font-['Inter',sans-serif] text-slate-900 flex flex-col items-center overflow-x-clip">
+      
+      {/* Top Navigation Bar */}
       <Navbar />
 
-      {/* Hero Section */}
-      <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-800 via-blue-700 to-blue-800 opacity-100"></div>
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative text-white py-20 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 mt-20 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-            CSI Events
-          </h1>
-          <p className="text-xl md:text-2xl opacity-90 font-light mb-8">
-            Discover • Learn • Compete • Connect
-          </p>
+      {/* Mode Switcher Bar (Interactive Live vs Case Study Showcase) */}
+      <div className="w-full bg-slate-50 border-b border-slate-200/90 py-2.5 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-slate-600">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-semibold text-slate-800">CSI KKWIEER Event Platform</span>
+            <span className="text-slate-400 hidden sm:inline">• Production-Ready UI/UX System</span>
+          </div>
+
+          {/* Toggle Pills */}
+          <div className="inline-flex rounded-xl bg-slate-200/80 p-1 border border-slate-300/60">
+            <button
+              onClick={() => {
+                setViewMode("interactive");
+                router.replace("/events", undefined, { shallow: true });
+              }}
+              className={`flex items-center gap-1.5 px-3.5 py-1 rounded-lg font-bold text-xs transition-all ${
+                viewMode === "interactive"
+                  ? "bg-white text-[#1D68F2] shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Monitor className="w-3.5 h-3.5" />
+              <span>Live Interactive Flow</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setViewMode("case-study");
+                router.replace("/events?view=case-study", undefined, { shallow: true });
+              }}
+              className={`flex items-center gap-1.5 px-3.5 py-1 rounded-lg font-bold text-xs transition-all ${
+                viewMode === "case-study"
+                  ? "bg-[#1D68F2] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>Multi-Screen UI/UX Case Study</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="relative max-w-6xl mx-auto px-4 -mt-12 pb-20">
-        {/* Category Filter */}
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/80 p-2 mb-10">
-          <div className="flex justify-center gap-6 flex-wrap">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className={`flex items-center gap-2 px-5 py-2 min-w-[120px] rounded-xl font-semibold text-sm justify-center border border-gray-600 bg-transparent transition-colors duration-300 ${activeCategory === cat.id
-                  ? "border-blue-500 text-blue-600"
-                  : "text-gray-700 hover:border-blue-500 hover:text-blue-600"
-                  }`}
-              >
-                {cat.id === "talks" && <Calendar className="w-4 h-4" />}
-                {cat.id === "workshops" && <Sparkles className="w-4 h-4" />}
-                {cat.id === "competitions" && <Award className="w-4 h-4" />}
-                <span>{cat.name}</span>
-                <span
-                  className={`text-xs px-2 py-1 rounded-full ${activeCategory === cat.id
-                    ? "bg-blue-50 text-blue-600"
-                    : "bg-gray-100 text-gray-500"
-                    }`}
-                >
-                  {cat.count}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* ========================================================= */}
+      {/* VIEW 1: MULTI-SCREEN UI/UX CASE STUDY PRESENTATION        */}
+      {/* ========================================================= */}
+      {viewMode === "case-study" && (
+        <CaseStudyPresentation
+          onSelectEventForLive={(id) => {
+            setViewMode("interactive");
+            handleSelectEvent(id);
+          }}
+        />
+      )}
 
-        {/* Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-          {filteredEvents.map((event) => (
-            <div
-              key={event.id}
-              className={`group relative bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden flex flex-col justify-between border border-white/20 ${event.featured ? "ring-2 ring-indigo-200 ring-offset-2" : ""
-                }`}
-            >
-              {/* Image */}
-              <div className="relative aspect-[4/3] overflow-hidden rounded-t-3xl">
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-full transition-transform duration-700"
+      {/* ========================================================= */}
+      {/* VIEW 2: LIVE INTERACTIVE FLOW (SCREEN 1, 2, 3)            */}
+      {/* ========================================================= */}
+      {viewMode === "interactive" && (
+        <main className="w-full flex-1">
+          
+          {/* STATE A: Detailed Event View or Registration Success */}
+          {selectedEvent ? (
+            <div className="w-full">
+              {registrationSuccessData ? (
+                /* SCREEN 3: Registration Success */
+                <RegistrationSuccessView
+                  event={selectedEvent}
+                  registrationData={registrationSuccessData}
+                  onBackToEvents={handleBackToEvents}
+                  onPreviewEmail={() => setIsEmailModalOpen(true)}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-              </div>
-
-              {/* Content */}
-              <div className="p-6 flex flex-col flex-1 justify-between">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">
-                      {event.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed mt-2 line-clamp-3">
-                      {truncate(event.description, 100)}
-                    </p>
+              ) : (
+                /* SCREEN 2: Event Details + Sticky Registration Form */
+                <EventDetailView
+                  event={selectedEvent}
+                  onBack={handleBackToEvents}
+                  onRegistrationComplete={(regData) => {
+                    setRegistrationSuccessData(regData);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                />
+              )}
+            </div>
+          ) : (
+            /* STATE B: SCREEN 1 — Upcoming Events Discovery Page */
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+              
+              {/* Top Header Row */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200/80">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-7 h-0.5 bg-[#1D68F2]" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#1D68F2]">
+                      Calendar of Activities
+                    </span>
                   </div>
-
-                  {/* Date Box */}
-                  <div className="ml-4 bg-white border border-gray-800 rounded-xl p-3 text-center shadow-md w-16">
-                    <div className="text-xl font-bold text-gray-900">
-                      {formatDate(event.date).day}
-                    </div>
-                    <div className="text-sm text-blue-600 font-semibold">
-                      {formatDate(event.date).month}
-                    </div>
-                  </div>
+                  <h1 className="text-3xl sm:text-5xl font-black text-[#0A192F] tracking-tight">
+                    Upcoming Events
+                  </h1>
+                  <p className="text-slate-500 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
+                    Be a part of our events, workshops, hackathons and technical sessions. Learn, build and grow together.
+                  </p>
                 </div>
 
-                {/* Details */}
-                <div className="space-y-2 mt-4">
-                  <div className="flex items-center text-sm gap-2">
-                    <div className="flex items-center gap-2 rounded-lg px-3 py-1">
-                      <Clock className="w-4 h-4 text-blue-600" />
-                      <span className="font-medium">{event.time}</span>
-                    </div>
+                {/* Right Controls: Search & Category Dropdown */}
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                  {/* Search Input */}
+                  <div className="relative flex-1 md:w-64">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Search events..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/60 text-xs sm:text-sm focus:outline-none focus:bg-white focus:border-[#1D68F2] focus:ring-2 focus:ring-blue-100 transition-all"
+                    />
                   </div>
-                  <div className="flex items-center text-sm gap-2">
-                    <div className="flex items-center gap-2 rounded-lg px-3 py-1">
-                      <MapPin className="w-4 h-4 text-blue-600" />
-                      <span className="font-medium truncate">
-                        {event.location}
-                      </span>
-                    </div>
+
+                  {/* Dropdown Indicator */}
+                  <div className="relative">
+                    <select
+                      value={activeCategory}
+                      onChange={(e) => setActiveCategory(e.target.value)}
+                      className="appearance-none pl-3.5 pr-8 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 cursor-pointer focus:outline-none focus:border-[#1D68F2]"
+                    >
+                      {CATEGORIES.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
-                  {event.attendees && (
-                    <div className="flex items-center text-sm gap-2">
-                      <div className="flex items-center gap-2 rounded-lg px-3 py-1">
-                        <Users className="w-4 h-4 text-blue-600" />
-                        <span className="font-medium">{event.attendees} Attendees</span>
+                </div>
+              </div>
+
+              {/* Category Filter Pills Row (Exact reference layout) */}
+              <div className="flex items-center gap-2 overflow-x-auto py-5 scrollbar-none">
+                {CATEGORIES.map((cat) => {
+                  const isActive = activeCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveCategory(cat.id)}
+                      className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                        isActive
+                          ? "bg-[#1D68F2] text-white shadow-sm shadow-blue-500/20"
+                          : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900"
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Event Cards Grid (2 rows x 3 cols = 6 cards matching reference) */}
+              {filteredEvents.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pt-2">
+                  {filteredEvents.map((event) => (
+                    <div
+                      key={event.id}
+                      onClick={() => handleSelectEvent(event.id as string)}
+                      className="group bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer"
+                    >
+                      <div>
+                        {/* Event Image Banner with Overlays */}
+                        <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+                          <img
+                            src={event.image}
+                            alt={event.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-black/10" />
+
+                          {/* Top-Left Date Badge */}
+                          <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md rounded-xl p-2 px-3 text-center shadow-md border border-slate-100">
+                            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider leading-none">
+                              {event.dateBadge.month}
+                            </div>
+                            <div className="text-lg font-black text-[#0A192F] leading-none my-0.5">
+                              {event.dateBadge.day}
+                            </div>
+                            {event.dateBadge.year && (
+                              <div className="text-[9px] font-semibold text-slate-400 leading-none">
+                                {event.dateBadge.year}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Top-Right Category Pill */}
+                          <div className="absolute top-3 right-3">
+                            <span className="inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-slate-900/80 text-white backdrop-blur-md border border-white/20">
+                              {event.categoryBadge}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Card Content Body */}
+                        <div className="p-5 sm:p-6">
+                          <h3 className="text-lg font-bold text-[#0A192F] group-hover:text-[#1D68F2] transition-colors line-clamp-1">
+                            {event.title}
+                          </h3>
+                          {event.subtitle && (
+                            <p className="text-xs text-slate-500 font-medium mt-0.5 line-clamp-1">
+                              {event.subtitle}
+                            </p>
+                          )}
+                          <p className="text-xs text-slate-600 leading-relaxed mt-2.5 line-clamp-2">
+                            {event.description}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Card Meta Footer */}
+                      <div className="px-5 sm:px-6 pb-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                            <span className="truncate max-w-[110px]">{event.location}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 hidden sm:flex">
+                            <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                            <span>{event.dateRange}</span>
+                          </div>
+                        </div>
+
+                        {/* Circle Blue Arrow Button */}
+                        <div className="w-8 h-8 rounded-full bg-blue-50 text-[#1D68F2] group-hover:bg-[#1D68F2] group-hover:text-white transition-all flex items-center justify-center flex-shrink-0">
+                          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                        </div>
                       </div>
                     </div>
-                  )}
+                  ))}
                 </div>
-
-                {/* Register / Read More Button */}
-                {event.category === "upcoming" && (
+              ) : (
+                /* Empty State */
+                <div className="text-center py-16 bg-slate-50 rounded-2xl border border-slate-200/80 mt-4">
+                  <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <h3 className="text-base font-bold text-slate-800">No events found</h3>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Try adjusting your search query or selecting a different category filter.
+                  </p>
                   <button
-                    className="mt-6 w-full py-3 px-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 
-    border border-gray-600 bg-transparent text-blue-600 
-    transition-colors duration-300 hover:bg-blue-600 hover:border-blue-600 hover:text-white"
-                    onClick={()=>window.open("https://forms.gle/wKDSxzc9jmQknyBS7", "_blank")}
+                    onClick={() => {
+                      setActiveCategory("all");
+                      setSearchQuery("");
+                    }}
+                    className="mt-4 px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-[#1D68F2] hover:bg-slate-50"
                   >
-                    Register Now
+                    Reset Filters
                   </button>
-                )}
+                </div>
+              )}
 
-
-              </div>
             </div>
-          ))}
-        </div>
+          )}
 
-        {/* Empty State */}
-        {filteredEvents.length === 0 && (
-          <div className="text-center py-20">
-            <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Calendar className="w-12 h-12 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No Events Found
-            </h3>
-            <p className="text-gray-500">
-              Check back soon for exciting new events in this category!
-            </p>
-          </div>
-        )}
-      </div>
+        </main>
+      )}
+
+      {/* Confirmation Email Preview Modal (Screen 4) */}
+      {selectedEvent && (
+        <ConfirmationEmailModal
+          isOpen={isEmailModalOpen}
+          onClose={() => setIsEmailModalOpen(false)}
+          event={selectedEvent}
+          registrationData={registrationSuccessData}
+        />
+      )}
+
     </div>
   );
 };

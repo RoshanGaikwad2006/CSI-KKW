@@ -1,179 +1,247 @@
-
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import React, { useRef } from "react";
 import { useRouter } from "next/router";
-
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-
-import { Card } from "../../../../components/ui/card";
+import Link from "next/link";
+import {
+  MapPin,
+  Calendar,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "../../../../components/ui/button";
 
-type Event = {
-  id: number;
+interface EventsCarouselProps {
+  onOpenVisionWeekModal?: () => void;
+}
+
+export interface UpcomingEventItem {
+  id: string;
   title: string;
-  description: string;
+  subtitle: string;
+  category: string;
+  day: string;
+  month: string;
+  dateRange: string;
+  location: string;
   image: string;
-  status: "upcoming" | "ongoing" | "past";
-};
+  isVisionWeek?: boolean;
+  externalLink?: string;
+}
 
-const DESCRIPTION_LIMIT = 120;
-
-const staticEvents: Event[] = [
+export const staticUpcomingEvents: UpcomingEventItem[] = [
   {
-    id: 7,
-    title: "E-Yantran 2026",
-    description:
-      "Largest E-Waste Awareness & Collection Mega Drive. Volunteer registrations are open",
-    image: "/images/eyantran.png",
-    status: "upcoming",
-  },
-  {
-    id: 1,
-    title: "CSI Installation Ceremony",
-    description:
-      "Installation for the new board members of the CSI KKWIEER for academic year 2025-26.",
-    image: "/images/installation.jpg",
-    status: "past",
-  },
-  {
-    id: 2,
-    title: "Google Cohort Programme",
-    description:
-      "Cohort 2 Guidance Sessions, aimed at introducing students to cloud learning opportunities",
+    id: "vision-week-2026",
+    title: "Vision Week 2026",
+    subtitle: "Annual Tech Symposium, Hackathon & AI Innovation Conclave",
+    category: "FLAGSHIP",
+    day: "10",
+    month: "MAR",
+    dateRange: "Mar 10 – 15, 2026",
+    location: "Campus & Labs",
     image: "/images/cohort.jpg",
-    status: "past",
+    isVisionWeek: true,
   },
   {
-    id: 6,
-    title: "Campus to Corporate 4.0",
-    description:
-      "Take the leap from learning to career readiness! Gain real-world experience, expert mentorship, and certificates that set you apart.",
+    id: "eyantran-2026",
+    title: "E-Yantran 2026",
+    subtitle: "E-Waste Awareness & Collection Mega Drive",
+    category: "AWARENESS",
+    day: "24",
+    month: "JAN",
+    dateRange: "Jan 24 – Feb 15, 2026",
+    location: "KKWIEER Campus",
+    image: "/images/eyantran.png",
+    externalLink: "https://forms.gle/wKDSxzc9jmQknyBS7",
+  },
+  {
+    id: "tech-talk-series",
+    title: "Tech Talk Series",
+    subtitle: "Emerging Tech & You: Career In Cloud & AI",
+    category: "TALK",
+    day: "12",
+    month: "AUG",
+    dateRange: "Aug 12, 2025",
+    location: "Seminar Hall, KKWIEER",
+    image: "/images/installation.jpg",
+  },
+  {
+    id: "codeverse-hackathon",
+    title: "CodeVerse 2.0",
+    subtitle: "Intra-College Coding Sprint & Hackathon",
+    category: "COMPETITION",
+    day: "03",
+    month: "MAR",
+    dateRange: "Mar 3 – 4, 2025",
+    location: "Online / Computer Labs",
     image: "/images/c2c.png",
-    status: "past",
-  }
+  },
 ];
 
-export const EventsCarousel = (): JSX.Element => {
+export const EventsCarousel: React.FC<EventsCarouselProps> = ({
+  onOpenVisionWeekModal,
+}) => {
   const router = useRouter();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const displayEvents = staticEvents;
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -360, behavior: "smooth" });
+    }
+  };
 
-  const truncateDescription = (text: string) => {
-    if (text.length <= DESCRIPTION_LIMIT) return text;
-    return text.substring(0, DESCRIPTION_LIMIT) + "...more";
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 360, behavior: "smooth" });
+    }
+  };
+
+  const handleCardAction = (event: UpcomingEventItem) => {
+    if (event.isVisionWeek) {
+      if (onOpenVisionWeekModal) {
+        onOpenVisionWeekModal();
+      }
+    } else if (event.externalLink) {
+      window.open(event.externalLink, "_blank");
+    } else {
+      router.push("/events");
+    }
   };
 
   return (
-    <section className="relative w-full py-10 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-12 bg-transparent">
-      {/* Section heading */}
-      <div className="relative z-10 text-center mb-10 sm:mb-12">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-600">
-          Think. Build. Compete
-        </h1>
-        <p className="text-base sm:text-lg text-gray-800 mt-2">
-          Recent Events
-        </p>
-      </div>
+    <section id="events-section" className="w-full py-14 sm:py-16 bg-slate-50/60 border-y border-slate-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-10">
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#0A192F] tracking-tight">
+              Upcoming Events
+            </h2>
+            <div className="w-10 h-1 bg-[#1D68F2] rounded-full mt-1" />
+          </div>
 
-      {/* Swiper Carousel */}
-      <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
-        navigation={false}
-        pagination={{ clickable: true }}
-        autoplay={{ delay: 0, disableOnInteraction: false }}
-        speed={3000}
-        loop={true}
-        spaceBetween={16}
-        slidesPerView={1}
-        breakpoints={{
-          640: { slidesPerView: 1, spaceBetween: 20 },
-          768: { slidesPerView: 2, spaceBetween: 24 },
-          1024: { slidesPerView: 3, spaceBetween: 30 },
-        }}
-        className="max-w-7xl mx-auto px-2 sm:px-4 mb-8"
-      >
-        {displayEvents.map((event) => (
-          <SwiperSlide key={event.id}>
-            <Card className="p-4 sm:p-6 shadow-xl rounded-2xl bg-white/80 backdrop-blur-lg border border-white/200 h-[500px] sm:h-[520px] flex flex-col">
-              {/* Event Image */}
-              <div className="relative w-full h-[160px] sm:h-[180px] lg:h-[220px] overflow-hidden rounded-xl shadow-md">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/events"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[#1D68F2] hover:text-blue-700 transition-colors group"
+            >
+              <span>View All Events</span>
+              <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+            </Link>
+
+            {/* Nav Arrows */}
+            <div className="hidden sm:flex items-center gap-2">
+              <button
+                onClick={scrollLeft}
+                className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-700 transition-colors shadow-xs focus:outline-none"
+                aria-label="Previous events"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={scrollRight}
+                className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-700 transition-colors shadow-xs focus:outline-none"
+                aria-label="Next events"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Events Cards Row */}
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-6 overflow-x-auto pb-4 pt-1 snap-x scrollbar-none"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {staticUpcomingEvents.map((event) => (
+            <div
+              key={event.id}
+              onClick={() => handleCardAction(event)}
+              className="group cursor-pointer flex-shrink-0 w-[300px] sm:w-[350px] lg:w-[380px] bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 overflow-hidden flex flex-col justify-between snap-start"
+            >
+              {/* Card Image with Badges */}
+              <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
                 <img
                   src={event.image}
                   alt={event.title}
-                  className="w-full h-full object-center"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
+                
+                {/* Dark gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+
+                {/* Date Badge (Top Left) */}
+                <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md rounded-xl px-2.5 py-1.5 shadow-md text-center min-w-[48px] border border-white/50">
+                  <div className="text-[10px] uppercase font-bold text-[#1D68F2] tracking-wider leading-none">
+                    {event.month}
+                  </div>
+                  <div className="text-lg font-extrabold text-[#0A192F] leading-tight">
+                    {event.day}
+                  </div>
+                </div>
+
+                {/* Category Pill (Top Right) */}
+                <div className="absolute top-3 right-3">
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider uppercase backdrop-blur-md border ${
+                    event.isVisionWeek
+                      ? "bg-blue-600 text-white border-blue-400 shadow-md animate-pulse"
+                      : "bg-[#0A192F]/80 text-white border-white/20"
+                  }`}>
+                    {event.isVisionWeek && <Sparkles className="w-2.5 h-2.5 text-amber-300" />}
+                    <span>{event.category}</span>
+                  </span>
+                </div>
               </div>
 
-              {/* Status Badge */}
-              <div className="mt-3">
-                <span
-                  className={`px-3 py-1 text-xs sm:text-sm font-semibold rounded-md shadow-md tracking-wide
-                    ${
-                      event.status === "upcoming"
-                        ? "bg-blue-100 text-blue-600"
-                        : event.status === "ongoing"
-                        ? "bg-yellow-400 text-black"
-                        : "bg-gray-800 text-white"
-                    }`}
-                >
-                  {event.status.toUpperCase()}
-                </span>
+              {/* Card Content */}
+              <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-[#0A192F] group-hover:text-[#1D68F2] transition-colors leading-snug mb-1.5">
+                    {event.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed mb-4">
+                    {event.subtitle}
+                  </p>
+                </div>
+
+                {/* Card Meta & Action */}
+                <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 font-medium text-slate-600">
+                      <MapPin className="w-3.5 h-3.5 text-[#1D68F2] flex-shrink-0" />
+                      <span className="truncate max-w-[190px]">{event.location}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                      <span>{event.dateRange}</span>
+                    </div>
+                  </div>
+
+                  {/* Circular Arrow Button / Register action */}
+                  <div className="flex items-center">
+                    {event.isVisionWeek ? (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-50 text-[#1D68F2] text-xs font-bold group-hover:bg-[#1D68F2] group-hover:text-white transition-all shadow-xs">
+                        <span>Register</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    ) : (
+                      <div className="w-9 h-9 rounded-full border border-slate-200 group-hover:border-[#1D68F2] group-hover:bg-[#1D68F2] text-slate-600 group-hover:text-white flex items-center justify-center transition-all">
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
+            </div>
+          ))}
+        </div>
 
-              {/* Content */}
-              <div className="flex flex-col flex-1 mt-3">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-800">
-                  {event.title}
-                </h2>
-                <p className="mt-2 text-sm sm:text-base text-gray-600 leading-relaxed flex-1">
-                  {truncateDescription(event.description)}
-                </p>
-                <Button
-                  className="mt-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl shadow hover:opacity-90 transition text-sm sm:text-base px-4 sm:px-6 py-2"
-                  onClick={() => router.push(`/events/`)}
-                >
-                  Learn More
-                </Button>
-              </div>
-            </Card>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-
-      {/* View All Button */}
-      <div className="flex justify-center mt-6">
-        <button
-          onClick={() => router.push("/events")}
-          className="
-            relative
-            px-6 sm:px-8 py-2 sm:py-3
-            bg-gradient-to-b from-blue-600 via-blue-500 to-blue-600
-            text-white
-            font-semibold
-            rounded-lg
-            shadow-lg
-            overflow-hidden
-            group
-            transition-all
-            duration-300
-            ease-in-out
-            hover:scale-105
-          "
-        >
-          
-          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 via-blue-400 to-blue-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-md"></span>
-
-          {/* Moving background stripe on hover */}
-          <span className="absolute -left-8 top-0 w-24 h-full bg-white/20 rounded-full transform rotate-45 translate-x-0 group-hover:translate-x-[200%] transition-transform duration-700"></span>
-
-          {/* Button text */}
-          <span className="relative z-10 tracking-wider text-base sm:text-lg group-hover:scale-105 transition-transform duration-300">
-            View All
-          </span>
-        </button>
       </div>
     </section>
   );
 };
+
+export default EventsCarousel;

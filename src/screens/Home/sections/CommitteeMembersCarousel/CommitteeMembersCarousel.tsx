@@ -1,13 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
-import ProfileCard from "../../../../components/ProfileCard";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Autoplay, Pagination } from "swiper/modules";
-
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import { CoverFlowCarousel, CarouselItem } from "../../../../components/ui/3-d-coverflow-carousel";
+import { ArrowRight, Users, Sparkles } from "lucide-react";
 
 // -------------------- Types --------------------
 interface CommitteeMember {
@@ -40,6 +35,7 @@ const committeeMembers: CommitteeMember[] = [
     image: "/images/2025/1Ankit.png",
     linkedin:
       "https://www.linkedin.com/in/ankit-khandelwal-002474295?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    description: "Leading the CSI KKWIEER Student Branch with strategic vision, leadership, and technical excellence.",
   },
   {
     id: "2",
@@ -48,6 +44,7 @@ const committeeMembers: CommitteeMember[] = [
     year: "2025",
     image: "/images/2025/2Manasi.png",
     linkedin: "https://www.linkedin.com/in/manasi-jadhav-3ba44228b/",
+    description: "Directing student engagement, event operations, and inter-collegiate technological partnerships.",
   },
   {
     id: "3",
@@ -56,6 +53,7 @@ const committeeMembers: CommitteeMember[] = [
     year: "2025",
     image: "/images/2025/3Shweta.png",
     linkedin: "https://www.linkedin.com/in/shweta-yeola-3a8075296/",
+    description: "Orchestrating chapter administration, official correspondence, and member documentation.",
   },
   {
     id: "4",
@@ -65,6 +63,7 @@ const committeeMembers: CommitteeMember[] = [
     image: "/images/2025/4Meghraj.png",
     linkedin:
       "https://www.linkedin.com/in/meghraj-bhavsar-3449ba289?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    description: "Coordinating logistical operations, venue management, and cross-department workshops.",
   },
   {
     id: "5",
@@ -74,6 +73,7 @@ const committeeMembers: CommitteeMember[] = [
     image: "/images/2025/5Atharva.png",
     linkedin:
       "https://www.linkedin.com/in/atharva-jadhav-73a997295?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    description: "Overseeing financial planning, corporate sponsorships, and annual budget allocations.",
   },
   {
     id: "6",
@@ -83,64 +83,15 @@ const committeeMembers: CommitteeMember[] = [
     image: "/images/2025/6Sadique.png",
     linkedin:
       "https://www.linkedin.com/in/sadique-khatib-4175342a9?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    description: "Managing resource disbursement, accounting records, and event sponsorship reconciliation.",
   },
 ];
 
-// -------------------- Button Component --------------------
-const CustomButton: React.FC<{
-  children: React.ReactNode;
-  variant?: "default" | "outline";
-  size?: "sm" | "md" | "lg";
-  className?: string;
-  onClick?: () => void;
-}> = ({
-  children,
-  variant = "default",
-  size = "md",
-  className = "",
-  onClick,
-}) => {
-  const baseClasses =
-    "font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 inline-flex items-center justify-center";
-
-  const variantClasses = {
-    default: "bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500",
-    outline:
-      "border-2 border-gray-300 hover:border-blue-600 text-gray-700 hover:text-blue-600 bg-white",
-  };
-
-  const sizeClasses = {
-    sm: "px-4 py-2 text-sm",
-    md: "px-6 py-2",
-    lg: "px-8 py-3 text-lg",
-  };
-
-  return (
-    <button
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-};
-
-// -------------------- Main Component --------------------
-const CommitteeMembersCarousel: React.FC = () => {
-  const [selectedYear, setSelectedYear] = useState("2025");
+export const CommitteeMembersCarousel: React.FC = () => {
   const router = useRouter();
 
-  const handleViewAllMembers = () => {
-    router.push("/committee");
-  };
-
-  // Filter by year
-  const filteredMembers = committeeMembers.filter(
-    (member) => selectedYear === "all" || member.year === selectedYear
-  );
-
   // Sort by defined positions
-  const sortedMembers = filteredMembers.sort((a, b) => {
+  const sortedMembers = [...committeeMembers].sort((a, b) => {
     const aIndex = ALL_POSITIONS.indexOf(a.position);
     const bIndex = ALL_POSITIONS.indexOf(b.position);
     if (aIndex === -1) return 1;
@@ -148,112 +99,66 @@ const CommitteeMembersCarousel: React.FC = () => {
     return aIndex - bIndex;
   });
 
-  // Decide loop condition (fixes Swiper warning)
-  const enableLoop = sortedMembers.length > 3;
+  // Map committee members to 3D Coverflow carousel items
+  const coverFlowItems: CarouselItem[] = sortedMembers.map((m) => ({
+    tag: `#${m.position.replace(/\s+/g, "")}`,
+    titleLine1: m.name.toUpperCase(),
+    titleLine2: `– ${m.position.toUpperCase()}`,
+    desc: m.description || `Core leadership member driving technical workshops and community excellence at CSI KKWIEER.`,
+    img: m.image,
+    ctaText: "LinkedIn Profile",
+    ctaUrl: m.linkedin || "#",
+  }));
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
+    <section className="py-16 sm:py-20 bg-slate-950 text-white relative overflow-hidden">
+      
+      {/* Background Ambience Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-blue-600/10 blur-[120px] pointer-events-none" />
+
+      <div className="container mx-auto px-4 relative z-10">
+        
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            <span>Core Executive Board 2025-26</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
             Let's. Make. It. Happen
           </h2>
-
-
-          {/* Year Tabs */}
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            {["2025"].map((year) => (
-              <CustomButton
-                key={year}
-                variant={year === selectedYear ? "default" : "outline"}
-                size="md"
-                onClick={() => setSelectedYear(year)}
-                className="min-w-[80px]"
-              >
-                {year}
-              </CustomButton>
-            ))}
-          </div>
+          <p className="text-slate-400 text-sm sm:text-base mt-2 max-w-xl mx-auto">
+            Meet the passionate student leaders driving technical innovation, regional hackathons, and community growth at CSI KKWIEER.
+          </p>
         </div>
 
-        {/* Swiper Carousel */}
-        {sortedMembers.length > 0 ? (
-          <div className="relative mb-12">
-            <Swiper
-              modules={[Navigation, Autoplay, Pagination]}
-              spaceBetween={20}
-              slidesPerView={1}
-              loop={enableLoop}
-              autoplay={{
-                delay: 2500,
-                disableOnInteraction: false,
-              }}
-              navigation
-              pagination={{ clickable: true }}
-              breakpoints={{
-                640: { slidesPerView: 1 },
-                768: { slidesPerView: Math.min(2, sortedMembers.length) },
-                1024: { slidesPerView: Math.min(3, sortedMembers.length) },
-              }}
-              className="w-full max-w-7xl mx-auto"
-            >
-              {sortedMembers.map((member) => (
-                <SwiperSlide key={member.id}>
-                  <div className="flex justify-center">
-                    <ProfileCard
-                      name={member.name}
-                      title={member.position}
-                      avatarUrl={member.image}
-                      linkedinUrl={member.linkedin}
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">
-              No committee members found for {selectedYear}
-            </p>
-          </div>
-        )}
+        {/* 3D Coverflow Stage (Dedicated Primary View) */}
+        <div className="w-full max-w-7xl mx-auto mb-10 rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-[#0c0a09]/90">
+          <CoverFlowCarousel
+            items={coverFlowItems}
+            sectionLabel="CSI KKWIEER CORE LEADERSHIP"
+            accentColor="#1D68F2"
+            autoplay={true}
+            autoplayDelay={3500}
+          />
+        </div>
 
         {/* View All Members Button */}
-        <div className="text-center">
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={() => router.push("/committee")}
-              className="
-                relative
-                px-6 sm:px-8 py-2 sm:py-3
-                bg-gradient-to-b from-blue-600 via-blue-500 to-blue-600
-                text-white
-                font-semibold
-                rounded-lg
-                shadow-lg
-                overflow-hidden
-                group
-                transition-all
-                duration-300
-                ease-in-out
-                hover:scale-105
-              "
-            >
-              
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 via-blue-400 to-blue-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-md"></span>
-
-              {/* Moving background stripe on hover */}
-              <span className="absolute -left-8 top-0 w-24 h-full bg-white/20 rounded-full transform rotate-45 translate-x-0 group-hover:translate-x-[200%] transition-transform duration-700"></span>
-
-              {/* Button text */}
-              <span className="relative z-10 tracking-wider text-base sm:text-lg group-hover:scale-105 transition-transform duration-300">
-                View All Members
-              </span>
-            </button>
-          </div>
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <button
+            onClick={() => router.push("/committee")}
+            className="group relative inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#1D68F2] hover:bg-blue-600 text-white font-bold text-sm shadow-xl shadow-blue-500/25 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+          >
+            <Users className="w-4 h-4" />
+            <span>View All 26 Committee Members</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </button>
+          <p className="text-xs text-slate-500">
+            Explore coordinators across Technical, Media, Web, Public Relations, and Logistics teams
+          </p>
         </div>
+
       </div>
     </section>
   );
