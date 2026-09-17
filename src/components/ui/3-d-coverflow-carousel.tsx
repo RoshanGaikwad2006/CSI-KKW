@@ -99,8 +99,8 @@ export const defaultCsiCommitteeItems: CarouselItem[] = [
     titleLine2: "– PRESIDENT",
     desc: "Leading the CSI KKWIEER Student Branch with strategic vision, leadership, and technical excellence.",
     img: `${CLOUDINARY_BASE}/1.Kasturi_Shinde.png`,
-    ctaText: "View Profile",
-    ctaUrl: "#",
+    ctaText: "LinkedIn Profile",
+    ctaUrl: "https://www.linkedin.com/in/kasturi-shinde31/",
   },
   {
     tag: "#Vice-President",
@@ -108,8 +108,8 @@ export const defaultCsiCommitteeItems: CarouselItem[] = [
     titleLine2: "– VICE PRESIDENT",
     desc: "Directing student engagement, event planning, and inter-collegiate technical initiatives.",
     img: `${CLOUDINARY_BASE}/2.Rehan_Pinjari.png`,
-    ctaText: "View Profile",
-    ctaUrl: "#",
+    ctaText: "LinkedIn Profile",
+    ctaUrl: "https://www.linkedin.com/in/rehan-pinjari/",
   },
   {
     tag: "#Secretary",
@@ -117,8 +117,8 @@ export const defaultCsiCommitteeItems: CarouselItem[] = [
     titleLine2: "– SECRETARY",
     desc: "Orchestrating chapter administration, team communication, and member records.",
     img: `${CLOUDINARY_BASE}/3.Sneha_Shelar.png`,
-    ctaText: "View Profile",
-    ctaUrl: "#",
+    ctaText: "LinkedIn Profile",
+    ctaUrl: "https://www.linkedin.com/in/sneha-shelar-1711ab318/",
   },
   {
     tag: "#Joint-Secretary",
@@ -126,8 +126,8 @@ export const defaultCsiCommitteeItems: CarouselItem[] = [
     titleLine2: "– JOINT SECRETARY",
     desc: "Coordinating logistical operations and technical workshop arrangements across departments.",
     img: `${CLOUDINARY_BASE}/4.Rajas_Mahajan.png`,
-    ctaText: "View Profile",
-    ctaUrl: "#",
+    ctaText: "LinkedIn Profile",
+    ctaUrl: "https://www.linkedin.com/in/rajas-mahajan-6563b72a7/",
   },
   {
     tag: "#Treasurer",
@@ -135,8 +135,8 @@ export const defaultCsiCommitteeItems: CarouselItem[] = [
     titleLine2: "– TREASURER",
     desc: "Overseeing financial planning, event sponsorships, and budget management.",
     img: `${CLOUDINARY_BASE}/5.Bhumika_Jadhav.png`,
-    ctaText: "View Profile",
-    ctaUrl: "#",
+    ctaText: "LinkedIn Profile",
+    ctaUrl: "https://www.linkedin.com/in/bhumika-jadhav-587203342",
   },
   {
     tag: "#Joint-Treasurer",
@@ -144,8 +144,8 @@ export const defaultCsiCommitteeItems: CarouselItem[] = [
     titleLine2: "– JOINT TREASURER",
     desc: "Managing resource allocation and financial reporting for national and regional events.",
     img: `${CLOUDINARY_BASE}/6.Soham_Bagad.png`,
-    ctaText: "View Profile",
-    ctaUrl: "#",
+    ctaText: "LinkedIn Profile",
+    ctaUrl: "https://www.linkedin.com/in/soham-bagad",
   },
 ];
 
@@ -461,12 +461,13 @@ export function CoverFlowCarousel({
                   {/* LinkedIn button — center card only */}
                   <a
                     href={item.ctaUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     onClick={(e) => {
+                      e.stopPropagation();
                       if (onCtaClick) {
                         e.preventDefault();
                         onCtaClick(item);
-                      } else if (item.ctaUrl && item.ctaUrl !== "#") {
-                        window.open(item.ctaUrl, "_blank");
                       }
                     }}
                     style={{

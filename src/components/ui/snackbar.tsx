@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { X, Sparkles, ArrowRight, Calendar, MapPin } from "lucide-react";
+import { X, ArrowRight, Calendar, MapPin } from "lucide-react";
 
 type Event = {
   id?: number;
@@ -85,13 +85,6 @@ export default function Snackbar({ event, onRegisterClick }: SnackbarProps) {
 
         {/* Bottom Section: Themed Content (White Card Theme) */}
         <div className="relative px-6 pt-6 pb-8 sm:px-8 sm:pt-6 sm:pb-9 flex flex-col items-center text-center bg-white">
-
-          {/* Eyebrow Tag */}
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#1D68F2] text-[11px] font-bold tracking-widest uppercase mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#1D68F2]" />
-            <span>CSI KKWIEER Flagship Event</span>
-          </div>
-
           {/* Main Headline */}
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
             Welcome to <span className="text-[#1D68F2]">{event?.title?.replace(/\s*2026\s*/i, "") || "Vision Week"}!</span>

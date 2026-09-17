@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { Navbar } from "../../components/ui/navbar";
 import { HeroSection } from "./sections/HeroSection";
 import { EventsCarousel } from "./sections/EventsCarousel";
-import { WhatWeDoSection } from "./sections/WhatWeDoSection";
 import { GallerySection } from "./sections/GallerySection/GallerySection";
 import { AboutUs } from "./sections/AboutUsSection";
 import CommitteeMembersCarousel from "./sections/CommitteeMembersCarousel/CommitteeMembersCarousel";
@@ -54,10 +53,7 @@ export const Home = (): JSX.Element => {
       {/* 4. Upcoming Events Section (Reference Layout + Vision Week 2026) */}
       <EventsCarousel />
 
-      {/* 5. What We Do Section (4 Pillars from Reference Layout) */}
-      <WhatWeDoSection />
-
-      {/* 6. Moments That Matter Gallery Section (Reference Layout) */}
+      {/* 5. Moments That Matter Gallery Section (Reference Layout) */}
       <GallerySection />
 
       {/* 7. CSI Chapter Leadership & Parent Bodies (Preserved Overview Cards) */}

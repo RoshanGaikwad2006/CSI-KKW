@@ -58,38 +58,58 @@ export default async function handler(req, res) {
     ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown",
   };
 
-  let mongoSaved = false;
-  let googleSheetDispatched = false;
-
-  // 1. Save to MongoDB Atlas (event_registrations collection)
-  try {
-    const mongo = await clientPromise;
-    if (mongo) {
-      const db = mongo.db("test");
-      await db.collection("event_registrations").insertOne(regRecord);
-      mongoSaved = true;
-    }
-  } catch (mongoErr) {
-    console.warn("MongoDB Atlas registration backup notice:", mongoErr.message);
-  }
-
-  // 2. Dispatch to Google Apps Script / Google Drive Sheets Webhook
-  const googleScriptUrl =
-    process.env.GOOGLE_SCRIPT_WEBAPP_URL ||
-    "https://script.google.com/macros/s/AKfycbzrwqtTr-dSofOpK9jujNT7yK5utJXxfXQ6vhKweDQnV1DoHwQpA-pM3v9tosMlQv68/exec";
-  if (googleScriptUrl) {
+  // 1. Task: Save to MongoDB Atlas (warm pooled connection < 50ms)
+  const mongoTask = async () => {
     try {
-      const gRes = await fetch(googleScriptUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(regRecord),
-        redirect: "follow",
-      });
-      googleSheetDispatched = gRes.ok || gRes.status === 302 || gRes.status === 200;
-    } catch (sheetErr) {
-      console.warn("Google Sheets webhook dispatch notice:", sheetErr.message);
+      const mongo = await clientPromise;
+      if (mongo) {
+        const db = mongo.db("test");
+        await db.collection("event_registrations").insertOne(regRecord);
+        return true;
+      }
+    } catch (mongoErr) {
+      console.warn("MongoDB Atlas registration backup notice:", mongoErr.message);
     }
-  }
+    return false;
+  };
+
+  // 2. Task: Dispatch to Google Apps Script Webhooks with 3.5s timeout (in parallel)
+  const eventWebhooks = [
+    process.env.GOOGLE_SCRIPT_WEBAPP_URL,
+    "https://script.google.com/macros/s/AKfycbxM9ZEgALXG9q8lIVO-dkuxNdXGisQgufpdvt-z8Gak0h1Y34w9MylquFt9CPEY_lNH/exec",
+    "https://script.google.com/macros/s/AKfycbzrwqtTr-dSofOpK9jujNT7yK5utJXxfXQ6vhKweDQnV1DoHwQpA-pM3v9tosMlQv68/exec",
+  ].filter(Boolean);
+  const uniqueEventWebhooks = [...new Set(eventWebhooks)];
+
+  const googleSheetTask = async () => {
+    if (uniqueEventWebhooks.length === 0) return false;
+    const dispatches = uniqueEventWebhooks.map(async (webhookUrl) => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+        const gRes = await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(regRecord),
+          redirect: "follow",
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+        return gRes.ok || gRes.status === 302 || gRes.status === 200;
+      } catch (sheetErr) {
+        console.warn("Google Sheets webhook notice:", webhookUrl, sheetErr.message);
+        return false;
+      }
+    });
+    const results = await Promise.all(dispatches);
+    return results.some(Boolean);
+  };
+
+  // Execute simultaneously!
+  const [mongoSaved, googleSheetDispatched] = await Promise.all([
+    mongoTask(),
+    googleSheetTask(),
+  ]);
 
   return res.status(200).json({
     success: true,

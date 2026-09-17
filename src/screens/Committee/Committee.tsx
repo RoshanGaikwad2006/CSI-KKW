@@ -35,37 +35,37 @@ const CLOUDINARY_BASE = "/images/2026";
 // Complete committee members data — 2026-27 batch
 const committeeMembers: CommitteeMember[] = [
   // ── Core Officers ──
-  { id: "1",  name: "Kasturi Shinde",     position: "President",       year: "2026", image: `${CLOUDINARY_BASE}/1.Kasturi_Shinde.png` },
-  { id: "2",  name: "Rehan Pinjari",      position: "Vice-President",  year: "2026", image: `${CLOUDINARY_BASE}/2.Rehan_Pinjari.png` },
-  { id: "3",  name: "Sneha Shelar",       position: "Secretary",       year: "2026", image: `${CLOUDINARY_BASE}/3.Sneha_Shelar.png` },
-  { id: "4",  name: "Rajas Mahajan",      position: "Joint-Secretary", year: "2026", image: `${CLOUDINARY_BASE}/4.Rajas_Mahajan.png` },
-  { id: "5",  name: "Bhumika Jadhav",     position: "Treasurer",       year: "2026", image: `${CLOUDINARY_BASE}/5.Bhumika_Jadhav.png` },
-  { id: "6",  name: "Soham Bagad",        position: "Joint Treasurer", year: "2026", image: `${CLOUDINARY_BASE}/6.Soham_Bagad.png` },
+  { id: "1",  name: "Kasturi Shinde",     position: "President",       year: "2026", image: `${CLOUDINARY_BASE}/1.Kasturi_Shinde.png`,  linkedin: "https://www.linkedin.com/in/kasturi-shinde31/" },
+  { id: "2",  name: "Rehan Pinjari",      position: "Vice-President",  year: "2026", image: `${CLOUDINARY_BASE}/2.Rehan_Pinjari.png`,   linkedin: "https://www.linkedin.com/in/rehan-pinjari/" },
+  { id: "3",  name: "Sneha Shelar",       position: "Secretary",       year: "2026", image: `${CLOUDINARY_BASE}/3.Sneha_Shelar.png`,    linkedin: "https://www.linkedin.com/in/sneha-shelar-1711ab318/" },
+  { id: "4",  name: "Rajas Mahajan",      position: "Joint-Secretary", year: "2026", image: `${CLOUDINARY_BASE}/4.Rajas_Mahajan.png`,   linkedin: "https://www.linkedin.com/in/rajas-mahajan-6563b72a7/" },
+  { id: "5",  name: "Bhumika Jadhav",     position: "Treasurer",       year: "2026", image: `${CLOUDINARY_BASE}/5.Bhumika_Jadhav.png`,  linkedin: "https://www.linkedin.com/in/bhumika-jadhav-587203342" },
+  { id: "6",  name: "Soham Bagad",        position: "Joint Treasurer", year: "2026", image: `${CLOUDINARY_BASE}/6.Soham_Bagad.png`,     linkedin: "https://www.linkedin.com/in/soham-bagad" },
   // ── Editorial Team ──
-  { id: "7",  name: "Tosha Chaudhary",    position: "Editorial Team",  year: "2026", image: `${CLOUDINARY_BASE}/7.Tosha_Chaudhary.png` },
-  { id: "8",  name: "Simran Tupe",        position: "Editorial Team",  year: "2026", image: `${CLOUDINARY_BASE}/8.Simran_Tupe.png` },
+  { id: "7",  name: "Tosha Chaudhary",    position: "Editorial Team",  year: "2026", image: `${CLOUDINARY_BASE}/7.Tosha_Chaudhary.png`, linkedin: "https://www.linkedin.com/in/tosha-choudhary-0a026b2a3" },
+  { id: "8",  name: "Simran Tupe",        position: "Editorial Team",  year: "2026", image: `${CLOUDINARY_BASE}/8.Simran_Tupe.png`,     linkedin: "https://www.linkedin.com/in/simrantupe/" },
   // ── Social Media Team ──
-  { id: "9",  name: "Akanksha Deshmukh",  position: "Social Media Team", year: "2026", image: `${CLOUDINARY_BASE}/9.Akanksha_Deshmukh.png` },
-  { id: "10", name: "Anjali Karhale",     position: "Social Media Team", year: "2026", image: `${CLOUDINARY_BASE}/10.Anjali_Karhale.png` },
+  { id: "9",  name: "Akanksha Deshmukh",  position: "Social Media Team", year: "2026", image: `${CLOUDINARY_BASE}/9.Akanksha_Deshmukh.png`, linkedin: "https://www.linkedin.com/in/akanksha-deshmukh-20414432a/" },
+  { id: "10", name: "Anjali Karhale",     position: "Social Media Team", year: "2026", image: `${CLOUDINARY_BASE}/10.Anjali_Karhale.png`,  linkedin: "https://www.linkedin.com/in/anjali-karhale-b7023b341/" },
   // ── Creative Team ──
-  { id: "11", name: "Sukhada Deshpande",  position: "Creative Team",   year: "2026", image: `${CLOUDINARY_BASE}/11.Sukhada_Deshpande.png` },
-  { id: "12", name: "Sanjana Bagul",      position: "Creative Team",   year: "2026", image: `${CLOUDINARY_BASE}/12.Sanjana_Bagul.png` },
+  { id: "11", name: "Sukhada Deshpande",  position: "Creative Team",   year: "2026", image: `${CLOUDINARY_BASE}/11.Sukhada_Deshpande.png`, linkedin: "https://www.linkedin.com/in/sukhada-deshpande-651b81332" },
+  { id: "12", name: "Sanjana Bagul",      position: "Creative Team",   year: "2026", image: `${CLOUDINARY_BASE}/12.Sanjana_Bagul.png`,   linkedin: "https://www.linkedin.com/in/sanjana-bagul-a3358b339" },
   // ── Technical Team ──
-  { id: "13", name: "Roshan Gaikwad",     position: "Technical Team",  year: "2026", image: `${CLOUDINARY_BASE}/13.Roshan_Gaikwad.png` },
-  { id: "14", name: "Rehan Shaikh",       position: "Technical Team",  year: "2026", image: `${CLOUDINARY_BASE}/14.Rehan_Shaikh.png` },
+  { id: "13", name: "Roshan Gaikwad",     position: "Technical Team",  year: "2026", image: `${CLOUDINARY_BASE}/13.Roshan_Gaikwad.png`,  linkedin: "https://www.linkedin.com/in/roshan-gaikwad-69a638328/" },
+  { id: "14", name: "Rehan Shaikh",       position: "Technical Team",  year: "2026", image: `${CLOUDINARY_BASE}/14.Rehan_Shaikh.png`,    linkedin: "https://www.linkedin.com/in/rehan-shaikh113/" },
   // ── Core Committee ──
-  { id: "15", name: "Pratiksha Sonawane", position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/15.Pratiksha_Sonawane.png` },
-  { id: "16", name: "Rohan Gaikwad",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/16.Rohan_Gaikwad.png` },
-  { id: "17", name: "Raj Sankpal",        position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/17.Raj_Sankpal.png` },
-  { id: "18", name: "Arjun Sarode",       position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/18.Arjun_Sarode.png` },
-  { id: "19", name: "Shravani Desai",     position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/19.Shravani_Desai.png` },
-  { id: "20", name: "Hrutuja Patil",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/20.Hrutuja_Patil.png` },
-  { id: "21", name: "Kalpesh Bire",       position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/21.Kalpesh_Bire.png` },
-  { id: "22", name: "Devansh Bhatt",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/22.Devansh_Bhatt.png` },
-  { id: "23", name: "Anurag Borse",       position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/23.Anurag_Borse.png` },
-  { id: "24", name: "Nayana Mane",        position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/24.Nayana_Mane.png` },
-  { id: "25", name: "Pratham Bhandange",  position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/25.Pratham_Bhandange.png` },
-  { id: "26", name: "Radha Boraste",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/26.Radha_Boraste.png` },
+  { id: "15", name: "Pratiksha Sonawane", position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/15.Pratiksha_Sonawane.png`, linkedin: "https://www.linkedin.com/in/pratiksha-sonawane-9393b232a" },
+  { id: "16", name: "Rohan Gaikwad",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/16.Rohan_Gaikwad.png`,   linkedin: "https://www.linkedin.com/in/rohan-gaikwad-7a2614328" },
+  { id: "17", name: "Raj Sankpal",        position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/17.Raj_Sankpal.png`,     linkedin: "https://www.linkedin.com/in/raj-sankpal-a45b88321/" },
+  { id: "18", name: "Arjun Sarode",       position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/18.Arjun_Sarode.png`,    linkedin: "https://www.linkedin.com/in/arjun-sarode-59294b331" },
+  { id: "19", name: "Shravani Desai",     position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/19.Shravani_Desai.png`,  linkedin: "https://www.linkedin.com/in/shravani-desai-765554377" },
+  { id: "20", name: "Hrutuja Patil",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/20.Hrutuja_Patil.png`,   linkedin: "https://www.linkedin.com/in/hrutuja-patil-404a17331/" },
+  { id: "21", name: "Kalpesh Bire",       position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/21.Kalpesh_Bire.png`,    linkedin: "https://www.linkedin.com/in/kalpesh-bire-3b5833316/" },
+  { id: "22", name: "Devansh Bhatt",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/22.Devansh_Bhatt.png`,   linkedin: "https://www.linkedin.com/in/devansh-bhatt06" },
+  { id: "23", name: "Anurag Borse",       position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/23.Anurag_Borse.png`,    linkedin: "https://www.linkedin.com/in/anurag-borse-860253397/" },
+  { id: "24", name: "Nayana Mane",        position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/24.Nayana_Mane.png`,     linkedin: "https://www.linkedin.com/in/nayana-mane-b40a2732a" },
+  { id: "25", name: "Pratham Bhandange",  position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/25.Pratham_Bhandange.png`, linkedin: "https://www.linkedin.com/in/pratham-bhadange-aab42a32b/" },
+  { id: "26", name: "Radha Boraste",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/26.Radha_Boraste.png`,   linkedin: "https://www.linkedin.com/in/radha-boraste-94363a354" },
 ];
 
 // Lazy Loading Hook

@@ -43,25 +43,20 @@ export const FooterSection = (): JSX.Element => {
         
         {/* Row 1: Logos + Title (inline) */}
         <div className="flex flex-col md:flex-row items-center md:items-center space-y-4 md:space-y-0 md:space-x-8 mb-10 text-center md:text-left">
-  {/* Logos */}
-  <div className="flex items-center justify-center md:justify-start space-x-4">
-    <img
-      src="/images/csi.png"
-      alt="CSI Logo"
-      className="w-16 h-auto md:w-20"
-    />
-    <img
-      src="/images/CSIwhite.svg"
-      alt="CSI KKW Logo"
-      className="w-28 h-28 md:w-26 md:h-16"
-    />
-  </div>
+          {/* Logos */}
+          <div className="flex items-center justify-center md:justify-start">
+            <img
+              src="/images/csi.png"
+              alt="CSI Logo"
+              className="w-16 h-auto md:w-20"
+            />
+          </div>
 
-  {/* Title */}
-  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
-    CSI KKWIEER Students' Branch
-  </h1>
-</div>
+          {/* Title */}
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
+            CSI KKWIEER Students' Branch
+          </h1>
+        </div>
 
 
         {/* Row 2: Address + Links (2 cols on mobile, 4 cols on desktop) */}
