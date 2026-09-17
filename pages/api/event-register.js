@@ -76,7 +76,7 @@ export default async function handler(req, res) {
   // 2. Dispatch to Google Apps Script / Google Drive Sheets Webhook
   const googleScriptUrl =
     process.env.GOOGLE_SCRIPT_WEBAPP_URL ||
-    "https://script.google.com/macros/s/AKfycbxM9ZEgALXG9q8lIVO-dkuxNdXGisQgufpdvt-z8Gak0h1Y34w9MylquFt9CPEY_lNH/exec";
+    "https://script.google.com/macros/s/AKfycbzrwqtTr-dSofOpK9jujNT7yK5utJXxfXQ6vhKweDQnV1DoHwQpA-pM3v9tosMlQv68/exec";
   if (googleScriptUrl) {
     try {
       const gRes = await fetch(googleScriptUrl, {

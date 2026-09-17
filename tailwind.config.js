@@ -55,13 +55,21 @@ module.exports = {
   		},
   		fontFamily: {
   			sans: [
+  				'"Plus Jakarta Sans"',
+  				'Inter',
   				'ui-sans-serif',
   				'system-ui',
-  				'sans-serif',
-  				'Apple Color Emoji"',
-  				'Segoe UI Emoji"',
-  				'Segoe UI Symbol"',
-  				'Noto Color Emoji"'
+  				'sans-serif'
+  			],
+  			display: [
+  				'Outfit',
+  				'"Plus Jakarta Sans"',
+  				'sans-serif'
+  			],
+  			heading: [
+  				'"Space Grotesk"',
+  				'Outfit',
+  				'sans-serif'
   			]
   		},
   		keyframes: {
