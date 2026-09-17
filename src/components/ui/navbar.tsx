@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   MenuIcon,
   XIcon,
-  ArrowRight,
   Home,
   Info,
   Calendar,
@@ -12,13 +11,12 @@ import {
   Users,
   Mail,
 } from "lucide-react";
-import { Button } from "./button";
 
 interface NavbarProps {
   onOpenJoinModal?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenJoinModal }) => {
+export const Navbar: React.FC<NavbarProps> = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string>("home");
@@ -88,19 +86,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenJoinModal }) => {
     }
   };
 
-  const handleJoinClick = () => {
-    if (onOpenJoinModal) {
-      onOpenJoinModal();
-    } else {
-      const modalTrigger = document.getElementById("vision-week-trigger");
-      if (modalTrigger) {
-        modalTrigger.click();
-      } else {
-        window.open("https://forms.gle/wKDSxzc9jmQknyBS7", "_blank");
-      }
-    }
-  };
-
   const isActive = (item: typeof navigationItems[0]) => {
     if (router.pathname === "/" && item.target) {
       return activeItem === item.target || (activeItem === "home" && item.label === "Home");
@@ -110,7 +95,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenJoinModal }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled
           ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 py-3"
           : "bg-white/90 backdrop-blur-sm py-4 border-b border-gray-100/70"
@@ -158,34 +143,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenJoinModal }) => {
           })}
         </nav>
 
-        {/* Right: Join CTA & Tagline */}
+        {/* Right: Tagline */}
         <div className="hidden md:flex items-center">
-          <Button
-            onClick={handleJoinClick}
-            className="bg-[#1D68F2] hover:bg-blue-700 text-white font-medium text-sm px-5 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1.5 group"
-          >
-            <span>Join CSI</span>
-            <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-          </Button>
-
-          <div className="h-7 w-[1px] bg-gray-200 mx-3.5 hidden lg:block" />
-
-          <div className="hidden lg:flex flex-col text-[8.5px] tracking-wider font-semibold text-gray-500 uppercase leading-tight">
+          <div className="flex flex-col text-[8.5px] tracking-wider font-semibold text-gray-500 uppercase leading-tight text-right">
             <span>STUDENT COMMUNITY</span>
             <span className="text-gray-400 font-normal">FOR A BETTER TOMORROW</span>
           </div>
         </div>
 
         {/* Mobile Hamburger Toggle */}
-        <div className="flex items-center md:hidden gap-2">
-          <Button
-            onClick={handleJoinClick}
-            size="sm"
-            className="bg-[#1D68F2] text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-1"
-          >
-            <span>Join</span>
-            <ArrowRight className="w-3 h-3" />
-          </Button>
+        <div className="flex items-center md:hidden">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none"
@@ -218,14 +185,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenJoinModal }) => {
             );
           })}
 
-          <div className="pt-3 border-t border-gray-100 flex flex-col gap-2">
-            <Button
-              onClick={handleJoinClick}
-              className="w-full bg-[#1D68F2] text-white py-2.5 rounded-xl font-medium flex items-center justify-center gap-2"
-            >
-              <span>Join CSI KKWIEER</span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
+          <div className="pt-3 border-t border-gray-100">
             <div className="text-center text-[10px] uppercase font-semibold text-gray-400 tracking-wider pt-1">
               Student Community for a Better Tomorrow
             </div>

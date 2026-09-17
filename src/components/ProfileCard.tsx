@@ -38,11 +38,6 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   return (
     <div className={`pc-card-wrapper ${className}`.trim()} style={cardStyle}>
       <section ref={cardRef} className="pc-card">
-        {/* Only keep title */}
-        <div className="pc-details ">
-          <h3></h3>
-        </div>
-
         {/* Avatar fills the card */}
         <div className="pc-avatar-content">
           <img

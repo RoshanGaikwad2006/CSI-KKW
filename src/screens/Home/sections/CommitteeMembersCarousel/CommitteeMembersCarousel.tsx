@@ -25,6 +25,9 @@ const ALL_POSITIONS = [
   "Joint-Treasurer",
 ];
 
+// Cloudinary base URL
+const CLOUDINARY_BASE = "https://res.cloudinary.com/rnrrnpun/image/upload/v1789632324";
+
 // -------------------- Data (2026-27 Committee) --------------------
 const committeeMembers: CommitteeMember[] = [
   {
@@ -32,15 +35,15 @@ const committeeMembers: CommitteeMember[] = [
     name: "Kasturi Shinde",
     position: "President",
     year: "2026",
-    image: "/images/2026/1.Kasturi Shinde.png",
+    image: `${CLOUDINARY_BASE}/1.Kasturi_Shinde.png`,
     description: "Leading the CSI KKWIEER Student Branch with strategic vision, leadership, and technical excellence.",
   },
   {
     id: "2",
-    name: "Rehan Rais Pinjari",
+    name: "Rehan Pinjari",
     position: "Vice-President",
     year: "2026",
-    image: "/images/2026/2.Rehan Pinjari.png",
+    image: `${CLOUDINARY_BASE}/2.Rehan_Pinjari.png`,
     description: "Directing student engagement, event operations, and inter-collegiate technological partnerships.",
   },
   {
@@ -48,7 +51,7 @@ const committeeMembers: CommitteeMember[] = [
     name: "Sneha Shelar",
     position: "Secretary",
     year: "2026",
-    image: "/images/2026/3.Sneha Shelar.png",
+    image: `${CLOUDINARY_BASE}/3.Sneha_Shelar.png`,
     description: "Orchestrating chapter administration, official correspondence, and member documentation.",
   },
   {
@@ -56,7 +59,7 @@ const committeeMembers: CommitteeMember[] = [
     name: "Rajas Mahajan",
     position: "Joint-Secretary",
     year: "2026",
-    image: "/images/2026/4.Rajas Mahajan.png",
+    image: `${CLOUDINARY_BASE}/4.Rajas_Mahajan.png`,
     description: "Coordinating logistical operations, venue management, and cross-department workshops.",
   },
   {
@@ -64,15 +67,15 @@ const committeeMembers: CommitteeMember[] = [
     name: "Bhumika Jadhav",
     position: "Treasurer",
     year: "2026",
-    image: "/images/2026/5.Bhumika Jadhav.png",
+    image: `${CLOUDINARY_BASE}/5.Bhumika_Jadhav.png`,
     description: "Overseeing financial planning, corporate sponsorships, and annual budget allocations.",
   },
   {
     id: "6",
-    name: "Soham Prasad Bagad",
+    name: "Soham Bagad",
     position: "Joint-Treasurer",
     year: "2026",
-    image: "/images/2026/6.Soham Bagad.png",
+    image: `${CLOUDINARY_BASE}/6.Soham_Bagad.png`,
     description: "Managing resource disbursement, accounting records, and event sponsorship reconciliation.",
   },
 ];

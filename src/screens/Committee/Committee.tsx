@@ -29,40 +29,43 @@ const ALL_POSITIONS = [
   "Core Committee",
 ];
 
+// Cloudinary base URL
+const CLOUDINARY_BASE = "https://res.cloudinary.com/rnrrnpun/image/upload/v1789632324";
+
 // Complete committee members data — 2026-27 batch
 const committeeMembers: CommitteeMember[] = [
   // ── Core Officers ──
-  { id: "1",  name: "Kasturi Shinde",          position: "President",       year: "2026", image: "/images/2026/1.Kasturi Shinde.png" },
-  { id: "2",  name: "Rehan Rais Pinjari",       position: "Vice-President",  year: "2026", image: "/images/2026/2.Rehan Pinjari.png" },
-  { id: "3",  name: "Sneha Shelar",             position: "Secretary",       year: "2026", image: "/images/2026/3.Sneha Shelar.png" },
-  { id: "4",  name: "Rajas Mahajan",            position: "Joint-Secretary", year: "2026", image: "/images/2026/4.Rajas Mahajan.png" },
-  { id: "5",  name: "Bhumika Jadhav",           position: "Treasurer",       year: "2026", image: "/images/2026/5.Bhumika Jadhav.png" },
-  { id: "6",  name: "Soham Prasad Bagad",       position: "Joint Treasurer", year: "2026", image: "/images/2026/6.Soham Bagad.png" },
+  { id: "1",  name: "Kasturi Shinde",     position: "President",       year: "2026", image: `${CLOUDINARY_BASE}/1.Kasturi_Shinde.png` },
+  { id: "2",  name: "Rehan Pinjari",      position: "Vice-President",  year: "2026", image: `${CLOUDINARY_BASE}/2.Rehan_Pinjari.png` },
+  { id: "3",  name: "Sneha Shelar",       position: "Secretary",       year: "2026", image: `${CLOUDINARY_BASE}/3.Sneha_Shelar.png` },
+  { id: "4",  name: "Rajas Mahajan",      position: "Joint-Secretary", year: "2026", image: `${CLOUDINARY_BASE}/4.Rajas_Mahajan.png` },
+  { id: "5",  name: "Bhumika Jadhav",     position: "Treasurer",       year: "2026", image: `${CLOUDINARY_BASE}/5.Bhumika_Jadhav.png` },
+  { id: "6",  name: "Soham Bagad",        position: "Joint Treasurer", year: "2026", image: `${CLOUDINARY_BASE}/6.Soham_Bagad.png` },
   // ── Editorial Team ──
-  { id: "7",  name: "Tosha S. Choudhary",       position: "Editorial Team",  year: "2026", image: "/images/2026/7.Tosha Chaudhary.png" },
-  { id: "8",  name: "Simran Tupe",              position: "Editorial Team",  year: "2026", image: "/images/2026/8.Simran Tupe.png" },
+  { id: "7",  name: "Tosha Chaudhary",    position: "Editorial Team",  year: "2026", image: `${CLOUDINARY_BASE}/7.Tosha_Chaudhary.png` },
+  { id: "8",  name: "Simran Tupe",        position: "Editorial Team",  year: "2026", image: `${CLOUDINARY_BASE}/8.Simran_Tupe.png` },
   // ── Social Media Team ──
-  { id: "9",  name: "Akanksha Deshmukh",        position: "Social Media Team", year: "2026", image: "/images/2026/9.Akanksha Deshmukh.png" },
-  { id: "10", name: "Anjali Sachin Karhale",    position: "Social Media Team", year: "2026", image: "/images/2026/10.Anjali Karhale.png" },
+  { id: "9",  name: "Akanksha Deshmukh",  position: "Social Media Team", year: "2026", image: `${CLOUDINARY_BASE}/9.Akanksha_Deshmukh.png` },
+  { id: "10", name: "Anjali Karhale",     position: "Social Media Team", year: "2026", image: `${CLOUDINARY_BASE}/10.Anjali_Karhale.png` },
   // ── Creative Team ──
-  { id: "11", name: "Sukhada Santosh Deshpande", position: "Creative Team",  year: "2026", image: "/images/2026/11.Sukhada Deshpande.png" },
-  { id: "12", name: "Sanjana Bharat Bagul",     position: "Creative Team",   year: "2026", image: "/images/2026/12.Sanjana Bagul.png" },
+  { id: "11", name: "Sukhada Deshpande",  position: "Creative Team",   year: "2026", image: `${CLOUDINARY_BASE}/11.Sukhada_Deshpande.png` },
+  { id: "12", name: "Sanjana Bagul",      position: "Creative Team",   year: "2026", image: `${CLOUDINARY_BASE}/12.Sanjana_Bagul.png` },
   // ── Technical Team ──
-  { id: "13", name: "Roshan Gaikwad",           position: "Technical Team",  year: "2026", image: "/images/2026/13.Roshan Gaikwad.png" },
-  { id: "14", name: "Rehan Shaikh",             position: "Technical Team",  year: "2026", image: "/images/2026/14.Rehan Shaikh.png" },
+  { id: "13", name: "Roshan Gaikwad",     position: "Technical Team",  year: "2026", image: `${CLOUDINARY_BASE}/13.Roshan_Gaikwad.png` },
+  { id: "14", name: "Rehan Shaikh",       position: "Technical Team",  year: "2026", image: `${CLOUDINARY_BASE}/14.Rehan_Shaikh.png` },
   // ── Core Committee ──
-  { id: "15", name: "Pratiksha Rahul Sonawane", position: "Core Committee",  year: "2026", image: "/images/2026/15.Pratiksha Sonawane.png" },
-  { id: "16", name: "Rohan Gaikwad",            position: "Core Committee",  year: "2026", image: "/images/2026/16.Rohan Gaikwad.png" },
-  { id: "17", name: "Raj Sankpal",              position: "Core Committee",  year: "2026", image: "/images/2026/17.Raj Sankpal.png" },
-  { id: "18", name: "Arjun Sarode",             position: "Core Committee",  year: "2026", image: "/images/2026/18.Arjun Sarode.png" },
-  { id: "19", name: "Shravani Yogesh Desai",    position: "Core Committee",  year: "2026", image: "/images/2026/19.Shravani Desai.png" },
-  { id: "20", name: "Hrutuja Patil",            position: "Core Committee",  year: "2026", image: "/images/2026/20.Hrutuja Patil.png" },
-  { id: "21", name: "Kalpesh Bire",             position: "Core Committee",  year: "2026", image: "/images/2026/21.Kalpesh Bire.png" },
-  { id: "22", name: "Devansh Kunal Bhatt",      position: "Core Committee",  year: "2026", image: "/images/2026/22.Devansh Bhatt.png" },
-  { id: "23", name: "Anurag Narayan Borse",     position: "Core Committee",  year: "2026", image: "/images/2026/23.Anurag Borse.png" },
-  { id: "24", name: "Nayana Mane",              position: "Core Committee",  year: "2026", image: "/images/2026/24.Nayana Mane.png" },
-  { id: "25", name: "Pratham Milind Bhandange", position: "Core Committee",  year: "2026", image: "/images/2026/25.Pratham Bhandange.png" },
-  { id: "26", name: "Radha Boraste",            position: "Core Committee",  year: "2026", image: "/images/2026/26.Radha Boraste.png" },
+  { id: "15", name: "Pratiksha Sonawane", position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/15.Pratiksha_Sonawane.png` },
+  { id: "16", name: "Rohan Gaikwad",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/16.Rohan_Gaikwad.png` },
+  { id: "17", name: "Raj Sankpal",        position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/17.Raj_Sankpal.png` },
+  { id: "18", name: "Arjun Sarode",       position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/18.Arjun_Sarode.png` },
+  { id: "19", name: "Shravani Desai",     position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/19.Shravani_Desai.png` },
+  { id: "20", name: "Hrutuja Patil",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/20.Hrutuja_Patil.png` },
+  { id: "21", name: "Kalpesh Bire",       position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/21.Kalpesh_Bire.png` },
+  { id: "22", name: "Devansh Bhatt",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/22.Devansh_Bhatt.png` },
+  { id: "23", name: "Anurag Borse",       position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/23.Anurag_Borse.png` },
+  { id: "24", name: "Nayana Mane",        position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/24.Nayana_Mane.png` },
+  { id: "25", name: "Pratham Bhandange",  position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/25.Pratham_Bhandange.png` },
+  { id: "26", name: "Radha Boraste",      position: "Core Committee",  year: "2026", image: `${CLOUDINARY_BASE}/26.Radha_Boraste.png` },
 ];
 
 // Lazy Loading Hook
@@ -202,7 +205,7 @@ export const Committee = (): JSX.Element => {
       <Navbar />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-56">
+      <div className="container mx-auto px-4 pt-36 pb-24">
         {/* Section Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -237,11 +240,11 @@ export const Committee = (): JSX.Element => {
         {/* Members Grid */}
         {sortedMembers.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 mb-12 items-stretch justify-items-center">
               {visibleMembers.map((member, index) => (
                 <div 
                   key={member.id} 
-                  className="flex justify-center"
+                  className="w-full flex justify-center"
                   ref={
                     index === visibleMembers.length - 1 && hasMoreMembers
                       ? lastElementRef

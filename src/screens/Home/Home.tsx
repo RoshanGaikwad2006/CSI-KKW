@@ -19,20 +19,21 @@ export const Home = (): JSX.Element => {
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-white relative font-['Inter',sans-serif] text-slate-900 overflow-x-hidden">
       
-      {/* 1. Floating Notification Banner (Preserved) */}
+      {/* 1. Vision Week Event Popup Card */}
       <Snackbar
         event={{
           id: 6,
           title: "Vision Week 2026",
           category: "upcoming",
-          date: "2026-03-10",
+          date: "March 12 – 16, 2026",
           time: "9:00 AM",
-          location: "Campus Wide & Labs",
-          description: "Flagship Annual Tech Symposium & Hackathon. Registrations are now open!",
-          image: "/images/cohort.jpg",
+          location: "KKWIEER Campus",
+          description: "Join us for an exciting journey. Register now to participate, learn, and showcase your skills!",
+          image: "/images/Eyantran2026.jpeg",
           attendees: null,
           featured: true,
         }}
+        onRegisterClick={() => setIsVisionWeekModalOpen(true)}
       />
 
       {/* 2. Top Navigation Bar (Redesigned with Reference Layout) */}

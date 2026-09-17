@@ -86,6 +86,9 @@ export const defaultDishes: CarouselItem[] = [
   },
 ];
 
+// Cloudinary base URL
+const CLOUDINARY_BASE = "https://res.cloudinary.com/rnrrnpun/image/upload/v1789632324";
+
 // Default CSI Committee Member items — 2026-27 batch
 export const defaultCsiCommitteeItems: CarouselItem[] = [
   {
@@ -93,16 +96,16 @@ export const defaultCsiCommitteeItems: CarouselItem[] = [
     titleLine1: "KASTURI SHINDE",
     titleLine2: "– PRESIDENT",
     desc: "Leading the CSI KKWIEER Student Branch with strategic vision, leadership, and technical excellence.",
-    img: "/images/2026/1.Kasturi Shinde.png",
+    img: `${CLOUDINARY_BASE}/1.Kasturi_Shinde.png`,
     ctaText: "View Profile",
     ctaUrl: "#",
   },
   {
     tag: "#Vice-President",
-    titleLine1: "REHAN RAIS PINJARI",
+    titleLine1: "REHAN PINJARI",
     titleLine2: "– VICE PRESIDENT",
     desc: "Directing student engagement, event planning, and inter-collegiate technical initiatives.",
-    img: "/images/2026/2.Rehan Pinjari.png",
+    img: `${CLOUDINARY_BASE}/2.Rehan_Pinjari.png`,
     ctaText: "View Profile",
     ctaUrl: "#",
   },
@@ -111,7 +114,7 @@ export const defaultCsiCommitteeItems: CarouselItem[] = [
     titleLine1: "SNEHA SHELAR",
     titleLine2: "– SECRETARY",
     desc: "Orchestrating chapter administration, team communication, and member records.",
-    img: "/images/2026/3.Sneha Shelar.png",
+    img: `${CLOUDINARY_BASE}/3.Sneha_Shelar.png`,
     ctaText: "View Profile",
     ctaUrl: "#",
   },
@@ -120,7 +123,7 @@ export const defaultCsiCommitteeItems: CarouselItem[] = [
     titleLine1: "RAJAS MAHAJAN",
     titleLine2: "– JOINT SECRETARY",
     desc: "Coordinating logistical operations and technical workshop arrangements across departments.",
-    img: "/images/2026/4.Rajas Mahajan.png",
+    img: `${CLOUDINARY_BASE}/4.Rajas_Mahajan.png`,
     ctaText: "View Profile",
     ctaUrl: "#",
   },
@@ -129,16 +132,16 @@ export const defaultCsiCommitteeItems: CarouselItem[] = [
     titleLine1: "BHUMIKA JADHAV",
     titleLine2: "– TREASURER",
     desc: "Overseeing financial planning, event sponsorships, and budget management.",
-    img: "/images/2026/5.Bhumika Jadhav.png",
+    img: `${CLOUDINARY_BASE}/5.Bhumika_Jadhav.png`,
     ctaText: "View Profile",
     ctaUrl: "#",
   },
   {
     tag: "#Joint-Treasurer",
-    titleLine1: "SOHAM PRASAD BAGAD",
+    titleLine1: "SOHAM BAGAD",
     titleLine2: "– JOINT TREASURER",
     desc: "Managing resource allocation and financial reporting for national and regional events.",
-    img: "/images/2026/6.Soham Bagad.png",
+    img: `${CLOUDINARY_BASE}/6.Soham_Bagad.png`,
     ctaText: "View Profile",
     ctaUrl: "#",
   },
