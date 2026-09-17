@@ -100,9 +100,9 @@ export const CommitteeMembersCarousel: React.FC = () => {
 
   // Map committee members to 3D Coverflow carousel items
   const coverFlowItems: CarouselItem[] = sortedMembers.map((m) => ({
-    tag: `#${m.position.replace(/\s+/g, "")}`,
+    tag: m.position.replace(/-/g, " "),
     titleLine1: m.name.toUpperCase(),
-    titleLine2: `– ${m.position.toUpperCase()}`,
+    titleLine2: `– ${m.position.toUpperCase().replace(/-/g, " ")}`,
     desc: m.description || `Core leadership member driving technical workshops and community excellence at CSI KKWIEER.`,
     img: m.image,
     ctaText: "LinkedIn Profile",
