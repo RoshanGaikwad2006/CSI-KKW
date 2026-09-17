@@ -2,7 +2,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { CoverFlowCarousel, CarouselItem } from "../../../../components/ui/3-d-coverflow-carousel";
-import { ArrowRight, Users, Sparkles } from "lucide-react";
+import { ArrowRight, Users } from "lucide-react";
 
 // -------------------- Types --------------------
 interface CommitteeMember {
@@ -121,11 +121,6 @@ export const CommitteeMembersCarousel: React.FC = () => {
         
         {/* Section Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-            <span>Core Executive Board 2026-27</span>
-          </div>
-
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
             Let's. Make. It. Happen
           </h2>
@@ -138,7 +133,7 @@ export const CommitteeMembersCarousel: React.FC = () => {
         <div className="w-full max-w-7xl mx-auto mb-10 rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-[#0c0a09]/90">
           <CoverFlowCarousel
             items={coverFlowItems}
-            sectionLabel="CSI KKWIEER CORE LEADERSHIP 2026-27"
+            sectionLabel="CSI KKWIEER CORE LEADERSHIP"
             accentColor="#1D68F2"
             autoplay={true}
             autoplayDelay={3000}
