@@ -36,6 +36,7 @@ const committeeMembers: CommitteeMember[] = [
     position: "President",
     year: "2026",
     image: `${CLOUDINARY_BASE}/1.Kasturi_Shinde.png`,
+    linkedin: "https://www.linkedin.com/in/kasturi-shinde31/",
     description: "Leading the CSI KKWIEER Student Branch with strategic vision, leadership, and technical excellence.",
   },
   {
@@ -44,6 +45,7 @@ const committeeMembers: CommitteeMember[] = [
     position: "Vice-President",
     year: "2026",
     image: `${CLOUDINARY_BASE}/2.Rehan_Pinjari.png`,
+    linkedin: "https://www.linkedin.com/in/rehan-pinjari/",
     description: "Directing student engagement, event operations, and inter-collegiate technological partnerships.",
   },
   {
@@ -52,6 +54,7 @@ const committeeMembers: CommitteeMember[] = [
     position: "Secretary",
     year: "2026",
     image: `${CLOUDINARY_BASE}/3.Sneha_Shelar.png`,
+    linkedin: "https://www.linkedin.com/in/sneha-shelar-1711ab318/",
     description: "Orchestrating chapter administration, official correspondence, and member documentation.",
   },
   {
@@ -60,6 +63,7 @@ const committeeMembers: CommitteeMember[] = [
     position: "Joint-Secretary",
     year: "2026",
     image: `${CLOUDINARY_BASE}/4.Rajas_Mahajan.png`,
+    linkedin: "https://www.linkedin.com/in/rajas-mahajan-6563b72a7/",
     description: "Coordinating logistical operations, venue management, and cross-department workshops.",
   },
   {
@@ -68,6 +72,7 @@ const committeeMembers: CommitteeMember[] = [
     position: "Treasurer",
     year: "2026",
     image: `${CLOUDINARY_BASE}/5.Bhumika_Jadhav.png`,
+    linkedin: "https://www.linkedin.com/in/bhumika-jadhav-587203342",
     description: "Overseeing financial planning, corporate sponsorships, and annual budget allocations.",
   },
   {
@@ -76,6 +81,7 @@ const committeeMembers: CommitteeMember[] = [
     position: "Joint-Treasurer",
     year: "2026",
     image: `${CLOUDINARY_BASE}/6.Soham_Bagad.png`,
+    linkedin: "https://www.linkedin.com/in/soham-bagad",
     description: "Managing resource disbursement, accounting records, and event sponsorship reconciliation.",
   },
 ];
