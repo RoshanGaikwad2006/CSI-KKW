@@ -121,7 +121,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
         </Link>
 
         {/* Center: Navigation links */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-2">
+        <nav className="hidden md:flex items-center gap-1.5 lg:gap-3">
           {navigationItems.map((item, index) => {
             const active = isActive(item);
             return (
@@ -129,15 +129,15 @@ export const Navbar: React.FC<NavbarProps> = () => {
                 key={index}
                 href={item.path}
                 onClick={(e) => handleNavClick(item, e)}
-                className={`relative px-3.5 py-1.5 text-sm font-medium transition-colors rounded-full ${
+                className={`relative px-4 py-2 text-base lg:text-[17px] font-semibold tracking-normal transition-colors rounded-full ${
                   active
-                    ? "text-[#1D68F2] font-semibold"
-                    : "text-[#334155] hover:text-[#1D68F2] hover:bg-blue-50/60"
+                    ? "text-[#1D68F2]"
+                    : "text-[#334155] hover:text-[#1D68F2] hover:bg-blue-50/70"
                 }`}
               >
                 {item.label}
                 {active && (
-                  <span className="absolute bottom-0 left-3.5 right-3.5 h-[2.5px] bg-[#1D68F2] rounded-full" />
+                  <span className="absolute bottom-0 left-4 right-4 h-[2.5px] bg-[#1D68F2] rounded-full" />
                 )}
               </a>
             );
@@ -174,7 +174,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
                 key={index}
                 href={item.path}
                 onClick={(e) => handleNavClick(item, e)}
-                className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-base font-medium transition-colors ${
+                className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-lg font-semibold transition-colors ${
                   active
                     ? "bg-blue-50 text-[#1D68F2] font-semibold"
                     : "text-gray-700 hover:bg-gray-50"
