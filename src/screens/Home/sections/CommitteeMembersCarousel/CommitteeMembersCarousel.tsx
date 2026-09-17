@@ -25,8 +25,8 @@ const ALL_POSITIONS = [
   "Joint-Treasurer",
 ];
 
-// Cloudinary base URL
-const CLOUDINARY_BASE = "https://res.cloudinary.com/rnrrnpun/image/upload/v1789632324";
+// Local optimized committee images
+const CLOUDINARY_BASE = "/images/2026";
 
 // -------------------- Data (2026-27 Committee) --------------------
 const committeeMembers: CommitteeMember[] = [

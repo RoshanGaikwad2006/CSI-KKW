@@ -29,8 +29,8 @@ const ALL_POSITIONS = [
   "Core Committee",
 ];
 
-// Cloudinary base URL
-const CLOUDINARY_BASE = "https://res.cloudinary.com/rnrrnpun/image/upload/v1789632324";
+// Local optimized committee images
+const CLOUDINARY_BASE = "/images/2026";
 
 // Complete committee members data — 2026-27 batch
 const committeeMembers: CommitteeMember[] = [
