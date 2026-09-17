@@ -86,6 +86,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
     }
   };
 
+
   const isActive = (item: typeof navigationItems[0]) => {
     if (router.pathname === "/" && item.target) {
       return activeItem === item.target || (activeItem === "home" && item.label === "Home");

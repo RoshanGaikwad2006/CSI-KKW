@@ -98,9 +98,7 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
 
   const handleCardAction = (event: UpcomingEventItem) => {
     if (event.isVisionWeek) {
-      if (onOpenVisionWeekModal) {
-        onOpenVisionWeekModal();
-      }
+      router.push("/vision-week-register");
     } else if (event.externalLink) {
       window.open(event.externalLink, "_blank");
     } else {
