@@ -289,22 +289,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <div
                 className="relative w-full overflow-hidden"
                 style={{
-                  // Aggressive edge fade — no visible boundary
                   WebkitMaskImage: [
-                    "radial-gradient(ellipse 88% 82% at 52% 44%,",
-                    "  black 40%,",
-                    "  rgba(0,0,0,0.88) 60%,",
-                    "  rgba(0,0,0,0.5) 76%,",
-                    "  rgba(0,0,0,0.15) 88%,",
+                    "radial-gradient(ellipse 96% 90% at 50% 48%,",
+                    "  black 68%,",
+                    "  rgba(0,0,0,0.92) 80%,",
+                    "  rgba(0,0,0,0.5) 92%,",
+                    "  rgba(0,0,0,0.15) 97%,",
                     "  transparent 100%",
                     ")",
                   ].join(""),
                   maskImage: [
-                    "radial-gradient(ellipse 88% 82% at 52% 44%,",
-                    "  black 40%,",
-                    "  rgba(0,0,0,0.88) 60%,",
-                    "  rgba(0,0,0,0.5) 76%,",
-                    "  rgba(0,0,0,0.15) 88%,",
+                    "radial-gradient(ellipse 96% 90% at 50% 48%,",
+                    "  black 68%,",
+                    "  rgba(0,0,0,0.92) 80%,",
+                    "  rgba(0,0,0,0.5) 92%,",
+                    "  rgba(0,0,0,0.15) 97%,",
                     "  transparent 100%",
                     ")",
                   ].join(""),
@@ -320,18 +319,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     transition: "transform 1.1s cubic-bezier(0.22,1,0.36,1) 0.15s, opacity 0.85s ease 0.1s",
                   }}
                 />
-                {/* Left edge */}
-                <div className="absolute inset-y-0 left-0 w-28 pointer-events-none z-10"
-                  style={{ background: `linear-gradient(to right,${BG} 0%,rgba(248,250,255,0.55) 55%,transparent 100%)` }} />
+                {/* Left edge — subtle soft blend so left-side members remain fully visible */}
+                <div className="absolute inset-y-0 left-0 w-8 sm:w-10 pointer-events-none z-10"
+                  style={{ background: `linear-gradient(to right,${BG} 0%,rgba(248,250,255,0.35) 45%,transparent 100%)` }} />
                 {/* Right edge */}
-                <div className="absolute inset-y-0 right-0 w-20 pointer-events-none z-10"
-                  style={{ background: `linear-gradient(to left,${BG} 0%,rgba(248,250,255,0.45) 55%,transparent 100%)` }} />
-                {/* Bottom edge — strongest fade */}
-                <div className="absolute inset-x-0 bottom-0 h-36 pointer-events-none z-10"
-                  style={{ background: `linear-gradient(to top,${BG} 0%,rgba(248,250,255,0.75) 45%,transparent 100%)` }} />
+                <div className="absolute inset-y-0 right-0 w-10 sm:w-12 pointer-events-none z-10"
+                  style={{ background: `linear-gradient(to left,${BG} 0%,rgba(248,250,255,0.3) 50%,transparent 100%)` }} />
+                {/* Bottom edge — smooth fade into stats row */}
+                <div className="absolute inset-x-0 bottom-0 h-28 pointer-events-none z-10"
+                  style={{ background: `linear-gradient(to top,${BG} 0%,rgba(248,250,255,0.6) 50%,transparent 100%)` }} />
                 {/* Top edge */}
-                <div className="absolute inset-x-0 top-0 h-16 pointer-events-none z-10"
-                  style={{ background: `linear-gradient(to bottom,${BG} 0%,rgba(248,250,255,0.35) 55%,transparent 100%)` }} />
+                <div className="absolute inset-x-0 top-0 h-10 pointer-events-none z-10"
+                  style={{ background: `linear-gradient(to bottom,${BG} 0%,rgba(248,250,255,0.2) 60%,transparent 100%)` }} />
               </div>
             </div>
           </div>
