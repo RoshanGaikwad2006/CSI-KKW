@@ -32,6 +32,7 @@ export interface CoverFlowCarouselProps {
   sectionLabel?: string;
   autoplay?: boolean;
   autoplayDelay?: number;
+  pauseOnHover?: boolean;
   className?: string;
   accentColor?: string;
   onCtaClick?: (item: CarouselItem) => void;
@@ -147,7 +148,8 @@ export function CoverFlowCarousel({
   items = defaultDishes,
   sectionLabel = "BEST SELLERS",
   autoplay = true,
-  autoplayDelay = 5000,
+  autoplayDelay = 3500,
+  pauseOnHover = false,
   className = "",
   accentColor = "#c5a880",
   onCtaClick,
@@ -170,10 +172,15 @@ export function CoverFlowCarousel({
   };
 
   useEffect(() => {
-    if (!autoplay || isHovered || total <= 1) return;
-    const interval = setInterval(nextSlide, autoplayDelay);
+    if (!autoplay || total <= 1) return;
+    if (pauseOnHover && isHovered) return;
+
+    const interval = setInterval(() => {
+      nextSlide();
+    }, autoplayDelay);
+
     return () => clearInterval(interval);
-  }, [autoplay, autoplayDelay, isHovered, nextSlide, total]);
+  }, [autoplay, autoplayDelay, pauseOnHover, isHovered, nextSlide, total, currentIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -130,7 +130,8 @@ export const CommitteeMembersCarousel: React.FC = () => {
             sectionLabel="CSI KKWIEER CORE LEADERSHIP 2026-27"
             accentColor="#1D68F2"
             autoplay={true}
-            autoplayDelay={3500}
+            autoplayDelay={3000}
+            pauseOnHover={false}
           />
         </div>
 
