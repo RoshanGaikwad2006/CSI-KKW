@@ -101,6 +101,8 @@ export const CommitteeMembersCarousel: React.FC = () => {
     img: m.image,
     ctaText: "LinkedIn Profile",
     ctaUrl: m.linkedin || "#",
+    // President slide lingers for half the time of every other slide
+    ...(m.position === "President" ? { delay: 1500 } : {}),
   }));
 
   return (

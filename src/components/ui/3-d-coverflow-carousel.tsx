@@ -25,6 +25,8 @@ export interface CarouselItem {
   ctaText?: string;
   ctaUrl?: string;
   linkedin?: string;
+  /** Override the global autoplayDelay for this specific slide (in ms) */
+  delay?: number;
 }
 
 export interface CoverFlowCarouselProps {
@@ -178,12 +180,13 @@ export function CoverFlowCarousel({
     if (!autoplay || total <= 1) return;
     if (pauseOnHover && isHovered) return;
 
-    const interval = setInterval(() => {
+    const currentDelay = items[currentIndex]?.delay ?? autoplayDelay;
+    const timeout = setTimeout(() => {
       nextSlide();
-    }, autoplayDelay);
+    }, currentDelay);
 
-    return () => clearInterval(interval);
-  }, [autoplay, autoplayDelay, pauseOnHover, isHovered, nextSlide, total, currentIndex]);
+    return () => clearTimeout(timeout);
+  }, [autoplay, autoplayDelay, pauseOnHover, isHovered, nextSlide, total, currentIndex, items]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
