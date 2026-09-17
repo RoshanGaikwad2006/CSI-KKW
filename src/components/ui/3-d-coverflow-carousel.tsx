@@ -252,27 +252,6 @@ export function CoverFlowCarousel({
                       display: "block",
                     }}
                   />
-                  {/* Tag badge */}
-                  {item.tag && (
-                    <div style={{ position: "absolute", top: "10px", right: "10px", zIndex: 2 }}>
-                      <span
-                        style={{
-                          display: "inline-block",
-                          fontSize: "0.65rem",
-                          fontWeight: 700,
-                          letterSpacing: "0.06em",
-                          color: "#ffffff",
-                          background: accentColor,
-                          padding: "3px 9px",
-                          borderRadius: "999px",
-                          boxShadow: `0 2px 8px ${accentColor}55`,
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        {item.tag.replace(/^#/, "")}
-                      </span>
-                    </div>
-                  )}
                 </div>
 
                 {/* ── Text panel: clean white area below photo ── */}
