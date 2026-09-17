@@ -24,8 +24,8 @@ export const ConfirmationEmailModal: React.FC<ConfirmationEmailModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const participantName = registrationData?.name || "Roshan";
-  const participantEmail = registrationData?.email || "roshan@example.com";
+  const participantName = registrationData?.name || "Student";
+  const participantEmail = registrationData?.email || "student@example.com";
   const ticketId = registrationData?.ticketId || "CSI-EVT-9428";
 
   return (

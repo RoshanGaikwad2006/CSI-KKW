@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 
-// MongoDB Atlas URI (Using verified Cluster-CSI credentials)
-const uri = process.env.MONGODB_URI || "mongodb+srv://admin:admin123@cluster-csi.zcwv2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-CSI";
+// MongoDB Atlas URI
+const uri = process.env.MONGODB_URI || "mongodb+srv://roshangaikwad2006_db_user:VZSn3qP6xIR2Pjxv@cluster0.qtasksf.mongodb.net/?retryWrites=true&w=majority";
 const options = {};
 
 let client;
@@ -74,7 +74,9 @@ export default async function handler(req, res) {
   }
 
   // 2. Dispatch to Google Apps Script / Google Drive Sheets Webhook
-  const googleScriptUrl = process.env.GOOGLE_SCRIPT_WEBAPP_URL;
+  const googleScriptUrl =
+    process.env.GOOGLE_SCRIPT_WEBAPP_URL ||
+    "https://script.google.com/macros/s/AKfycbxM9ZEgALXG9q8lIVO-dkuxNdXGisQgufpdvt-z8Gak0h1Y34w9MylquFt9CPEY_lNH/exec";
   if (googleScriptUrl) {
     try {
       const gRes = await fetch(googleScriptUrl, {

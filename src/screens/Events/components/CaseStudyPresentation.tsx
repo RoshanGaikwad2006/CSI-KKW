@@ -262,13 +262,13 @@ export const CaseStudyPresentation: React.FC<CaseStudyPresentationProps> = ({
                     <div>
                       <span className="text-slate-600 block">Full Name *</span>
                       <div className="h-6 rounded border border-slate-300 bg-white px-1.5 flex items-center text-slate-400">
-                        Roshan Gaikwad
+                        Alex Kumar
                       </div>
                     </div>
                     <div>
                       <span className="text-slate-600 block">Email Address *</span>
                       <div className="h-6 rounded border border-slate-300 bg-white px-1.5 flex items-center text-slate-400">
-                        roshan@example.com
+                        student@example.com
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-1">
@@ -335,7 +335,7 @@ export const CaseStudyPresentation: React.FC<CaseStudyPresentationProps> = ({
                 <Mail className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div className="text-[10px]">
                   <p className="text-slate-800 font-semibold">
-                    A confirmation email has been sent to roshan@example.com
+                    A confirmation email has been sent to student@example.com
                   </p>
                   <p className="text-slate-400">Check your inbox (and spam folder)</p>
                 </div>
@@ -381,12 +381,12 @@ export const CaseStudyPresentation: React.FC<CaseStudyPresentationProps> = ({
                   </div>
                   <div>
                     <div className="font-bold text-slate-900 text-[11px]">CSI KKWIEER</div>
-                    <div className="text-slate-400 text-[9px]">to roshan@example.com</div>
+                    <div className="text-slate-400 text-[9px]">to student@example.com</div>
                   </div>
                 </div>
 
                 <div className="pt-1 text-slate-700">
-                  <p className="font-bold text-slate-900">Hi Roshan,</p>
+                  <p className="font-bold text-slate-900">Hi Student,</p>
                   <p className="mt-0.5">Thank you for registering for <strong>E-Yantran 2026</strong>!</p>
                 </div>
 
