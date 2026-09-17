@@ -40,117 +40,8 @@ export interface CoverFlowCarouselProps {
   onCtaClick?: (item: CarouselItem) => void;
 }
 
-export const defaultDishes: CarouselItem[] = [
-  {
-    tag: "#Signature",
-    titleLine1: "BUTTER CHICKEN",
-    titleLine2: "– DELHI HERITAGE",
-    desc: "Velvety roasted tomato and fenugreek gravy with tender charred chicken",
-    img: "https://cdn.21st.dev/assets/mirror/84/84cb320f9692895054c9e1774ca48848f1c9c62ccba43ad8ad0b186460bb3751.jpg",
-    ctaText: "View Menu",
-    ctaUrl: "#",
-  },
-  {
-    tag: "#ChefSpecial",
-    titleLine1: "TANDOORI CHOPS",
-    titleLine2: "– SMOKED SPICE",
-    desc: "Grass-fed lamb chops charred in live charcoal tandoor with Kashmiri spices",
-    img: "https://cdn.21st.dev/assets/mirror/a4/a4712dee84e12432f1d3a1a3234914c0281c9bb12692e4bc8da5eaa4355bec33.jpg",
-    ctaText: "View Menu",
-    ctaUrl: "#",
-  },
-  {
-    tag: "#Vegetarian",
-    titleLine1: "PANEER TIKKA",
-    titleLine2: "– CLAY ROASTED",
-    desc: "Artisan cottage cheese marinated in spiced yogurt, bell peppers & saffron",
-    img: "https://cdn.21st.dev/assets/mirror/56/56a6950cf4a436af231cf7cd707189e121e65934066f851c744bdab0cfee64d4.jpg",
-    ctaText: "View Menu",
-    ctaUrl: "#",
-  },
-  {
-    tag: "#CoastalCatch",
-    titleLine1: "MALABAR PRAWNS",
-    titleLine2: "– COCONUT GRAVY",
-    desc: "Jumbo wild tiger prawns simmered in fragrant curry leaves and coconut milk",
-    img: "https://cdn.21st.dev/assets/mirror/a3/a32877b070c563bbbcf54b6104761b1516814625209c806ee8b60f8a69598cd1.jpg",
-    ctaText: "View Menu",
-    ctaUrl: "#",
-  },
-  {
-    tag: "#ArtisanBake",
-    titleLine1: "TRUFFLE NAAN",
-    titleLine2: "– CHARCOAL OVEN",
-    desc: "Crispy puffed leavened bread brushed with pure ghee and black winter truffle",
-    img: "https://cdn.21st.dev/assets/mirror/5c/5c1b6f03cc2ace649f9025f304ca4fdce74cd413504e65a00ef3f68152e8ed92.jpg",
-    ctaText: "View Menu",
-    ctaUrl: "#",
-  },
-];
-
-// Local optimized committee images
-const CLOUDINARY_BASE = "/images/2026";
-
-// Default CSI Committee Member items — 2026-27 batch
-export const defaultCsiCommitteeItems: CarouselItem[] = [
-  {
-    tag: "#President",
-    titleLine1: "KASTURI SHINDE",
-    titleLine2: "– PRESIDENT",
-    desc: "Leading the CSI KKWIEER Student Branch with strategic vision, leadership, and technical excellence.",
-    img: `${CLOUDINARY_BASE}/1.Kasturi_Shinde.png`,
-    ctaText: "LinkedIn Profile",
-    ctaUrl: "https://www.linkedin.com/in/kasturi-shinde31/",
-  },
-  {
-    tag: "#Vice-President",
-    titleLine1: "REHAN PINJARI",
-    titleLine2: "– VICE PRESIDENT",
-    desc: "Directing student engagement, event planning, and inter-collegiate technical initiatives.",
-    img: `${CLOUDINARY_BASE}/2.Rehan_Pinjari.png`,
-    ctaText: "LinkedIn Profile",
-    ctaUrl: "https://www.linkedin.com/in/rehan-pinjari/",
-  },
-  {
-    tag: "#Secretary",
-    titleLine1: "SNEHA SHELAR",
-    titleLine2: "– SECRETARY",
-    desc: "Orchestrating chapter administration, team communication, and member records.",
-    img: `${CLOUDINARY_BASE}/3.Sneha_Shelar.png`,
-    ctaText: "LinkedIn Profile",
-    ctaUrl: "https://www.linkedin.com/in/sneha-shelar-1711ab318/",
-  },
-  {
-    tag: "#Joint-Secretary",
-    titleLine1: "RAJAS MAHAJAN",
-    titleLine2: "– JOINT SECRETARY",
-    desc: "Coordinating logistical operations and technical workshop arrangements across departments.",
-    img: `${CLOUDINARY_BASE}/4.Rajas_Mahajan.png`,
-    ctaText: "LinkedIn Profile",
-    ctaUrl: "https://www.linkedin.com/in/rajas-mahajan-6563b72a7/",
-  },
-  {
-    tag: "#Treasurer",
-    titleLine1: "BHUMIKA JADHAV",
-    titleLine2: "– TREASURER",
-    desc: "Overseeing financial planning, event sponsorships, and budget management.",
-    img: `${CLOUDINARY_BASE}/5.Bhumika_Jadhav.png`,
-    ctaText: "LinkedIn Profile",
-    ctaUrl: "https://www.linkedin.com/in/bhumika-jadhav-587203342",
-  },
-  {
-    tag: "#Joint-Treasurer",
-    titleLine1: "SOHAM BAGAD",
-    titleLine2: "– JOINT TREASURER",
-    desc: "Managing resource allocation and financial reporting for national and regional events.",
-    img: `${CLOUDINARY_BASE}/6.Soham_Bagad.png`,
-    ctaText: "LinkedIn Profile",
-    ctaUrl: "https://www.linkedin.com/in/soham-bagad",
-  },
-];
-
 export function CoverFlowCarousel({
-  items = defaultDishes,
+  items = [],
   sectionLabel = "BEST SELLERS",
   autoplay = true,
   autoplayDelay = 3500,
@@ -175,6 +66,18 @@ export function CoverFlowCarousel({
   const goToSlide = (idx: number) => {
     setCurrentIndex(idx % total);
   };
+
+  // Preload all carousel images into memory once on mount to prevent repeated network calls
+  useEffect(() => {
+    if (typeof window !== "undefined" && items && items.length > 0) {
+      items.forEach((item) => {
+        if (item.img) {
+          const img = new Image();
+          img.src = item.img;
+        }
+      });
+    }
+  }, [items]);
 
   useEffect(() => {
     if (!autoplay || total <= 1) return;
@@ -224,24 +127,12 @@ export function CoverFlowCarousel({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Background Ambience */}
+      {/* Background Ambience — High performance CSS gradient without re-fetching backdrop images */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <img
-          src={items[currentIndex]?.img}
-          alt="ambience background"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            filter: "brightness(0.22) blur(32px)",
-            transform: "scale(1.15)",
-            transition: "opacity 1000ms ease, filter 1000ms ease",
-          }}
-        />
         <div
           className="absolute inset-0"
           style={{
-            background: "radial-gradient(circle at center, rgba(12,10,9,0.3) 0%, rgba(12,10,9,0.92) 100%)",
+            background: `radial-gradient(ellipse 70% 60% at 50% 45%, ${accentColor}18 0%, rgba(12,10,9,0.96) 85%)`,
           }}
         />
       </div>
@@ -457,40 +348,6 @@ export function CoverFlowCarousel({
                       {item.desc}
                     </p>
                   )}
-
-                  {/* LinkedIn button — center card only */}
-                  <a
-                    href={item.ctaUrl || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (onCtaClick) {
-                        e.preventDefault();
-                        onCtaClick(item);
-                      }
-                    }}
-                    style={{
-                      display: isCenter ? "inline-flex" : "none",
-                      alignItems: "center",
-                      gap: "5px",
-                      padding: "6px 14px",
-                      borderRadius: "9999px",
-                      background: `linear-gradient(135deg, ${accentColor} 0%, #1148ab 100%)`,
-                      color: "#ffffff",
-                      fontSize: "0.63rem",
-                      fontWeight: 800,
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      textDecoration: "none",
-                      boxShadow: `0 4px 12px ${accentColor}44`,
-                      cursor: "pointer",
-                      marginTop: "2px",
-                    }}
-                  >
-                    <span>{item.ctaText || "View Profile"}</span>
-                    <ArrowRightIcon />
-                  </a>
                 </div>
               </div>
             );
