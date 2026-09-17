@@ -1,6 +1,23 @@
 import React from "react";
-import { CoverFlowCarousel, defaultCsiCommitteeItems } from "@/components/ui/3-d-coverflow-carousel";
+import { CoverFlowCarousel, CarouselItem } from "@/components/ui/3-d-coverflow-carousel";
 import { Navbar } from "@/components/ui/navbar";
+
+const demoItems: CarouselItem[] = [
+  {
+    tag: "#President",
+    titleLine1: "KASTURI SHINDE",
+    titleLine2: "– PRESIDENT",
+    desc: "Leading the CSI KKWIEER Student Branch with strategic vision, leadership, and technical excellence.",
+    img: "/images/2026/1.Kasturi_Shinde.png",
+  },
+  {
+    tag: "#Vice-President",
+    titleLine1: "REHAN PINJARI",
+    titleLine2: "– VICE PRESIDENT",
+    desc: "Directing student engagement, event planning, and inter-collegiate technical initiatives.",
+    img: "/images/2026/2.Rehan_Pinjari.png",
+  },
+];
 
 export default function Demo() {
   return (
@@ -19,8 +36,8 @@ export default function Demo() {
       </div>
       <div className="w-full">
         <CoverFlowCarousel
-          items={defaultCsiCommitteeItems}
-          sectionLabel="CSI KKWIEER BOARD 2025-26"
+          items={demoItems}
+          sectionLabel="CSI KKWIEER BOARD 2026-27"
           accentColor="#1D68F2"
           autoplay={true}
           autoplayDelay={4000}
