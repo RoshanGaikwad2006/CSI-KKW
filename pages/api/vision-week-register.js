@@ -7,7 +7,7 @@ const uri =
 
 const GOOGLE_SCRIPT_WEBAPP_URL =
   process.env.GOOGLE_SCRIPT_WEBAPP_URL ||
-  "https://script.google.com/macros/s/AKfycbxM9ZEgALXG9q8lIVO-dkuxNdXGisQgufpdvt-z8Gak0h1Y34w9MylquFt9CPEY_lNH/exec";
+  "https://script.google.com/macros/s/AKfycbzrwqtTr-dSofOpK9jujNT7yK5utJXxfXQ6vhKweDQnV1DoHwQpA-pM3v9tosMlQv68/exec";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -24,6 +24,7 @@ export default async function handler(req, res) {
     prn,
     track,
     comments,
+    paymentScreenshot,
   } = req.body;
 
   // Validation
@@ -44,6 +45,7 @@ export default async function handler(req, res) {
     prn: String(prn || "").trim(),
     track: String(track || "General").trim(),
     comments: String(comments || "").trim(),
+    paymentScreenshot: String(paymentScreenshot || "").trim(),
     submittedAt: new Date(),
     ip: req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "",
   };
