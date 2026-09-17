@@ -88,8 +88,8 @@ export const defaultDishes: CarouselItem[] = [
   },
 ];
 
-// Cloudinary base URL
-const CLOUDINARY_BASE = "https://res.cloudinary.com/rnrrnpun/image/upload/v1789632324";
+// Local optimized committee images
+const CLOUDINARY_BASE = "/images/2026";
 
 // Default CSI Committee Member items — 2026-27 batch
 export const defaultCsiCommitteeItems: CarouselItem[] = [
