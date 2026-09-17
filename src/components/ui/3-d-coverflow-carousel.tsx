@@ -461,12 +461,13 @@ export function CoverFlowCarousel({
                   {/* LinkedIn button — center card only */}
                   <a
                     href={item.ctaUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     onClick={(e) => {
+                      e.stopPropagation();
                       if (onCtaClick) {
                         e.preventDefault();
                         onCtaClick(item);
-                      } else if (item.ctaUrl && item.ctaUrl !== "#") {
-                        window.open(item.ctaUrl, "_blank");
                       }
                     }}
                     style={{

@@ -1,6 +1,6 @@
 "use client";
-import React, { useRef, useCallback } from "react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import React, { useRef } from "react";
+import { FaLinkedin } from "react-icons/fa";
 
 
 interface ProfileCardProps {
@@ -23,12 +23,6 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   linkedinUrl,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleLinkedInClick = useCallback(() => {
-    if (linkedinUrl) {
-      window.open(linkedinUrl, "_blank");
-    }
-  }, [linkedinUrl]);
 
   const cardStyle = {
     "--icon": iconUrl ? `url(${iconUrl})` : "none",
