@@ -342,61 +342,58 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           className="w-full"
           style={anim(phase >= 5, 0, 12)}
         >
-          <div
-            className="w-full bg-white/90 backdrop-blur-sm border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
-          >
-            {/* Force true 4-col grid spanning full container width */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 w-full divide-x divide-y sm:divide-y-0 divide-slate-200">
+          <div className="w-full bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl shadow-sm overflow-hidden">
+            <div className="grid grid-cols-2 sm:grid-cols-4 w-full divide-x divide-y sm:divide-y-0 divide-slate-200/80">
 
               {/* Stat 1 — Student Members */}
-              <div className="flex items-center gap-3.5 px-6 py-5" style={{ ...anim(phase >= 5, 0), transitionDelay: "0s" }}>
-                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1D68F2] flex-shrink-0">
-                  <Users className="w-5 h-5" />
+              <div 
+                className="flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-slate-50/80 transition-colors duration-200" 
+                style={{ ...anim(phase >= 5, 0), transitionDelay: "0s" }}
+              >
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] leading-none tabular-nums">
+                  {statsVisible ? `${members.value}+` : "0+"}
                 </div>
-                <div className="min-w-0">
-                  <div className="text-2xl font-extrabold text-[#0A192F] leading-none tabular-nums">
-                    {statsVisible ? `${members.value}+` : "0+"}
-                  </div>
-                  <div className="text-[11px] font-medium text-slate-500 mt-1 whitespace-nowrap">Student Members</div>
+                <div className="text-xs sm:text-sm font-medium text-slate-600 mt-2 whitespace-nowrap">
+                  Student Members
                 </div>
               </div>
 
               {/* Stat 2 — Events Organized */}
-              <div className="flex items-center gap-3.5 px-6 py-5" style={{ ...anim(phase >= 5, 0), transitionDelay: "0.07s" }}>
-                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1D68F2] flex-shrink-0">
-                  <Calendar className="w-5 h-5" />
+              <div 
+                className="flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-slate-50/80 transition-colors duration-200" 
+                style={{ ...anim(phase >= 5, 0), transitionDelay: "0.07s" }}
+              >
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] leading-none tabular-nums">
+                  {statsVisible ? `${events.value}+` : "0+"}
                 </div>
-                <div className="min-w-0">
-                  <div className="text-2xl font-extrabold text-[#0A192F] leading-none tabular-nums">
-                    {statsVisible ? `${events.value}+` : "0+"}
-                  </div>
-                  <div className="text-[11px] font-medium text-slate-500 mt-1 whitespace-nowrap">Events Organized</div>
+                <div className="text-xs sm:text-sm font-medium text-slate-600 mt-2 whitespace-nowrap">
+                  Events Organized
                 </div>
               </div>
 
               {/* Stat 3 — Team Members */}
-              <div className="flex items-center gap-3.5 px-6 py-5" style={{ ...anim(phase >= 5, 0), transitionDelay: "0.14s" }}>
-                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1D68F2] flex-shrink-0">
-                  <Sparkles className="w-5 h-5" />
+              <div 
+                className="flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-slate-50/80 transition-colors duration-200" 
+                style={{ ...anim(phase >= 5, 0), transitionDelay: "0.14s" }}
+              >
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] leading-none tabular-nums">
+                  {statsVisible ? team.value : "0"}
                 </div>
-                <div className="min-w-0">
-                  <div className="text-2xl font-extrabold text-[#0A192F] leading-none tabular-nums">
-                    {statsVisible ? team.value : "0"}
-                  </div>
-                  <div className="text-[11px] font-medium text-slate-500 mt-1 whitespace-nowrap">Team Members</div>
+                <div className="text-xs sm:text-sm font-medium text-slate-600 mt-2 whitespace-nowrap">
+                  Team Members
                 </div>
               </div>
 
               {/* Stat 4 — Best Branch Awards */}
-              <div className="flex items-center gap-3.5 px-6 py-5" style={{ ...anim(phase >= 5, 0), transitionDelay: "0.21s" }}>
-                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1D68F2] flex-shrink-0">
-                  <Trophy className="w-5 h-5" />
+              <div 
+                className="flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-slate-50/80 transition-colors duration-200" 
+                style={{ ...anim(phase >= 5, 0), transitionDelay: "0.21s" }}
+              >
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] leading-none tabular-nums">
+                  {statsVisible ? `${awards.value}+` : "0+"}
                 </div>
-                <div className="min-w-0">
-                  <div className="text-2xl font-extrabold text-[#0A192F] leading-none tabular-nums">
-                    {statsVisible ? `${awards.value}+` : "0+"}
-                  </div>
-                  <div className="text-[11px] font-medium text-slate-500 mt-1 whitespace-nowrap">Best Branch Awards</div>
+                <div className="text-xs sm:text-sm font-medium text-slate-600 mt-2 whitespace-nowrap">
+                  Best Branch Awards
                 </div>
               </div>
 

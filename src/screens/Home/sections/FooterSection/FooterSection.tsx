@@ -59,44 +59,66 @@ export const FooterSection = (): JSX.Element => {
         </div>
 
 
-        {/* Row 2: Address + Links (4 columns) */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
-          {/* Address */}
-          <div>
-            <h4 className="text-lg font-semibold mb-3">Address</h4>
+        {/* Row 2: Address + Links (2 cols on mobile, 4 cols on desktop) */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-10">
+          {/* Address (Spans full width on mobile) */}
+          <div className="col-span-2 md:col-span-1">
+            <h4 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Address</h4>
             <a
-  href="https://www.google.com/maps/dir/K.K+Wagh+Institute+Of+Engineering+Education+and+Research,+Panchavati,+Nashik,+Maharashtra/Hirabai+Haridas+Vidyanagari,+Mumbai+Agra+Road+Amrutdham,+Panchavati,+Nashik,+Maharashtra+422003/@20.0135866,73.7810616,13z/data=!3m1!4b1!4m13!4m12!1m5!1m1!1s0x3bddebab15555555:0xdb01367e9d5cf969!2m2!1d73.8222614!2d20.0135914!1m5!1m1!1s0x3bddebab15555555:0xdb01367e9d5cf969!2m2!1d73.8222614!2d20.0135914?entry=ttu&g_ep=EgoyMDI1MDkxMC4wIKXMDSoASAFQAw%3D%3D"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="block not-italic text-gray-200 text-sm leading-relaxed hover:text-white transition-colors"
->
-  <address className="not-italic">
-    KK Wagh Institute of Engineering Education and Research <br />
-    Hirabai Haridas Vidyanagari, Amrutdham, Panchavati, <br />
-    Nashik, Maharashtra 422003, India.
-  </address>
-</a>
-
+              href="https://www.google.com/maps/dir/K.K+Wagh+Institute+Of+Engineering+Education+and+Research,+Panchavati,+Nashik,+Maharashtra/Hirabai+Haridas+Vidyanagari,+Mumbai+Agra+Road+Amrutdham,+Panchavati,+Nashik,+Maharashtra+422003/@20.0135866,73.7810616,13z/data=!3m1!4b1!4m13!4m12!1m5!1m1!1s0x3bddebab15555555:0xdb01367e9d5cf969!2m2!1d73.8222614!2d20.0135914!1m5!1m1!1s0x3bddebab15555555:0xdb01367e9d5cf969!2m2!1d73.8222614!2d20.0135914?entry=ttu&g_ep=EgoyMDI1MDkxMC4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block not-italic text-gray-200 text-xs sm:text-sm leading-relaxed hover:text-white transition-colors"
+            >
+              <address className="not-italic">
+                KK Wagh Institute of Engineering Education and Research <br className="hidden sm:inline" />
+                Hirabai Haridas Vidyanagari, Amrutdham, Panchavati, <br className="hidden sm:inline" />
+                Nashik, Maharashtra 422003, India.
+              </address>
+            </a>
           </div>
 
-          {/* Footer Sections */}
-          {footerSections.map((section, index) => (
-            <div key={index}>
-              <h4 className="text-lg font-semibold mb-3">{section.title}</h4>
-              <ul className="space-y-2 text-sm text-gray-200">
-                {section.links.map((link, idx) => (
-                  <li key={idx}>
-                    <a
-                      href="#"
-                      className="hover:text-white transition-colors"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Quick Links */}
+          <div className="col-span-1">
+            <h4 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Quick Links</h4>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-200">
+              {footerSections[0].links.map((link, idx) => (
+                <li key={idx}>
+                  <a href="#" className="hover:text-white transition-colors">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Policies (Placed to the right of Quick Links on Mobile) */}
+          <div className="col-span-1">
+            <h4 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Policies</h4>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-200">
+              {footerSections[2].links.map((link, idx) => (
+                <li key={idx}>
+                  <a href="#" className="hover:text-white transition-colors">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Support */}
+          <div className="col-span-1">
+            <h4 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Support</h4>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-200">
+              {footerSections[1].links.map((link, idx) => (
+                <li key={idx}>
+                  <a href="#" className="hover:text-white transition-colors">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Social Icons */}
