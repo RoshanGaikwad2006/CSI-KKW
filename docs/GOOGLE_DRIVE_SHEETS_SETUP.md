@@ -41,13 +41,14 @@ When 400 students register, multiple students may click submit simultaneously. S
 /**
  * CSI KKWIEER Event Registration Webhook
  * Handles concurrent student submissions safely using LockService.
+ * Perfectly mapped to your 12 Google Sheet columns:
+ * [Ticket ID, Event Name, Full Name, Email, Contact Number, Department, Year, Sessions Attending, UPI ID / UTR, College / PRN, Payment Proof URL, Timestamp]
  */
 function doPost(e) {
-  // 1. Acquire Script Lock to prevent race conditions during traffic spikes
+  // 1. Script Lock to prevent race conditions during traffic spikes
   var lock = LockService.getScriptLock();
   try {
-    // Wait up to 15 seconds for previous write to complete
-    lock.waitLock(15000);
+    lock.waitLock(20000);
   } catch (lockError) {
     return ContentService.createTextOutput(
       JSON.stringify({ status: "error", message: "Server busy, please retry" })
@@ -56,12 +57,12 @@ function doPost(e) {
 
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var data;
+    var data = {};
 
     // Parse JSON payload
-    if (e.postData && e.postData.contents) {
+    if (e && e.postData && e.postData.contents) {
       data = JSON.parse(e.postData.contents);
-    } else {
+    } else if (e && e.parameter) {
       data = e.parameter;
     }
 
@@ -72,38 +73,40 @@ function doPost(e) {
     var contact = "'" + (data.contactNumber || data.phone || "N/A"); // Prefix with ' to preserve leading zero
     var dept = data.department || "N/A";
     var year = data.year || "N/A";
-    var sessions = data.track || (Array.isArray(data.selectedSessions) ? data.selectedSessions.join(", ") : "All Sessions");
+
+    var sessions = "All Sessions";
+    if (Array.isArray(data.selectedSessions) && data.selectedSessions.length > 0) {
+      sessions = data.selectedSessions.join(", ");
+    } else if (data.track) {
+      sessions = data.track;
+    }
+
     var upiId = data.upiId || "N/A";
-    var collegePrn = (data.college || "") + (data.prn ? " (PRN: " + data.prn + ")" : "");
-    var screenshot = data.paymentScreenshot || "N/A";
+    
+    var collegePrn = data.college || "";
+    if (data.prn) {
+      collegePrn = collegePrn ? collegePrn + " (PRN: " + data.prn + ")" : "PRN: " + data.prn;
+    }
+    if (!collegePrn) collegePrn = "KKWIEER";
+
+    var screenshot = data.paymentScreenshot || data.paymentProofUrl || "N/A";
     var timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 
-    // 2. Append formatted row to Google Sheet
+    // 2. Append directly to Google Sheet (12 Columns)
     sheet.appendRow([
-      ticketId,
-      eventTitle,
-      fullName,
-      email,
-      contact,
-      dept,
-      year,
-      sessions,
-      upiId,
-      collegePrn,
-      screenshot,
-      timestamp
+      ticketId,        // Col A: Ticket ID
+      eventTitle,      // Col B: Event Name
+      fullName,        // Col C: Full Name
+      email,           // Col D: Email
+      contact,         // Col E: Contact Number
+      dept,            // Col F: Department
+      year,            // Col G: Year
+      sessions,        // Col H: Sessions Attending
+      upiId,           // Col I: UPI ID / UTR
+      collegePrn,      // Col J: College / PRN
+      screenshot,      // Col K: Payment Proof URL
+      timestamp        // Col L: Timestamp
     ]);
-
-    // Optional: Send automated confirmation email using college quota (1500/day on Google Workspace)
-    /*
-    if (email && email.indexOf("@") !== -1) {
-      MailApp.sendEmail({
-        to: email,
-        subject: "Confirmation: " + eventTitle + " Registration",
-        htmlBody: "<p>Hi <b>" + fullName + "</b>,</p><p>Your registration for <b>" + eventTitle + "</b> is confirmed!</p><p><b>Ticket ID:</b> " + ticketId + "</p><p>Team CSI KKWIEER</p>"
-      });
-    }
-    */
 
     return ContentService.createTextOutput(
       JSON.stringify({ status: "success", ticketId: ticketId })
@@ -114,7 +117,6 @@ function doPost(e) {
       JSON.stringify({ status: "error", message: error.toString() })
     ).setMimeType(ContentService.MimeType.JSON);
   } finally {
-    // Always release lock
     lock.releaseLock();
   }
 }

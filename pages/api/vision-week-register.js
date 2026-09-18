@@ -5,12 +5,10 @@ const uri =
   process.env.MONGODB_URI ||
   "mongodb+srv://roshangaikwad2006_db_user:VZSn3qP6xIR2Pjxv@cluster0.qtasksf.mongodb.net/?retryWrites=true&w=majority";
 
-const GOOGLE_WEBHOOKS = [
-  process.env.GOOGLE_SCRIPT_WEBAPP_URL,
-  "https://script.google.com/macros/s/AKfycbxM9ZEgALXG9q8lIVO-dkuxNdXGisQgufpdvt-z8Gak0h1Y34w9MylquFt9CPEY_lNH/exec",
-  "https://script.google.com/macros/s/AKfycbzrwqtTr-dSofOpK9jujNT7yK5utJXxfXQ6vhKweDQnV1DoHwQpA-pM3v9tosMlQv68/exec",
-].filter(Boolean);
-const UNIQUE_GOOGLE_WEBHOOKS = [...new Set(GOOGLE_WEBHOOKS)];
+// Single Webhook URL to prevent duplicate entries
+const GOOGLE_WEBHOOK_URL =
+  process.env.GOOGLE_SCRIPT_WEBAPP_URL ||
+  "https://script.google.com/macros/s/AKfycbzrwqtTr-dSofOpK9jujNT7yK5utJXxfXQ6vhKweDQnV1DoHwQpA-pM3v9tosMlQv68/exec";
 
 // Global cached connection promise for Next.js serverless pooling
 let client;
@@ -46,6 +44,7 @@ export default async function handler(req, res) {
     upiId,
     comments,
     paymentScreenshot,
+    ticketId: incomingTicketId,
   } = req.body;
 
   // Validation
@@ -55,7 +54,10 @@ export default async function handler(req, res) {
     });
   }
 
+  const ticketId = incomingTicketId || `VW26-${Math.floor(1000 + Math.random() * 9000)}`;
+
   const registrationData = {
+    ticketId,
     event: "Vision Week 2026",
     eventTitle: "Vision Week 2026",
     fullName: String(fullName).trim(),
@@ -63,7 +65,7 @@ export default async function handler(req, res) {
     phone: String(phone).trim(),
     contactNumber: String(phone).trim(),
     college: String(college || "KKWIEER").trim(),
-    department: String(department || "Computer Engineering").trim(),
+    department: String(department || "Computer").trim(),
     year: String(year || "TE").trim(),
     prn: String(prn || "").trim(),
     track: String(track || "All 5 Days (Full Conclave)").trim(),
@@ -74,6 +76,7 @@ export default async function handler(req, res) {
     comments: String(comments || "").trim(),
     reason: String(comments || "").trim(),
     paymentScreenshot: String(paymentScreenshot || "").trim(),
+    paymentProofUrl: String(paymentScreenshot || "").trim(),
     fee: 50,
     submittedAt: new Date(),
     ip: req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "",
@@ -109,30 +112,25 @@ export default async function handler(req, res) {
     return { success: false, id: null };
   };
 
-  // 2. Task: Forward to Google Apps Script Webhooks in parallel with 3.5s timeout
+  // 2. Task: Forward to Google Apps Script Webhook (single dispatch to avoid duplicate rows)
   const googleSheetTask = async () => {
-    if (UNIQUE_GOOGLE_WEBHOOKS.length === 0) return { success: false };
-    const dispatches = UNIQUE_GOOGLE_WEBHOOKS.map(async (webhookUrl) => {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3500);
-        const response = await fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(registrationData),
-          redirect: "follow",
-          signal: controller.signal,
-        });
-        clearTimeout(timeoutId);
-        return response.ok || response.status === 200 || response.status === 302;
-      } catch (err) {
-        console.warn("Google webhook dispatch notice:", webhookUrl, err.message);
-        return false;
-      }
-    });
-
-    const results = await Promise.all(dispatches);
-    return { success: results.some(Boolean) };
+    if (!GOOGLE_WEBHOOK_URL) return { success: false };
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const response = await fetch(GOOGLE_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(registrationData),
+        redirect: "follow",
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+      return { success: response.ok || response.status === 200 || response.status === 302 };
+    } catch (err) {
+      console.warn("Google webhook dispatch notice:", GOOGLE_WEBHOOK_URL, err.message);
+      return { success: false };
+    }
   };
 
   // Run MongoDB and Google Sheets simultaneously in parallel!
@@ -148,6 +146,7 @@ export default async function handler(req, res) {
       success: true,
       message: "Registration recorded successfully for Vision Week 2026!",
       id: savedId,
+      ticketId,
       syncedToGoogle: googleSheetSynced,
     });
   }
@@ -156,5 +155,6 @@ export default async function handler(req, res) {
   return res.status(200).json({
     success: true,
     message: "Registration accepted.",
+    ticketId,
   });
 }

@@ -75,36 +75,29 @@ export default async function handler(req, res) {
     return false;
   };
 
-  // 2. Task: Dispatch to Google Apps Script Webhooks with 3.5s timeout (in parallel)
-  const eventWebhooks = [
-    process.env.GOOGLE_SCRIPT_WEBAPP_URL,
-    "https://script.google.com/macros/s/AKfycbxM9ZEgALXG9q8lIVO-dkuxNdXGisQgufpdvt-z8Gak0h1Y34w9MylquFt9CPEY_lNH/exec",
-    "https://script.google.com/macros/s/AKfycbzrwqtTr-dSofOpK9jujNT7yK5utJXxfXQ6vhKweDQnV1DoHwQpA-pM3v9tosMlQv68/exec",
-  ].filter(Boolean);
-  const uniqueEventWebhooks = [...new Set(eventWebhooks)];
+  // 2. Task: Dispatch to Google Apps Script Webhook with 4s timeout
+  const GOOGLE_WEBHOOK_URL =
+    process.env.GOOGLE_SCRIPT_WEBAPP_URL ||
+    "https://script.google.com/macros/s/AKfycbzrwqtTr-dSofOpK9jujNT7yK5utJXxfXQ6vhKweDQnV1DoHwQpA-pM3v9tosMlQv68/exec";
 
   const googleSheetTask = async () => {
-    if (uniqueEventWebhooks.length === 0) return false;
-    const dispatches = uniqueEventWebhooks.map(async (webhookUrl) => {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3500);
-        const gRes = await fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(regRecord),
-          redirect: "follow",
-          signal: controller.signal,
-        });
-        clearTimeout(timeoutId);
-        return gRes.ok || gRes.status === 302 || gRes.status === 200;
-      } catch (sheetErr) {
-        console.warn("Google Sheets webhook notice:", webhookUrl, sheetErr.message);
-        return false;
-      }
-    });
-    const results = await Promise.all(dispatches);
-    return results.some(Boolean);
+    if (!GOOGLE_WEBHOOK_URL) return false;
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const gRes = await fetch(GOOGLE_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(regRecord),
+        redirect: "follow",
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+      return gRes.ok || gRes.status === 302 || gRes.status === 200;
+    } catch (sheetErr) {
+      console.warn("Google Sheets webhook notice:", GOOGLE_WEBHOOK_URL, sheetErr.message);
+      return false;
+    }
   };
 
   // Execute simultaneously!
