@@ -55,7 +55,7 @@ const EVENTS: Event[] = [
         category: "Ceremony",
         description: "Official Installation Ceremony of the CSI KKWIEER Student Branch Committee 2026",
         coverImage: "https://files.catbox.moe/5yzddm.jpg",
-        photoCount: 13,
+        photoCount: 10,
         participants: 35
     },
     {
@@ -160,11 +160,8 @@ const EVENT_PHOTOS: EventPhoto[] = [
     { id: 105, src: "https://files.catbox.moe/eo58il.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
     { id: 106, src: "https://files.catbox.moe/szde06.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
     { id: 107, src: "https://files.catbox.moe/pswped.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
-    { id: 108, src: "https://files.catbox.moe/yhrhnz.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
     { id: 109, src: "https://files.catbox.moe/6edfo8.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
-    { id: 110, src: "https://files.catbox.moe/254kj3.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
     { id: 111, src: "https://files.catbox.moe/2n37td.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
-    { id: 112, src: "https://files.catbox.moe/pgszyr.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
     { id: 113, src: "https://files.catbox.moe/n52qc0.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
 
     // Expert Talk 2026 photos (CDN hosted)
@@ -252,6 +249,16 @@ const Gallery = (): JSX.Element => {
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
     }, [lightboxIndex, filteredPhotos.length]);
+    useEffect(() => {
+        if (lightboxIndex !== null) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [lightboxIndex]);
 
 
     useEffect(() => {
@@ -331,7 +338,7 @@ const Gallery = (): JSX.Element => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 relative overflow-x-hidden">
             {/* Animated background elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-20 left-10 w-48 h-48 bg-blue-200/20 rounded-full blur-3xl animate-pulse"></div>

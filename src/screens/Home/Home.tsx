@@ -112,7 +112,7 @@ export const Home = (): JSX.Element => {
                   variant="outline"
                   size="sm"
                   className="rounded-xl border-blue-200 text-[#1D68F2] hover:bg-blue-50"
-                  onClick={() => window.open("https://www.csi-nashik.org.in/", "_blank")}
+                  onClick={() => window.open("https://www.kkwagh.edu.in/engineering/csi", "_blank")}
                 >
                   Visit Nashik Chapter Portal →
                 </Button>

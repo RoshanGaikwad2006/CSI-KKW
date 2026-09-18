@@ -22,12 +22,11 @@ import { CaseStudyPresentation } from "./components/CaseStudyPresentation";
 
 const CATEGORIES = [
   { id: "all", label: "All Events" },
+  { id: "upcoming", label: "Upcoming" },
   { id: "workshops", label: "Workshops" },
   { id: "talks", label: "Talks" },
-  { id: "hackathons", label: "Hackathons" },
   { id: "competitions", label: "Competitions" },
   { id: "community", label: "Community" },
-  { id: "webinars", label: "Webinars" },
 ];
 
 export const Events = (): JSX.Element => {
@@ -301,20 +300,41 @@ export const Events = (): JSX.Element => {
                           <p className="text-xs text-slate-600 leading-relaxed mt-2.5 line-clamp-2">
                             {event.description}
                           </p>
+
+                          {/* Event Details: Time, Location, Attendees */}
+                          <div className="space-y-1.5 mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
+                            {event.time && (
+                              <div className="flex items-center gap-2">
+                                <Clock className="w-3.5 h-3.5 text-[#1D68F2] flex-shrink-0" />
+                                <span className="font-medium">{event.time}</span>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2">
+                              <MapPin className="w-3.5 h-3.5 text-[#1D68F2] flex-shrink-0" />
+                              <span className="font-medium truncate">{event.location}</span>
+                            </div>
+                            {event.attendees && (
+                              <div className="flex items-center gap-2">
+                                <Users className="w-3.5 h-3.5 text-[#1D68F2] flex-shrink-0" />
+                                <span className="font-medium">{event.attendees} Attendees</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
 
                       {/* Card Meta Footer */}
                       <div className="px-5 sm:px-6 pb-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1.5">
-                            <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                            <span className="truncate max-w-[110px]">{event.location}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 hidden sm:flex">
-                            <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                            <span>{event.dateRange}</span>
-                          </div>
+                        <div>
+                          {event.registrationClosed ? (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                              Registrations Closed
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-[#1D68F2] border border-blue-200/60">
+                              Open for Registration
+                            </span>
+                          )}
                         </div>
 
                         {/* Circle Blue Arrow Button */}

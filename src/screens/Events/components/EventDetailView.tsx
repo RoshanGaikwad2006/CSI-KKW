@@ -214,6 +214,27 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed mt-4">
               {event.description}
             </p>
+
+            {event.id === "vision-week-2026" && (
+              <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg shadow-blue-500/20">
+                <div>
+                  <div className="font-bold text-sm sm:text-base flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    Dedicated 5-Day Multi-Session Portal
+                  </div>
+                  <div className="text-xs text-blue-100 mt-0.5">
+                    Select specific workshop days, tracks, and upload payment confirmation.
+                  </div>
+                </div>
+                <a
+                  href="/vision-week-register"
+                  className="px-4 py-2 rounded-xl bg-white text-[#1D68F2] hover:bg-blue-50 text-xs font-bold whitespace-nowrap shadow-sm transition-all flex items-center gap-1.5"
+                >
+                  <span>Open Session Portal</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Key Info Chips (Horizontal Row) */}
@@ -353,7 +374,47 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
 
             <hr className="my-4 border-slate-100" />
 
-            {/* Registration Form */}
+            {/* Registration Form or Closed Status */}
+            {event.registrationClosed ? (
+              <div className="py-6 text-center space-y-5">
+                <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 mx-auto flex items-center justify-center border border-emerald-100 shadow-sm">
+                  <Check className="w-8 h-8" />
+                </div>
+                <div>
+                  <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 mb-2">
+                    Registrations Closed
+                  </span>
+                  <h4 className="text-xl font-bold text-[#0A192F]">
+                    Event Concluded
+                  </h4>
+                  <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed max-w-xs mx-auto">
+                    Registrations for this event have successfully closed. A total of <strong className="text-slate-800">{event.attendees || 50} participants</strong> attended this initiative.
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200/80 text-left space-y-2.5 text-xs text-slate-600">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 font-medium">Attended:</span>
+                    <span className="font-bold text-slate-900 bg-white px-2.5 py-1 rounded-md border border-slate-200">
+                      {event.attendees || 50} Attendees
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 font-medium">Venue:</span>
+                    <span className="font-bold text-slate-900">{event.location}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 font-medium">Event Date:</span>
+                    <span className="font-bold text-slate-900">{event.dateRange}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 pt-2">
+                  <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Verified CSI KKWIEER Official Activity</span>
+                </div>
+              </div>
+            ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               
               {/* Full Name */}
@@ -415,7 +476,7 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
                 </label>
                 <input
                   type="tel"
-                  placeholder="Enter your 10-digit number"
+                  placeholder="Enter 10-digit mobile number"
                   maxLength={10}
                   value={formData.contactNumber}
                   onChange={(e) => {
@@ -436,7 +497,7 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
               </div>
 
               {/* Department & Year (2 Columns) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Department <span className="text-red-500">*</span>
@@ -534,6 +595,7 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
               </div>
 
             </form>
+            )}
           </div>
         </div>
       </div>

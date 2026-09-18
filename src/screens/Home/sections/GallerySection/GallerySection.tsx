@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, ArrowRight, ExternalLink, Calendar, Users, MapPin } from "lucide-react";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -48,13 +48,34 @@ export const GallerySection: React.FC = () => {
 
   const openModal = (photo: MomentPhoto) => {
     setSelectedPhoto(photo);
-    document.body.style.overflow = "hidden";
   };
 
   const closeModal = () => {
     setSelectedPhoto(null);
-    document.body.style.overflow = "unset";
   };
+
+  // Lock body scroll when modal is open and unlock on close/unmount
+  useEffect(() => {
+    if (selectedPhoto) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedPhoto]);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selectedPhoto) {
+        closeModal();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedPhoto]);
 
   return (
     <section id="gallery-section" className="w-full py-14 sm:py-16 bg-white">
@@ -170,7 +191,10 @@ export const GallerySection: React.FC = () => {
               </div>
 
               <button
-                onClick={() => router.push("/gallery")}
+                onClick={() => {
+                  closeModal();
+                  router.push("/gallery");
+                }}
                 className="bg-[#1D68F2] hover:bg-blue-700 text-white rounded-xl text-xs font-semibold px-4 py-2 transition-colors"
               >
                 View in Full Gallery

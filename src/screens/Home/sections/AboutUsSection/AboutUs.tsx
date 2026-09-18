@@ -35,7 +35,6 @@ export const AboutUs = () => {
     setPdfLoading(true);
     setPdfError(false);
     setPdfModal({ isOpen: true, url: url, title: title, type: type });
-    document.body.style.overflow = 'hidden';
   };
 
   // Function to close PDF modal
@@ -44,7 +43,6 @@ export const AboutUs = () => {
     setPdfLoading(false);
     setPdfError(false);
     setIsFullscreen(false);
-    document.body.style.overflow = 'unset';
   };
 
   // Handle PDF load success
@@ -63,6 +61,18 @@ export const AboutUs = () => {
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
   };
+
+  // Lock body scroll when PDF modal is open and ensure it is restored on close or unmount
+  useEffect(() => {
+    if (pdfModal.isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [pdfModal.isOpen]);
 
   // Close modal on escape key
   useEffect(() => {

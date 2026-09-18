@@ -35,6 +35,18 @@ export default function Snackbar({ event, onRegisterClick }: SnackbarProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [open]);
 
+  // Lock body scroll while popup is open and ensure it is cleaned up
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   const handleClose = () => {
     setIsClosing(true);
     setTimeout(() => setOpen(false), 250);

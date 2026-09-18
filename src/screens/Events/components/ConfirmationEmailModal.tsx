@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { X, Mail, Calendar, MapPin, Clock, CheckCircle2, Share2, Star, Reply, MoreVertical } from "lucide-react";
 import { EventItem } from "@/data/eventsData";
 
@@ -22,6 +22,18 @@ export const ConfirmationEmailModal: React.FC<ConfirmationEmailModalProps> = ({
   event,
   registrationData,
 }) => {
+  // Lock body scroll when modal is open and restore on close/unmount
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const participantName = registrationData?.name || "Student";
