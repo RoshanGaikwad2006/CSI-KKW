@@ -44,6 +44,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
   });
 
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
+  const [ticketId, setTicketId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -151,6 +152,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
 
       const data = await res.json();
       if (res.ok && data.success) {
+        setTicketId(data.ticketId || null);
         setSubmitted(true);
       } else {
         setError(data.error || "Submission could not be recorded. Please try again.");
@@ -166,6 +168,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
 
   const resetForm = () => {
     setSubmitted(false);
+    setTicketId(null);
     setError(null);
     setFormData({
       fullName: "",
@@ -243,6 +246,12 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
               </p>
 
               <div className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left mb-6 text-xs text-slate-700 space-y-1.5">
+                {ticketId && (
+                  <div className="flex justify-between border-b border-blue-200 bg-blue-50/80 -mx-4 -mt-4 px-4 py-2.5 rounded-t-2xl mb-1.5">
+                    <span className="font-semibold text-blue-700">Ticket ID:</span>
+                    <span className="font-mono font-extrabold text-[#1D68F2] tracking-wider">{ticketId}</span>
+                  </div>
+                )}
                 <div><span className="font-semibold text-slate-500">Candidate Email:</span> {formData.email}</div>
                 <div><span className="font-semibold text-slate-500">Phone:</span> {formData.phone}</div>
                 <div><span className="font-semibold text-slate-500">Sessions:</span> {selectedSessions.length === SESSIONS_LIST.length ? "All 5 Days (Full Conclave)" : selectedSessions.join(", ")}</div>

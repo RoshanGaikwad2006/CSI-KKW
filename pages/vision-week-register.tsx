@@ -79,6 +79,7 @@ export default function VisionWeekRegisterPage() {
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const [ticketId, setTicketId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -206,6 +207,7 @@ export default function VisionWeekRegisterPage() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        setTicketId(data.ticketId || null);
         setSubmitted(true);
       } else {
         setError(data.error || "Submission could not be recorded. Please try again.");
@@ -220,6 +222,7 @@ export default function VisionWeekRegisterPage() {
 
   const resetForm = () => {
     setSubmitted(false);
+    setTicketId(null);
     setError(null);
     setFormData(DEFAULT_FORM);
     setSelectedSessions([]);
@@ -293,6 +296,12 @@ export default function VisionWeekRegisterPage() {
                   </p>
 
                   <div className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-left mb-6 text-xs text-slate-700 space-y-2 font-sans">
+                    {ticketId && (
+                      <div className="flex justify-between border-b border-blue-200 bg-blue-50/70 -mx-4 -mt-4 px-4 py-2.5 rounded-t-xl mb-1">
+                        <span className="font-semibold text-blue-700">TICKET ID</span>
+                        <span className="font-extrabold text-[#1D68F2] font-mono tracking-wider">{ticketId}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between border-b border-slate-200 pb-1.5">
                       <span className="font-semibold text-slate-500">NAME</span>
                       <span className="font-bold text-slate-900">{formData.fullName}</span>
