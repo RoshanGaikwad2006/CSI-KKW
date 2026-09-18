@@ -244,6 +244,8 @@ export function CoverFlowCarousel({
                   <img
                     src={item.img}
                     alt={item.titleLine1}
+                    loading="eager"
+                    decoding="async"
                     style={{
                       width: "100%",
                       height: "100%",

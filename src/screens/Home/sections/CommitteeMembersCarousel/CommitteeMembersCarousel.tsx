@@ -89,27 +89,28 @@ const committeeMembers: CommitteeMember[] = [
 export const CommitteeMembersCarousel: React.FC = () => {
   const router = useRouter();
 
-  // Sort by defined positions
-  const sortedMembers = [...committeeMembers].sort((a, b) => {
-    const aIndex = ALL_POSITIONS.indexOf(a.position);
-    const bIndex = ALL_POSITIONS.indexOf(b.position);
-    if (aIndex === -1) return 1;
-    if (bIndex === -1) return -1;
-    return aIndex - bIndex;
-  });
+  // Sort by defined positions & map to 3D Coverflow carousel items (memoized to keep reference stable)
+  const coverFlowItems: CarouselItem[] = React.useMemo(() => {
+    const sorted = [...committeeMembers].sort((a, b) => {
+      const aIndex = ALL_POSITIONS.indexOf(a.position);
+      const bIndex = ALL_POSITIONS.indexOf(b.position);
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    });
 
-  // Map committee members to 3D Coverflow carousel items
-  const coverFlowItems: CarouselItem[] = sortedMembers.map((m) => ({
-    tag: m.position.replace(/-/g, " "),
-    titleLine1: m.name.toUpperCase(),
-    titleLine2: `– ${m.position.toUpperCase().replace(/-/g, " ")}`,
-    desc: m.description || `Core leadership member driving technical workshops and community excellence at CSI KKWIEER.`,
-    img: m.image,
-    ctaText: "LinkedIn Profile",
-    ctaUrl: m.linkedin || "#",
-    // President slide lingers for half the time of every other slide
-    ...(m.position === "President" ? { delay: 1500 } : {}),
-  }));
+    return sorted.map((m) => ({
+      tag: m.position.replace(/-/g, " "),
+      titleLine1: m.name.toUpperCase(),
+      titleLine2: `– ${m.position.toUpperCase().replace(/-/g, " ")}`,
+      desc: m.description || `Core leadership member driving technical workshops and community excellence at CSI KKWIEER.`,
+      img: m.image,
+      ctaText: "LinkedIn Profile",
+      ctaUrl: m.linkedin || "#",
+      // President slide lingers for half the time of every other slide
+      ...(m.position === "President" ? { delay: 1500 } : {}),
+    }));
+  }, []);
 
   return (
     <section className="py-16 sm:py-20 bg-slate-950 text-white relative overflow-hidden">

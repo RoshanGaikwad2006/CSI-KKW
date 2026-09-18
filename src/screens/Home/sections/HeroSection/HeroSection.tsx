@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { ArrowRight, Users, Calendar, Trophy, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "../../../../components/ui/button";
 
 interface HeroSectionProps {
