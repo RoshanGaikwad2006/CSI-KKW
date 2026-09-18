@@ -48,8 +48,30 @@ type Event = {
 
 const EVENTS: Event[] = [
     {
+        id: "installation-2026",
+        name: "CSI Installation Ceremony 2026",
+        date: "August 2026",
+        location: "K. K. Wagh Campus",
+        category: "Ceremony",
+        description: "Official Installation Ceremony of the CSI KKWIEER Student Branch Committee 2026",
+        coverImage: "https://files.catbox.moe/5yzddm.jpg",
+        photoCount: 13,
+        participants: 35
+    },
+    {
+        id: "expert-talk-2026",
+        name: "Global IT Careers 2027+ by Dr. Deepak Shikarpur",
+        date: "September 2026",
+        location: "K. K. Wagh Campus",
+        category: "Seminar",
+        description: "Enlightening Expert Session on Future IT Careers, Skills & Industry Expectations by Dr. Deepak Shikarpur",
+        coverImage: "https://files.catbox.moe/smyr5w.jpg",
+        photoCount: 7,
+        participants: 120
+    },
+    {
         id: "installation-2025",
-        name: "CSI Installation Ceremony",
+        name: "CSI Installation Ceremony 2025",
         date: "March 2025",
         location: "",
         category: "Ceremony",
@@ -116,7 +138,6 @@ const EVENTS: Event[] = [
         description: "",
         coverImage: "/images/csi_img1.png",
         photoCount: 5,
-
     },
     {
         id: "counselor-award",
@@ -127,12 +148,35 @@ const EVENTS: Event[] = [
         description: "",
         coverImage: "/images/csi_img2.png",
         photoCount: 3,
-
     }
 ];
 
 const EVENT_PHOTOS: EventPhoto[] = [
-    // Installation Ceremony photos
+    // Installation Ceremony 2026 photos (CDN hosted)
+    { id: 101, src: "https://files.catbox.moe/5yzddm.jpg", title: "CSI Installation Ceremony 2026", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 102, src: "https://files.catbox.moe/1cbcbg.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 103, src: "https://files.catbox.moe/99xooy.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 104, src: "https://files.catbox.moe/38ltho.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 105, src: "https://files.catbox.moe/eo58il.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 106, src: "https://files.catbox.moe/szde06.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 107, src: "https://files.catbox.moe/pswped.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 108, src: "https://files.catbox.moe/yhrhnz.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 109, src: "https://files.catbox.moe/6edfo8.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 110, src: "https://files.catbox.moe/254kj3.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 111, src: "https://files.catbox.moe/2n37td.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 112, src: "https://files.catbox.moe/pgszyr.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+    { id: 113, src: "https://files.catbox.moe/n52qc0.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
+
+    // Expert Talk 2026 photos (CDN hosted)
+    { id: 201, src: "https://files.catbox.moe/smyr5w.jpg", title: "Global IT Careers 2027+ by Dr. Deepak Shikarpur", eventId: "expert-talk-2026", eventName: "Global IT Careers 2027+", date: "September 2026", category: "Seminar" },
+    { id: 202, src: "https://files.catbox.moe/122fhw.jpeg", title: "", eventId: "expert-talk-2026", eventName: "Global IT Careers 2027+", date: "September 2026", category: "Seminar" },
+    { id: 203, src: "https://files.catbox.moe/lfyvzh.jpeg", title: "", eventId: "expert-talk-2026", eventName: "Global IT Careers 2027+", date: "September 2026", category: "Seminar" },
+    { id: 204, src: "https://files.catbox.moe/1ra3t1.jpeg", title: "", eventId: "expert-talk-2026", eventName: "Global IT Careers 2027+", date: "September 2026", category: "Seminar" },
+    { id: 205, src: "https://files.catbox.moe/xtgo0e.jpeg", title: "", eventId: "expert-talk-2026", eventName: "Global IT Careers 2027+", date: "September 2026", category: "Seminar" },
+    { id: 206, src: "https://files.catbox.moe/894dve.jpg", title: "", eventId: "expert-talk-2026", eventName: "Global IT Careers 2027+", date: "September 2026", category: "Seminar" },
+    { id: 207, src: "https://files.catbox.moe/gjlvra.jpg", title: "", eventId: "expert-talk-2026", eventName: "Global IT Careers 2027+", date: "September 2026", category: "Seminar" },
+
+    // Previous Installation Ceremony photos
     { id: 1, src: "/images/installation.jpg", title: "Installation Ceremony", eventId: "installation-2025", eventName: "CSI Installation Ceremony", date: "March 2025", category: "Ceremony" },
     { id: 2, src: "/images/installation.jpg", title: "Award Presentation", eventId: "installation-2025", eventName: "CSI Installation Ceremony", date: "March 2025", category: "Ceremony" },
     { id: 3, src: "/images/installation.jpg", title: "Committee Members", eventId: "installation-2025", eventName: "CSI Installation Ceremony", date: "March 2025", category: "Ceremony" },
@@ -549,9 +593,11 @@ const Gallery = (): JSX.Element => {
                                         </div>
 
                                         <figcaption className="p-3">
-                                            <h3 className="text-sm font-semibold text-slate-800 leading-tight mb-1 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
-                                                {photo.title}
-                                            </h3>
+                                            {photo.title ? (
+                                                <h3 className="text-sm font-semibold text-slate-800 leading-tight mb-1 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
+                                                    {photo.title}
+                                                </h3>
+                                            ) : null}
 
                                             <div className="space-y-0.5">
                                                 <div className="flex items-center gap-1 text-xs text-slate-600">
@@ -640,7 +686,9 @@ const Gallery = (): JSX.Element => {
                             {/* Image info */}
                             <div className="p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
                                 <div className="text-center text-white">
-                                    <h2 className="text-xl md:text-2xl font-bold mb-2">{filteredPhotos[lightboxIndex].title}</h2>
+                                    <h2 className="text-xl md:text-2xl font-bold mb-2">
+                                        {filteredPhotos[lightboxIndex].title || filteredPhotos[lightboxIndex].eventName}
+                                    </h2>
                                     <div className="flex flex-wrap justify-center gap-3 text-sm text-white/80">
                                         <div className="flex items-center gap-1">
                                             <Tag size={14} />
