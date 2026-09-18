@@ -82,7 +82,20 @@ export default async function handler(req, res) {
   // 1. Task: Save to MongoDB Atlas (warm pooled connection < 50ms)
   const mongoTask = async () => {
     try {
-      const mongo = await clientPromise;
+      if (!global._mongoClientPromise) {
+        client = new MongoClient(uri, { maxPoolSize: 20, serverSelectionTimeoutMS: 5000 });
+        global._mongoClientPromise = client.connect().catch((err) => {
+          delete global._mongoClientPromise;
+          console.warn("MongoDB connection warning:", err.message);
+          return null;
+        });
+      }
+      let mongo = await global._mongoClientPromise;
+      if (!mongo) {
+        delete global._mongoClientPromise;
+        client = new MongoClient(uri, { maxPoolSize: 20, serverSelectionTimeoutMS: 5000 });
+        mongo = await client.connect().catch(() => null);
+      }
       if (mongo) {
         const db = mongo.db("test");
         const registrations = db.collection("event_registrations");
@@ -90,6 +103,7 @@ export default async function handler(req, res) {
         return { success: true, id: result.insertedId };
       }
     } catch (mongoErr) {
+      delete global._mongoClientPromise;
       console.warn("MongoDB registration write warning:", mongoErr.message);
     }
     return { success: false, id: null };

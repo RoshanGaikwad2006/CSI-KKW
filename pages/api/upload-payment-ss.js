@@ -40,7 +40,31 @@ export default async function handler(req, res) {
       });
     }
 
-    console.warn("ImgBB API upload notice, utilizing base64 data URL fallback:", data);
+    // Secondary fallback: Free keyless file upload via tmpfiles.org
+    try {
+      const buffer = Buffer.from(base64Data, "base64");
+      const blob = new Blob([buffer], { type: "image/jpeg" });
+      const fd = new FormData();
+      fd.append("file", blob, `screenshot-${Date.now()}.jpg`);
+
+      const tmpRes = await fetch("https://tmpfiles.org/api/v1/upload", {
+        method: "POST",
+        body: fd,
+      });
+      const tmpData = await tmpRes.json();
+      if (tmpData?.data?.url) {
+        const directUrl = tmpData.data.url.replace("tmpfiles.org/", "tmpfiles.org/dl/");
+        return res.status(200).json({
+          success: true,
+          url: directUrl,
+          displayUrl: directUrl,
+        });
+      }
+    } catch (tmpErr) {
+      console.warn("Secondary tmpfiles upload notice:", tmpErr.message);
+    }
+
+    // Tertiary fallback: Return the base64 data url directly
     return res.status(200).json({
       success: true,
       url: image,
