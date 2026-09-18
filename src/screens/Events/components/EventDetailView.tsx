@@ -29,14 +29,14 @@ interface EventDetailViewProps {
 }
 
 const DEPARTMENTS = [
-  "Computer Engineering",
+  "Computer",
   "Information Technology",
-  "Artificial Intelligence & Data Science",
-  "Electronics & Telecommunication",
-  "Mechanical Engineering",
-  "Electrical Engineering",
-  "Chemical Engineering",
-  "Civil Engineering",
+  "AIDS",
+  "E&TC",
+  "Mechanical",
+  "Electrical",
+  "Chemical",
+  "Civil",
   "Robotics & Automation",
   "Other",
 ];

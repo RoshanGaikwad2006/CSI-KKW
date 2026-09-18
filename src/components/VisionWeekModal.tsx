@@ -18,11 +18,11 @@ interface VisionWeekModalProps {
 }
 
 const SESSIONS_LIST = [
-  { id: "day1", day: "Day 1", title: "Smart India Hackathon (SIH)" },
-  { id: "day2", day: "Day 2", title: "Placement & Career Guidance" },
-  { id: "day3", day: "Day 3", title: "AI Tools & Workflows" },
-  { id: "day4", day: "Day 4", title: "GATE – Information & Guidance" },
-  { id: "day5", day: "Day 5", title: "Soft Skills & Professional Grooming" },
+  { id: "day1", day: "Day 1 (26 Sept)", title: "AI Tools & Workflows" },
+  { id: "day2", day: "Day 2 (27 Sept)", title: "SIH (Smart India Hackathon)" },
+  { id: "day3", day: "Day 3 (28 Sept)", title: "Placement & Career Guidance" },
+  { id: "day4", day: "Day 4 (29 Sept)", title: "GATE – Information & Guidance" },
+  { id: "day5", day: "Day 5 (30 Sept)", title: "Soft Skills & Professional Grooming" },
 ];
 
 export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
@@ -35,20 +35,21 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
     email: "",
     phone: "",
     college: "K. K. Wagh Institute of Engineering Education & Research, Nashik",
-    department: "Computer Engineering",
+    department: "",
     year: "Third Year (TE)",
     prn: "",
     upiId: "",
-    track: "All 5 Days (Full Conclave)",
+    track: "",
     comments: "",
   });
 
-  const [selectedSessions, setSelectedSessions] = useState<string[]>(allSessionLabels);
+  const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isAllSelected = selectedSessions.length === SESSIONS_LIST.length;
+  const isAllSelected =
+    selectedSessions.length === SESSIONS_LIST.length && SESSIONS_LIST.length > 0;
 
   const handleToggleAll = () => {
     if (isAllSelected) {
@@ -171,14 +172,14 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
       email: "",
       phone: "",
       college: "K. K. Wagh Institute of Engineering Education & Research, Nashik",
-      department: "Computer Engineering",
+      department: "",
       year: "Third Year (TE)",
       prn: "",
       upiId: "",
-      track: "All 5 Days (Full Conclave)",
+      track: "",
       comments: "",
     });
-    setSelectedSessions(allSessionLabels);
+    setSelectedSessions([]);
   };
 
   return (
@@ -208,7 +209,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
           <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-slate-300 font-medium">
             <span className="flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-[#1D68F2]" />
-              <span>March 10 – 15, 2026</span>
+              <span>September 26 – 30, 2026</span>
             </span>
             <span className="flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-[#1D68F2]" />
@@ -416,14 +417,17 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
                     onChange={handleChange}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1D68F2] focus:border-transparent transition-all"
                   >
-                    <option value="Computer Engineering">Computer Engineering</option>
+                    <option value="">Select Department</option>
+                    <option value="Computer">Computer</option>
                     <option value="Information Technology">Information Technology</option>
-                    <option value="Artificial Intelligence & Data Science">Artificial Intelligence &amp; Data Science</option>
-                    <option value="Electronics & Telecommunication">Electronics &amp; Telecommunication</option>
-                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                    <option value="Civil Engineering">Civil Engineering</option>
-                    <option value="Chemical Engineering">Chemical Engineering</option>
-                    <option value="Other Department">Other</option>
+                    <option value="AIDS">AIDS</option>
+                    <option value="E&TC">E&amp;TC</option>
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Civil">Civil</option>
+                    <option value="Chemical">Chemical</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Robotics & Automation">Robotics &amp; Automation</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
 

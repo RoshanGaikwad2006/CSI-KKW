@@ -15,11 +15,11 @@ import {
 import { Button } from "../src/components/ui/button";
 
 const SESSIONS_LIST = [
-  { id: "day1", day: "Day 1", title: "Smart India Hackathon (SIH)" },
-  { id: "day2", day: "Day 2", title: "Placement & Career Guidance" },
-  { id: "day3", day: "Day 3", title: "AI Tools & Workflows" },
-  { id: "day4", day: "Day 4", title: "GATE – Information & Guidance" },
-  { id: "day5", day: "Day 5", title: "Soft Skills & Professional Grooming" },
+  { id: "day1", day: "Day 1 (26 Sept)", title: "AI Tools & Workflows" },
+  { id: "day2", day: "Day 2 (27 Sept)", title: "SIH (Smart India Hackathon)" },
+  { id: "day3", day: "Day 3 (28 Sept)", title: "Placement & Career Guidance" },
+  { id: "day4", day: "Day 4 (29 Sept)", title: "GATE – Information & Guidance" },
+  { id: "day5", day: "Day 5 (30 Sept)", title: "Soft Skills & Professional Grooming" },
 ];
 
 const DEFAULT_FORM = {
@@ -27,10 +27,10 @@ const DEFAULT_FORM = {
   email: "",
   phone: "",
   college: "K. K. Wagh Institute of Engineering Education & Research, Nashik",
-  department: "Computer Engineering",
+  department: "",
   year: "Third Year (TE)",
   prn: "",
-  track: "All 5 Days (Full Conclave)",
+  track: "",
   upiId: "",
   comments: "",
   paymentScreenshot: "",
@@ -38,27 +38,27 @@ const DEFAULT_FORM = {
 
 const SESSION_PLAN = [
   {
-    day: "Day 1",
-    title: "SIH (Smart India Hackathon)",
-    subtitle: "Problem statement analysis, ideation, team formation & hackathon strategy",
-  },
-  {
-    day: "Day 2",
-    title: "Placement & Career Guidance",
-    subtitle: "Resume optimization, interview preparation, tech stacks & campus drive insights",
-  },
-  {
-    day: "Day 3",
+    day: "Day 1 (26 Sept)",
     title: "AI Tools & Workflows",
     subtitle: "Hands-on exposure to modern generative AI, developer tools & productivity workflows",
   },
   {
-    day: "Day 4",
+    day: "Day 2 (27 Sept)",
+    title: "SIH (Smart India Hackathon)",
+    subtitle: "Problem statement analysis, ideation, team formation & hackathon strategy",
+  },
+  {
+    day: "Day 3 (28 Sept)",
+    title: "Placement & Career Guidance",
+    subtitle: "Resume optimization, interview preparation, tech stacks & campus drive insights",
+  },
+  {
+    day: "Day 4 (29 Sept)",
     title: "GATE – Information & Guidance",
     subtitle: "Exam pattern breakdown, preparation roadmap, PSUs & higher studies guidance",
   },
   {
-    day: "Day 5",
+    day: "Day 5 (30 Sept)",
     title: "Soft Skills & Professional Grooming",
     subtitle: "Effective communication, public speaking, leadership & team collaboration",
   },
@@ -66,7 +66,7 @@ const SESSION_PLAN = [
 
 
 const EVENT_DETAILS = [
-  { label: "DATE", value: "Mar 10 – 15, 2026" },
+  { label: "DATE", value: "Sep 26 – 30, 2026" },
   { label: "TIME", value: "" },
   { label: "VENUE", value: "Online" },
   { label: "ELIGIBILITY", value: "All Branches & Academic Years" }
@@ -76,14 +76,15 @@ export default function VisionWeekRegisterPage() {
   const router = useRouter();
   const allSessionLabels = SESSIONS_LIST.map((s) => `${s.day}: ${s.title}`);
   const [formData, setFormData] = useState(DEFAULT_FORM);
-  const [selectedSessions, setSelectedSessions] = useState<string[]>(allSessionLabels);
+  const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isAllSelected = selectedSessions.length === SESSIONS_LIST.length;
+  const isAllSelected =
+    selectedSessions.length === SESSIONS_LIST.length && SESSIONS_LIST.length > 0;
 
   const handleToggleAll = () => {
     if (isAllSelected) {
@@ -221,7 +222,7 @@ export default function VisionWeekRegisterPage() {
     setSubmitted(false);
     setError(null);
     setFormData(DEFAULT_FORM);
-    setSelectedSessions(allSessionLabels);
+    setSelectedSessions([]);
     setScreenshotFile(null);
     setScreenshotPreview(null);
   };
@@ -232,7 +233,7 @@ export default function VisionWeekRegisterPage() {
         <title>Vision Week 2026 Registration | CSI KKWIEER</title>
         <meta
           name="description"
-          content="Register for Vision Week 2026 — 5 Days Sessions on SIH, Placement Guidance, AI Tools, GATE Prep & Soft Skills by CSI KKWIEER."
+          content="Register for Vision Week 2026 — 5 Days Sessions on AI Tools, SIH, Placement Guidance, GATE Prep & Soft Skills by CSI KKWIEER."
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -266,7 +267,7 @@ export default function VisionWeekRegisterPage() {
               </div>
               <div className="flex items-center gap-2 self-start md:self-auto">
                 <span className="px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 text-xs font-semibold text-slate-200 font-sans">
-                  Mar 10 – 15, 2026
+                  Sep 26 – 30, 2026
                 </span>
               </div>
             </div>
@@ -418,13 +419,16 @@ export default function VisionWeekRegisterPage() {
                         onChange={handleChange}
                         className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
                       >
-                        <option value="Computer Engineering">Computer Engg</option>
+                        <option value="">Select Department</option>
+                        <option value="Computer">Computer</option>
                         <option value="Information Technology">IT</option>
                         <option value="AIDS">AIDS</option>
                         <option value="E&TC">E&amp;TC</option>
                         <option value="Mechanical">Mechanical</option>
                         <option value="Civil">Civil</option>
                         <option value="Chemical">Chemical</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Robotics & Automation">Robotics &amp; Automation</option>
                         <option value="Other">Other</option>
                       </select>
                     </div>
