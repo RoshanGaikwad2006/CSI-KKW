@@ -24,9 +24,9 @@ flowchart LR
 3. Name the sheet: `CSI KKWIEER - Event Registrations 2026`.
 4. In **Row 1**, set these 9 column headers:
 
-| A | B | C | D | E | F | G | H | I |
-|---|---|---|---|---|---|---|---|---|
-| **Ticket ID** | **Event Name** | **Full Name** | **Email** | **Contact Number** | **Department** | **Year** | **Reason / Notes** | **Timestamp** |
+| A | B | C | D | E | F | G | H | I | J | K | L |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| **Ticket ID** | **Event Name** | **Full Name** | **Email** | **Contact Number** | **Department** | **Year** | **Sessions Attending** | **UPI ID / UTR** | **College / PRN** | **Payment Proof URL** | **Timestamp** |
 
 ---
 
@@ -65,14 +65,17 @@ function doPost(e) {
       data = e.parameter;
     }
 
-    var ticketId = data.ticketId || "CSI-EVT-" + Math.floor(1000 + Math.random() * 9000);
-    var eventTitle = data.eventTitle || "General Event";
+    var ticketId = data.ticketId || "VW26-" + Math.floor(1000 + Math.random() * 9000);
+    var eventTitle = data.eventTitle || data.event || "Vision Week 2026";
     var fullName = data.fullName || "N/A";
     var email = data.email || "N/A";
     var contact = "'" + (data.contactNumber || data.phone || "N/A"); // Prefix with ' to preserve leading zero
     var dept = data.department || "N/A";
     var year = data.year || "N/A";
-    var reason = data.reason || data.comments || "";
+    var sessions = data.track || (Array.isArray(data.selectedSessions) ? data.selectedSessions.join(", ") : "All Sessions");
+    var upiId = data.upiId || "N/A";
+    var collegePrn = (data.college || "") + (data.prn ? " (PRN: " + data.prn + ")" : "");
+    var screenshot = data.paymentScreenshot || "N/A";
     var timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 
     // 2. Append formatted row to Google Sheet
@@ -84,7 +87,10 @@ function doPost(e) {
       contact,
       dept,
       year,
-      reason,
+      sessions,
+      upiId,
+      collegePrn,
+      screenshot,
       timestamp
     ]);
 
