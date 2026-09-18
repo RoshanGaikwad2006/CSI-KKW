@@ -32,6 +32,7 @@ export default async function handler(req, res) {
     eventId,
     eventTitle,
     ticketId,
+    upiId,
   } = req.body;
 
   // Validation
@@ -53,6 +54,7 @@ export default async function handler(req, res) {
     reason: reason || "",
     eventId: eventId || "general-event",
     eventTitle: eventTitle || "CSI KKWIEER Event",
+    upiId: upiId || "",
     registeredAt: timestamp,
     status: "CONFIRMED",
     ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown",

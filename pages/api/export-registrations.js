@@ -47,7 +47,11 @@ export default async function handler(req, res) {
       "Contact Number",
       "Department",
       "Year",
-      "Reason/Motivation",
+      "Sessions / Track",
+      "UPI ID / UTR",
+      "College",
+      "PRN",
+      "Payment Proof URL",
       "Registered At",
       "Status",
     ];
@@ -55,16 +59,24 @@ export default async function handler(req, res) {
     const csvRows = [headers.join(",")];
 
     for (const r of registrations) {
+      const sessionsVal =
+        r.track ||
+        (Array.isArray(r.selectedSessions) ? r.selectedSessions.join("; ") : "");
+
       const row = [
         `"${r.ticketId || ""}"`,
-        `"${(r.eventTitle || "").replace(/"/g, '""')}"`,
+        `"${(r.eventTitle || r.event || "").replace(/"/g, '""')}"`,
         `"${(r.fullName || "").replace(/"/g, '""')}"`,
         `"${r.email || ""}"`,
-        `"'${r.contactNumber || ""}"`, // apostrophe ensures leading 0 isn't stripped in Excel
+        `"'${r.contactNumber || r.phone || ""}"`, // apostrophe ensures leading 0 isn't stripped in Excel
         `"${(r.department || "").replace(/"/g, '""')}"`,
         `"${r.year || ""}"`,
-        `"${(r.reason || "").replace(/"/g, '""')}"`,
-        `"${r.registeredAt || ""}"`,
+        `"${(sessionsVal || "").replace(/"/g, '""')}"`,
+        `"${(r.upiId || "").replace(/"/g, '""')}"`,
+        `"${(r.college || "").replace(/"/g, '""')}"`,
+        `"${(r.prn || "").replace(/"/g, '""')}"`,
+        `"${(r.paymentScreenshot || "").replace(/"/g, '""')}"`,
+        `"${r.registeredAt || r.submittedAt || ""}"`,
         `"${r.status || "CONFIRMED"}"`,
       ];
       csvRows.push(row.join(","));

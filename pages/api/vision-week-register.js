@@ -42,6 +42,8 @@ export default async function handler(req, res) {
     year,
     prn,
     track,
+    selectedSessions,
+    upiId,
     comments,
     paymentScreenshot,
   } = req.body;
@@ -55,16 +57,24 @@ export default async function handler(req, res) {
 
   const registrationData = {
     event: "Vision Week 2026",
+    eventTitle: "Vision Week 2026",
     fullName: String(fullName).trim(),
     email: String(email).trim().toLowerCase(),
     phone: String(phone).trim(),
+    contactNumber: String(phone).trim(),
     college: String(college || "KKWIEER").trim(),
     department: String(department || "Computer Engineering").trim(),
     year: String(year || "TE").trim(),
     prn: String(prn || "").trim(),
-    track: String(track || "General").trim(),
+    track: String(track || "All 5 Days (Full Conclave)").trim(),
+    selectedSessions: Array.isArray(selectedSessions)
+      ? selectedSessions
+      : [String(track || "All 5 Days (Full Conclave)")],
+    upiId: String(upiId || "").trim(),
     comments: String(comments || "").trim(),
+    reason: String(comments || "").trim(),
     paymentScreenshot: String(paymentScreenshot || "").trim(),
+    fee: 50,
     submittedAt: new Date(),
     ip: req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "",
   };

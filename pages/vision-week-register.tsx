@@ -14,6 +14,14 @@ import {
 } from "lucide-react";
 import { Button } from "../src/components/ui/button";
 
+const SESSIONS_LIST = [
+  { id: "day1", day: "Day 1", title: "Smart India Hackathon (SIH)" },
+  { id: "day2", day: "Day 2", title: "Placement & Career Guidance" },
+  { id: "day3", day: "Day 3", title: "AI Tools & Workflows" },
+  { id: "day4", day: "Day 4", title: "GATE – Information & Guidance" },
+  { id: "day5", day: "Day 5", title: "Soft Skills & Professional Grooming" },
+];
+
 const DEFAULT_FORM = {
   fullName: "",
   email: "",
@@ -22,7 +30,8 @@ const DEFAULT_FORM = {
   department: "Computer Engineering",
   year: "Third Year (TE)",
   prn: "",
-  track: "All 5 Days Access Pass (Recommended)",
+  track: "All 5 Days (Full Conclave)",
+  upiId: "",
   comments: "",
   paymentScreenshot: "",
 };
@@ -65,12 +74,36 @@ const EVENT_DETAILS = [
 
 export default function VisionWeekRegisterPage() {
   const router = useRouter();
+  const allSessionLabels = SESSIONS_LIST.map((s) => `${s.day}: ${s.title}`);
   const [formData, setFormData] = useState(DEFAULT_FORM);
+  const [selectedSessions, setSelectedSessions] = useState<string[]>(allSessionLabels);
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isAllSelected = selectedSessions.length === SESSIONS_LIST.length;
+
+  const handleToggleAll = () => {
+    if (isAllSelected) {
+      setSelectedSessions([]);
+    } else {
+      setSelectedSessions(allSessionLabels);
+    }
+    if (error) setError(null);
+  };
+
+  const handleToggleSession = (sessionLabel: string) => {
+    setSelectedSessions((prev) => {
+      if (prev.includes(sessionLabel)) {
+        return prev.filter((s) => s !== sessionLabel);
+      } else {
+        return [...prev, sessionLabel];
+      }
+    });
+    if (error) setError(null);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -113,6 +146,18 @@ export default function VisionWeekRegisterPage() {
       return;
     }
 
+    if (selectedSessions.length === 0) {
+      setError("Please select at least one session to attend.");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.upiId.trim()) {
+      setError("Please enter your UPI ID or Transaction ID (UTR).");
+      setLoading(false);
+      return;
+    }
+
     if (!screenshotPreview) {
       setError("Please upload your Payment Transaction Screenshot before submitting.");
       setLoading(false);
@@ -140,8 +185,16 @@ export default function VisionWeekRegisterPage() {
         }
       }
 
+      const sessionsText =
+        selectedSessions.length === SESSIONS_LIST.length
+          ? "All 5 Days (Full Conclave)"
+          : selectedSessions.join(", ");
+
       const payload = {
         ...formData,
+        track: sessionsText,
+        selectedSessions,
+        upiId: formData.upiId.trim(),
         paymentScreenshot: uploadedScreenshotUrl || screenshotPreview || "",
       };
 
@@ -168,6 +221,7 @@ export default function VisionWeekRegisterPage() {
     setSubmitted(false);
     setError(null);
     setFormData(DEFAULT_FORM);
+    setSelectedSessions(allSessionLabels);
     setScreenshotFile(null);
     setScreenshotPreview(null);
   };
@@ -249,6 +303,18 @@ export default function VisionWeekRegisterPage() {
                     <div className="flex justify-between border-b border-slate-200 pb-1.5">
                       <span className="font-semibold text-slate-500">PHONE</span>
                       <span className="font-bold text-slate-900">{formData.phone}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                      <span className="font-semibold text-slate-500">SESSIONS</span>
+                      <span className="font-bold text-slate-900 text-right max-w-[60%] truncate">
+                        {selectedSessions.length === SESSIONS_LIST.length
+                          ? "All 5 Days (Full Conclave)"
+                          : selectedSessions.join(", ")}
+                      </span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                      <span className="font-semibold text-slate-500">UPI ID / UTR</span>
+                      <span className="font-bold text-slate-900">{formData.upiId}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="font-semibold text-slate-500">PAYMENT PROOF</span>
@@ -407,6 +473,93 @@ export default function VisionWeekRegisterPage() {
                         className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
                       />
                     </div>
+                  </div>
+
+                  {/* Sessions Selection */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-xs font-semibold text-[#0A192F] uppercase tracking-wider font-sans">
+                        SESSIONS ATTENDING <span className="text-red-500">*</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleToggleAll}
+                        className="text-[11px] font-bold text-[#1D68F2] hover:underline"
+                      >
+                        {isAllSelected ? "Deselect All" : "Select All (5 Days)"}
+                      </button>
+                    </div>
+
+                    <div className="space-y-1.5 border border-slate-300 bg-slate-50/50 rounded-xl p-2.5">
+                      {/* All 5 Days Quick Select Option */}
+                      <label
+                        onClick={handleToggleAll}
+                        className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all border text-xs font-sans ${
+                          isAllSelected
+                            ? "bg-blue-50/90 border-blue-300 text-[#0A192F] font-bold"
+                            : "bg-white/70 border-slate-200 text-slate-700 hover:bg-slate-100/60"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <input
+                            type="checkbox"
+                            checked={isAllSelected}
+                            onChange={handleToggleAll}
+                            className="w-3.5 h-3.5 rounded text-[#1D68F2] accent-[#1D68F2] cursor-pointer"
+                          />
+                          <span>All 5 Days (Full Conclave)</span>
+                        </div>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-[#1D68F2]">
+                          RECOMMENDED
+                        </span>
+                      </label>
+
+                      {/* Individual Days */}
+                      <div className="grid grid-cols-1 gap-1 pt-0.5">
+                        {SESSIONS_LIST.map((s) => {
+                          const label = `${s.day}: ${s.title}`;
+                          const isChecked = selectedSessions.includes(label);
+                          return (
+                            <label
+                              key={s.id}
+                              onClick={() => handleToggleSession(label)}
+                              className={`flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer transition-all border text-xs font-sans ${
+                                isChecked
+                                  ? "bg-white border-blue-200 text-[#0A192F] font-semibold"
+                                  : "bg-transparent border-transparent text-slate-600 hover:bg-slate-100/50"
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => handleToggleSession(label)}
+                                className="w-3.5 h-3.5 rounded text-[#1D68F2] accent-[#1D68F2] cursor-pointer"
+                              />
+                              <span className="truncate">{s.day}: {s.title}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* UPI ID / UTR */}
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
+                      UPI ID / TRANSACTION ID (UTR) <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="upiId"
+                      required
+                      value={formData.upiId}
+                      onChange={handleChange}
+                      placeholder="e.g. 408212345678 or student@okhdfcbank"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                    />
+                    <p className="text-[10px] text-slate-500 mt-1 font-sans">
+                      Enter the 12-digit UTR/Ref number or UPI ID used to pay the ₹50 entry fee.
+                    </p>
                   </div>
 
                   {/* Payment Screenshot Upload */}

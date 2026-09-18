@@ -17,10 +17,19 @@ interface VisionWeekModalProps {
   onClose: () => void;
 }
 
+const SESSIONS_LIST = [
+  { id: "day1", day: "Day 1", title: "Smart India Hackathon (SIH)" },
+  { id: "day2", day: "Day 2", title: "Placement & Career Guidance" },
+  { id: "day3", day: "Day 3", title: "AI Tools & Workflows" },
+  { id: "day4", day: "Day 4", title: "GATE – Information & Guidance" },
+  { id: "day5", day: "Day 5", title: "Soft Skills & Professional Grooming" },
+];
+
 export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const allSessionLabels = SESSIONS_LIST.map((s) => `${s.day}: ${s.title}`);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -29,13 +38,37 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
     department: "Computer Engineering",
     year: "Third Year (TE)",
     prn: "",
-    track: "CodeVerse Hackathon",
+    upiId: "",
+    track: "All 5 Days (Full Conclave)",
     comments: "",
   });
 
+  const [selectedSessions, setSelectedSessions] = useState<string[]>(allSessionLabels);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isAllSelected = selectedSessions.length === SESSIONS_LIST.length;
+
+  const handleToggleAll = () => {
+    if (isAllSelected) {
+      setSelectedSessions([]);
+    } else {
+      setSelectedSessions(allSessionLabels);
+    }
+    if (error) setError(null);
+  };
+
+  const handleToggleSession = (sessionLabel: string) => {
+    setSelectedSessions((prev) => {
+      if (prev.includes(sessionLabel)) {
+        return prev.filter((s) => s !== sessionLabel);
+      } else {
+        return [...prev, sessionLabel];
+      }
+    });
+    if (error) setError(null);
+  };
 
   // Close on Escape
   useEffect(() => {
@@ -84,11 +117,35 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
       return;
     }
 
+    if (selectedSessions.length === 0) {
+      setError("Please select at least one session to attend.");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.upiId.trim()) {
+      setError("Please enter your UPI ID or Transaction ID (UTR).");
+      setLoading(false);
+      return;
+    }
+
     try {
+      const sessionsText =
+        selectedSessions.length === SESSIONS_LIST.length
+          ? "All 5 Days (Full Conclave)"
+          : selectedSessions.join(", ");
+
+      const payload = {
+        ...formData,
+        track: sessionsText,
+        selectedSessions,
+        upiId: formData.upiId.trim(),
+      };
+
       const res = await fetch("/api/vision-week-register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -117,9 +174,11 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
       department: "Computer Engineering",
       year: "Third Year (TE)",
       prn: "",
-      track: "All 5 Days Access Pass (Recommended)",
+      upiId: "",
+      track: "All 5 Days (Full Conclave)",
       comments: "",
     });
+    setSelectedSessions(allSessionLabels);
   };
 
   return (
@@ -185,7 +244,8 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
               <div className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left mb-6 text-xs text-slate-700 space-y-1.5">
                 <div><span className="font-semibold text-slate-500">Candidate Email:</span> {formData.email}</div>
                 <div><span className="font-semibold text-slate-500">Phone:</span> {formData.phone}</div>
-                <div><span className="font-semibold text-slate-500">Pass Type:</span> {formData.track}</div>
+                <div><span className="font-semibold text-slate-500">Sessions:</span> {selectedSessions.length === SESSIONS_LIST.length ? "All 5 Days (Full Conclave)" : selectedSessions.join(", ")}</div>
+                <div><span className="font-semibold text-slate-500">UPI ID / UTR:</span> {formData.upiId}</div>
                 <div><span className="font-semibold text-slate-500">College:</span> {formData.college}</div>
               </div>
 
@@ -276,24 +336,72 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
                 </div>
               </div>
 
-              {/* Session Track Selection */}
+              {/* Sessions Selection */}
               <div>
-                <label className="block text-xs font-bold text-[#0A192F] uppercase tracking-wider mb-1">
-                  Select Session Pass <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="track"
-                  value={formData.track}
-                  onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-blue-300 bg-blue-50/40 text-sm font-semibold text-[#0A192F] focus:outline-none focus:ring-2 focus:ring-[#1D68F2] focus:border-transparent transition-all"
-                >
-                  <option value="All 5 Days Access Pass (Recommended)">✨ All 5 Days Access Pass (Recommended — ₹99)</option>
-                  <option value="Day 1: SIH (Smart India Hackathon)">Day 1: SIH (Smart India Hackathon)</option>
-                  <option value="Day 2: Placement & Career Guidance">Day 2: Placement & Career Guidance</option>
-                  <option value="Day 3: AI Tools">Day 3: AI Tools</option>
-                  <option value="Day 4: GATE – Information & Guidance">Day 4: GATE – Information & Guidance</option>
-                  <option value="Day 5: Soft Skills">Day 5: Soft Skills</option>
-                </select>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-bold text-[#0A192F] uppercase tracking-wider">
+                    Sessions Attending <span className="text-red-500">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleToggleAll}
+                    className="text-[11px] font-bold text-[#1D68F2] hover:underline"
+                  >
+                    {isAllSelected ? "Deselect All" : "Select All (5 Days)"}
+                  </button>
+                </div>
+
+                <div className="space-y-1.5 border border-slate-300 bg-slate-50/50 rounded-xl p-2.5">
+                  {/* All 5 Days Quick Select Option */}
+                  <label
+                    onClick={handleToggleAll}
+                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all border text-xs ${
+                      isAllSelected
+                        ? "bg-blue-50/90 border-blue-300 text-[#0A192F] font-bold"
+                        : "bg-white/70 border-slate-200 text-slate-700 hover:bg-slate-100/60"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <input
+                        type="checkbox"
+                        checked={isAllSelected}
+                        onChange={handleToggleAll}
+                        className="w-3.5 h-3.5 rounded text-[#1D68F2] accent-[#1D68F2] cursor-pointer"
+                      />
+                      <span>All 5 Days (Full Conclave)</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-[#1D68F2]">
+                      RECOMMENDED
+                    </span>
+                  </label>
+
+                  {/* Individual Days */}
+                  <div className="grid grid-cols-1 gap-1 pt-0.5">
+                    {SESSIONS_LIST.map((s) => {
+                      const label = `${s.day}: ${s.title}`;
+                      const isChecked = selectedSessions.includes(label);
+                      return (
+                        <label
+                          key={s.id}
+                          onClick={() => handleToggleSession(label)}
+                          className={`flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer transition-all border text-xs ${
+                            isChecked
+                              ? "bg-white border-blue-200 text-[#0A192F] font-semibold"
+                              : "bg-transparent border-transparent text-slate-600 hover:bg-slate-100/50"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => handleToggleSession(label)}
+                            className="w-3.5 h-3.5 rounded text-[#1D68F2] accent-[#1D68F2] cursor-pointer"
+                          />
+                          <span className="truncate">{s.day}: {s.title}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
 
               {/* Department & Year */}
@@ -365,6 +473,25 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D68F2] focus:border-transparent transition-all"
                   />
                 </div>
+              </div>
+
+              {/* UPI ID / UTR */}
+              <div>
+                <label className="block text-xs font-bold text-[#0A192F] uppercase tracking-wider mb-1">
+                  UPI ID / TRANSACTION ID (UTR) <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="upiId"
+                  required
+                  value={formData.upiId}
+                  onChange={handleChange}
+                  placeholder="e.g. 408212345678 or student@okhdfcbank"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D68F2] focus:border-transparent transition-all"
+                />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Entry fee: ₹50. Please enter the 12-digit UTR/Ref number or UPI ID used to pay.
+                </p>
               </div>
 
               {/* Notes */}
