@@ -16,7 +16,7 @@ export const Home = (): JSX.Element => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen bg-white relative font-['Inter',sans-serif] text-slate-900 overflow-x-hidden">
+    <div className="flex flex-col items-center w-full min-h-screen bg-transparent relative font-['Inter',sans-serif] text-slate-900 overflow-x-hidden">
       
       {/* 1. Vision Week Event Popup Card */}
       <Snackbar
@@ -57,26 +57,29 @@ export const Home = (): JSX.Element => {
       <GallerySection />
 
       {/* 7. CSI Chapter Leadership & Parent Bodies (Preserved Overview Cards) */}
-      <section className="w-full py-12 bg-slate-50 border-t border-slate-200/80">
+      <section className="w-full py-14 sm:py-16 bg-transparent border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h3 className="text-xl sm:text-2xl font-bold text-[#0A192F]">
-              Affiliation & Chapter Legacy
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-8 sm:mb-10">
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0A192F] tracking-tight">
+                Affiliation & Chapter Legacy
+              </h2>
+              <div className="w-10 h-1 bg-[#1D68F2] rounded-full mt-1" />
+            </div>
+            <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-md text-left sm:text-right">
               Connecting our student branch with national and regional computer science leadership
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* CSI India Card */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/90 shadow-sm hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-2 hover:border-blue-300 transition-all duration-300 flex flex-col justify-between group">
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1D68F2]">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1D68F2] group-hover:bg-[#1D68F2] group-hover:text-white group-hover:scale-110 transition-all duration-300">
                     <Network className="w-5 h-5" />
                   </div>
-                  <h4 className="text-xl font-bold text-[#0A192F]">CSI India (National Body)</h4>
+                  <h4 className="text-xl font-bold text-[#0A192F] group-hover:text-[#1D68F2] transition-colors duration-200">CSI India (National Body)</h4>
                 </div>
                 <p className="text-sm text-slate-600 leading-relaxed">
                   Founded in 1965 by IT pioneers, the Computer Society of India is the largest association of computer professionals in the nation. It facilitates technical dissemination through journals, conventions, and support for student research.
@@ -86,7 +89,7 @@ export const Home = (): JSX.Element => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl border-blue-200 text-[#1D68F2] hover:bg-blue-50"
+                  className="rounded-xl border-blue-200 text-[#1D68F2] hover:bg-blue-50 group-hover:bg-[#1D68F2] group-hover:text-white group-hover:border-[#1D68F2] transition-all duration-300"
                   onClick={() => window.open("https://csiindia.org/", "_blank")}
                 >
                   Visit CSI India Portal →
@@ -95,13 +98,13 @@ export const Home = (): JSX.Element => {
             </div>
 
             {/* CSI Nashik Chapter Card */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/90 shadow-sm hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-2 hover:border-blue-300 transition-all duration-300 flex flex-col justify-between group">
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1D68F2]">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1D68F2] group-hover:bg-[#1D68F2] group-hover:text-white group-hover:scale-110 transition-all duration-300">
                     <Award className="w-5 h-5" />
                   </div>
-                  <h4 className="text-xl font-bold text-[#0A192F]">CSI Nashik Chapter</h4>
+                  <h4 className="text-xl font-bold text-[#0A192F] group-hover:text-[#1D68F2] transition-colors duration-200">CSI Nashik Chapter</h4>
                 </div>
                 <p className="text-sm text-slate-600 leading-relaxed">
                   Formed in 1988-89, the Nashik Chapter has repeatedly received Best Chapter recognitions. With over 20 active student branches, it leads technical seminars, regional coding competitions, and community outreach initiatives.
@@ -111,7 +114,7 @@ export const Home = (): JSX.Element => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl border-blue-200 text-[#1D68F2] hover:bg-blue-50"
+                  className="rounded-xl border-blue-200 text-[#1D68F2] hover:bg-blue-50 group-hover:bg-[#1D68F2] group-hover:text-white group-hover:border-[#1D68F2] transition-all duration-300"
                   onClick={() => window.open("https://www.kkwagh.edu.in/engineering/csi", "_blank")}
                 >
                   Visit Nashik Chapter Portal →
@@ -123,12 +126,12 @@ export const Home = (): JSX.Element => {
       </section>
 
       {/* 8. About Us Detailed Section with Accordion & PDF Reports (Preserved) */}
-      <div id="AboutUs" className="w-full bg-white border-t border-slate-100">
+      <div id="AboutUs" className="w-full bg-transparent border-b border-slate-200/80">
         <AboutUs />
       </div>
 
       {/* 9. Committee Leadership Preview Carousel (Preserved) */}
-      <div id="team-section" className="w-full bg-slate-50/70 border-t border-slate-200/80">
+      <div id="team-section" className="w-full bg-transparent">
         <CommitteeMembersCarousel />
       </div>
 

@@ -338,28 +338,15 @@ const Gallery = (): JSX.Element => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 relative overflow-x-hidden">
-            {/* Animated background elements */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-20 left-10 w-48 h-48 bg-blue-200/20 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-20 right-10 w-64 h-64 bg-indigo-200/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-                <div className="absolute top-1/2 left-1/2 w-56 h-56 bg-blue-300/10 rounded-full blur-3xl animate-pulse delay-500"></div>
-            </div>
-
+        <div className="min-h-screen bg-transparent relative overflow-x-hidden">
             <Navbar />
 
             <main className="container mx-auto mt-8 px-4 pt-32 pb-20 relative z-10">
                 {/* Compact Hero Section */}
                 <section className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-sm font-medium border border-blue-200/50 backdrop-blur-sm shadow-lg animate-fadeInUp">
-                        <Sparkles size={20} className="animate-pulse" />
-                        CSI Photo Gallery
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-ping"></div>
-                    </div>
-
-                    <h1 className="mt-6 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-900 via-blue-600 to-indigo-600 animate-fadeInUp delay-200 leading-tight"> {/* Increased top margin */}
-                        Moments that define
-                        <span className="block bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0A192F] tracking-tight animate-fadeInUp leading-tight">
+                        Moments that define{" "}
+                        <span className="text-[#1D68F2]">
                             our community
                         </span>
                     </h1>

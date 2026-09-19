@@ -246,7 +246,7 @@ export default function VisionWeekRegisterPage() {
         />
       </Head>
 
-      <div className="min-h-screen bg-slate-50/70 flex flex-col font-sans text-slate-900 pb-12">
+      <div className="min-h-screen bg-transparent flex flex-col font-sans text-slate-900 pb-12">
         {/* ── Outer Layout Wrapper ── */}
         <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-5">
 

@@ -78,7 +78,7 @@ export const GallerySection: React.FC = () => {
   }, [selectedPhoto]);
 
   return (
-    <section id="gallery-section" className="w-full py-14 sm:py-16 bg-white">
+    <section id="gallery-section" className="w-full py-14 sm:py-16 bg-transparent border-b border-slate-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}

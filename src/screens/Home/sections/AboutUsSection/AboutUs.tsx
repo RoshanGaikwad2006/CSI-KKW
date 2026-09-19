@@ -103,15 +103,17 @@ export const AboutUs = () => {
   };
 
   return (
-    <section className="py-4 sm:py-6 md:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-14 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-      <h2 className="relative inline-block text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold gradient-text mb-6 sm:mb-8 animate-fade-in-up">
-        About Us
-        <span className="absolute left-0 -bottom-2 w-full h-[2px] sm:h-[3px] bg-gradient-to-r from-blue-400 via-blue-500 to-blue-700 rounded-full"></span>
-      </h2>
+      <div className="flex items-center gap-3 mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-[#0A192F] tracking-tight">
+          About Us
+        </h2>
+        <div className="w-10 h-1 bg-[#1D68F2] rounded-full mt-1" />
+      </div>
 
       {/* Intro (always visible) */}
-      <p className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed mb-4 sm:mb-6 text-center sm:text-left">
+      <p className="text-slate-600 text-sm sm:text-base md:text-[1.05rem] leading-relaxed mb-6 text-left max-w-5xl">
         The CSI student branch at KKWIEER, established in 1995-96, is one of the most vibrant in Maharashtra & Goa.
         Recognized 7 times as the "Best Student Branch", it has over 500 student members and organizes regular technical
         events such as quizzes, seminars, and workshops. Faculty and students benefit from publications, communication
@@ -119,23 +121,22 @@ export const AboutUs = () => {
       </p>
 
       {/* Modern Read More/Less Button */}
-      <div className="flex justify-center mb-4 sm:mb-6">
+      <div className="flex justify-start mb-6">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="group relative inline-flex items-center gap-2 px-4 sm:px-5 md:px-7 py-2 sm:py-3 
-               bg-white text-blue-600 font-medium rounded-xl border border-blue-600
-               transition-all duration-300 ease-out
-               hover:bg-blue-600 hover:text-white"
+          className="group relative inline-flex items-center gap-2 px-6 py-2.5 
+               bg-white hover:bg-[#1D68F2] text-[#1D68F2] hover:text-white font-semibold rounded-xl border border-blue-200 hover:border-[#1D68F2]
+               transition-all duration-300 shadow-xs hover:shadow-md hover:-translate-y-0.5 cursor-pointer text-sm sm:text-base"
         >
-          <span className="text-sm sm:text-base md:text-lg">
-            {expanded ? "Read Less" : "Read More"}
+          <span>
+            {expanded ? "Read Less" : "Read More About CSI KKWIEER"}
           </span>
 
           <div className="transition-transform duration-300 ease-out group-hover:translate-y-[-1px]">
             {expanded ? (
-              <ChevronUp className="w-4 h-4 md:w-5 md:h-5" />
+              <ChevronUp className="w-4 h-4" />
             ) : (
-              <ChevronDown className="w-4 h-4 md:w-5 md:h-5" />
+              <ChevronDown className="w-4 h-4" />
             )}
           </div>
         </button>
@@ -150,17 +151,17 @@ export const AboutUs = () => {
       >
         <div className="space-y-6 sm:space-y-8 md:space-y-10 pt-4">
           {/* Detailed Info */}
-          <div className="text-gray-700 space-y-3 sm:space-y-4 text-xs sm:text-sm md:text-base leading-relaxed transform transition-transform duration-500 ease-out">
-            <p className="animate-fade-in-up" style={{ animationDelay: "0.1s", textAlign: "justify" }}>
+          <div className="text-slate-600 space-y-4 text-sm sm:text-base leading-relaxed transform transition-transform duration-500 ease-out text-left max-w-5xl">
+            <p className="animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
               CSI was founded in 1965 by a small group of IT professionals who wanted to exchange ideas and organize activities
               in the emerging computer science field. Today, CSI is the largest and most professionally managed association for
               IT professionals in India with over 100,000 members.
             </p>
-            <p className="animate-fade-in-up" style={{ animationDelay: "0.2s", textAlign: "justify" }}>
+            <p className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
               Members include software developers, scientists, academicians, CIOs, CTOs, and vendors across various sectors.
               CSI currently has over 500 student branches across 73+ locations and aims to expand further into smaller towns and cities.
             </p>
-            <p className="animate-fade-in-up" style={{ animationDelay: "0.3s", textAlign: "justify" }}>
+            <p className="animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
               At KKWIEER, Prof. A. V. Kolapkar leads the student branch as Coordinator and has received the "Best Student Branch Coordinator" award.
               Faculty receive access to CSI Journals and Communications, and both students and faculty benefit from research grants and tech exposure.
               Prof. Dr. S. S. Sane, a key contributor, now serves as Regional Vice President for Maharashtra & Goa.

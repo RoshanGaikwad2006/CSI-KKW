@@ -82,13 +82,13 @@ export const Events = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white font-['Inter',sans-serif] text-slate-900 flex flex-col items-center overflow-x-clip">
+    <div className="min-h-screen w-full bg-transparent font-['Inter',sans-serif] text-slate-900 flex flex-col items-center overflow-x-clip">
       
       {/* Top Navigation Bar */}
       <Navbar />
 
       {/* Mode Switcher Bar (Interactive Live vs Case Study Showcase) */}
-      <div className="w-full bg-slate-50 border-b border-slate-200/90 py-2.5 px-4 sm:px-6">
+      <div className="w-full bg-white/80 backdrop-blur-md border-b border-slate-200/90 py-2.5 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 text-slate-600">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -233,10 +233,10 @@ export const Events = (): JSX.Element => {
                     <button
                       key={cat.id}
                       onClick={() => setActiveCategory(cat.id)}
-                      className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                      className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                         isActive
-                          ? "bg-[#1D68F2] text-white shadow-sm shadow-blue-500/20"
-                          : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900"
+                          ? "bg-[#1D68F2] text-white shadow-sm shadow-blue-500/20 scale-105"
+                          : "bg-white/80 text-slate-600 hover:bg-blue-50 hover:text-[#1D68F2] hover:scale-105 active:scale-95 border border-slate-200/60"
                       }`}
                     >
                       {cat.label}
@@ -252,7 +252,7 @@ export const Events = (): JSX.Element => {
                     <div
                       key={event.id}
                       onClick={() => handleSelectEvent(event.id as string)}
-                      className="group bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer"
+                      className="group bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-2xl hover:shadow-blue-500/15 hover:border-blue-400/80 hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer"
                     >
                       <div>
                         {/* Event Image Banner with Overlays */}
@@ -260,7 +260,7 @@ export const Events = (): JSX.Element => {
                           <img
                             src={event.image}
                             alt={event.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-black/10" />
 

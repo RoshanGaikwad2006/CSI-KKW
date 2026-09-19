@@ -129,15 +129,17 @@ export const Navbar: React.FC<NavbarProps> = () => {
                 key={index}
                 href={item.path}
                 onClick={(e) => handleNavClick(item, e)}
-                className={`relative px-4 py-2 text-base lg:text-[17px] font-semibold tracking-normal transition-colors rounded-full ${
+                className={`group relative px-4 py-2 text-base lg:text-[17px] font-semibold tracking-normal transition-all duration-200 rounded-full ${
                   active
                     ? "text-[#1D68F2]"
-                    : "text-[#334155] hover:text-[#1D68F2] hover:bg-blue-50/70"
+                    : "text-[#334155] hover:text-[#1D68F2] hover:bg-blue-50/80 hover:scale-105 active:scale-95"
                 }`}
               >
                 {item.label}
-                {active && (
+                {active ? (
                   <span className="absolute bottom-0 left-4 right-4 h-[2.5px] bg-[#1D68F2] rounded-full" />
+                ) : (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#1D68F2]/60 rounded-full group-hover:w-3/4 transition-all duration-200" />
                 )}
               </a>
             );

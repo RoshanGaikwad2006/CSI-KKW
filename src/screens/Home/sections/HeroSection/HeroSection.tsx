@@ -29,74 +29,6 @@ function useCountUp(target: number, duration = 1800, delay = 0) {
   return { value, start: () => setStarted(true) };
 }
 
-// ─── Particle canvas hook ────────────────────────────────────────────────────
-function useParticleCanvas(canvasRef: React.RefObject<HTMLCanvasElement>) {
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    type Dot = { x: number; y: number; size: number; vx: number; vy: number };
-    let particles: Dot[] = [];
-    let animId: number;
-
-    const resize = () => {
-      canvas.width  = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      particles = [];
-      const count = Math.floor((canvas.width * canvas.height) / 16000);
-      for (let i = 0; i < count; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 1.6 + 0.5,
-          vx: (Math.random() - 0.5) * 0.32,
-          vy: (Math.random() - 0.5) * 0.32,
-        });
-      }
-    };
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-        ctx.fillStyle = "rgba(29,110,245,0.28)";
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      // Connect nearby particles with lines
-      for (let a = 0; a < particles.length; a++) {
-        for (let b = a + 1; b < particles.length; b++) {
-          const dx = particles[a].x - particles[b].x;
-          const dy = particles[a].y - particles[b].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 90) {
-            ctx.strokeStyle = `rgba(29,110,245,${0.09 - dist / 1000})`;
-            ctx.lineWidth = 0.7;
-            ctx.beginPath();
-            ctx.moveTo(particles[a].x, particles[a].y);
-            ctx.lineTo(particles[b].x, particles[b].y);
-            ctx.stroke();
-          }
-        }
-      }
-      animId = requestAnimationFrame(animate);
-    };
-
-    resize();
-    animate();
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-    return () => { cancelAnimationFrame(animId); ro.disconnect(); };
-  }, [canvasRef]);
-}
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   onExploreEvents,
@@ -105,10 +37,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [phase, setPhase] = useState(0);
   const statsRef = useRef<HTMLDivElement>(null);
   const [statsVisible, setStatsVisible] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageWrapRef = useRef<HTMLDivElement>(null);
-
-  useParticleCanvas(canvasRef);
 
   // Staggered entrance
   useEffect(() => {
@@ -178,29 +107,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   return (
     <section
-      className="relative w-full overflow-hidden"
-      style={{ paddingTop: "5.5rem", paddingBottom: "2.5rem", background: "#f8faff" }}
+      className="relative w-full overflow-hidden border-b border-slate-200/80"
+      style={{ paddingTop: "5.5rem", paddingBottom: "2.5rem", background: "transparent" }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Particle canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none z-0"
-        style={{ opacity: 0.45 }}
-      />
 
-      {/* Ambient blue glow blobs */}
-      <div className="absolute -top-24 -left-24 w-[520px] h-[520px] bg-blue-100/60 rounded-full blur-[100px] pointer-events-none z-0" />
-      <div className="absolute top-1/4 -right-10 w-[420px] h-[420px] bg-blue-50/70 rounded-full blur-[110px] pointer-events-none z-0" />
-      <div className="absolute bottom-0 left-1/3 w-[360px] h-[360px] bg-indigo-50/50 rounded-full blur-[80px] pointer-events-none z-0" />
 
-      {/* Subtle dot grid */}
-      <div className="absolute inset-0 pointer-events-none z-0" style={{
-        backgroundSize: "36px 36px",
-        backgroundImage:
-          "linear-gradient(to right,rgba(29,110,245,0.03) 1px,transparent 1px),linear-gradient(to bottom,rgba(29,110,245,0.03) 1px,transparent 1px)",
-      }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -212,7 +125,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
             {/* Badge */}
             <div
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/70 shadow-sm mb-5"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50/90 border border-blue-200/70 shadow-xs mb-5 hover:bg-blue-100/70 hover:border-blue-300 hover:scale-105 hover:shadow-sm transition-all duration-300 cursor-default select-none"
               style={anim(phase >= 1, 0, 10)}
             >
               <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
@@ -229,7 +142,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <span className="block" style={anim(phase >= 2, 0, 26)}>Build Together</span>
               <span className="block" style={anim(phase >= 2, 0.12, 26)}>
                 for a Better{" "}
-                <span className="text-[#1D68F2] relative inline-block">
+                <span className="text-[#1D68F2] relative inline-block transition-transform duration-300 hover:scale-105 cursor-default">
                   Tomorrow
                   <svg
                     className="absolute -bottom-2 left-0 w-full pointer-events-none"
@@ -255,16 +168,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="flex flex-wrap items-center gap-4" style={anim(phase >= 4, 0, 10)}>
               <Button
                 onClick={() => onExploreEvents ? onExploreEvents() : scrollTo("events-section")}
-                className="bg-[#1D68F2] hover:bg-blue-700 text-white font-semibold text-base px-7 py-3.5 rounded-full flex items-center gap-2 group hover:-translate-y-0.5 transition-all duration-300"
+                className="bg-[#1D68F2] hover:bg-blue-700 text-white font-semibold text-base px-7 py-3.5 rounded-full flex items-center gap-2 group hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/35 active:translate-y-0 active:scale-95 transition-all duration-300 cursor-pointer"
                 style={{ boxShadow: "0 8px 28px -6px rgba(29,110,245,0.42)" }}
               >
                 <span>Explore Events</span>
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
               </Button>
               <Button
                 onClick={() => onAboutCsi ? onAboutCsi() : scrollTo("AboutUs")}
                 variant="outline"
-                className="bg-white hover:bg-slate-50 text-[#0A192F] border-slate-200 hover:border-slate-300 hover:text-[#1D68F2] font-semibold text-base px-7 py-3.5 rounded-full shadow-sm hover:-translate-y-0.5 transition-all duration-300"
+                className="bg-white hover:bg-blue-50/60 text-[#0A192F] border-slate-200 hover:border-[#1D68F2]/60 hover:text-[#1D68F2] font-semibold text-base px-7 py-3.5 rounded-full shadow-xs hover:shadow-md hover:-translate-y-1 active:translate-y-0 active:scale-95 transition-all duration-300 cursor-pointer"
               >
                 About CSI
               </Button>
@@ -347,54 +260,58 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
               {/* Stat 1 — Student Members */}
               <div 
-                className="flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-slate-50/80 transition-colors duration-200" 
+                className="group relative flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-blue-50/50 transition-all duration-300 cursor-default" 
                 style={{ ...anim(phase >= 5, 0), transitionDelay: "0s" }}
               >
-                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] leading-none tabular-nums">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] group-hover:text-[#1D68F2] group-hover:scale-105 leading-none tabular-nums transition-all duration-300">
                   {statsVisible ? `${members.value}+` : "0+"}
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-slate-600 mt-2 whitespace-nowrap">
+                <div className="text-xs sm:text-sm font-medium text-slate-600 group-hover:text-slate-900 mt-2 whitespace-nowrap transition-colors duration-200">
                   Student Members
                 </div>
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2.5px] bg-[#1D68F2] group-hover:w-12 transition-all duration-300 rounded-full" />
               </div>
 
               {/* Stat 2 — Events Organized */}
               <div 
-                className="flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-slate-50/80 transition-colors duration-200" 
+                className="group relative flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-blue-50/50 transition-all duration-300 cursor-default" 
                 style={{ ...anim(phase >= 5, 0), transitionDelay: "0.07s" }}
               >
-                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] leading-none tabular-nums">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] group-hover:text-[#1D68F2] group-hover:scale-105 leading-none tabular-nums transition-all duration-300">
                   {statsVisible ? `${events.value}+` : "0+"}
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-slate-600 mt-2 whitespace-nowrap">
+                <div className="text-xs sm:text-sm font-medium text-slate-600 group-hover:text-slate-900 mt-2 whitespace-nowrap transition-colors duration-200">
                   Events Organized
                 </div>
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2.5px] bg-[#1D68F2] group-hover:w-12 transition-all duration-300 rounded-full" />
               </div>
 
               {/* Stat 3 — Team Members */}
               <div 
-                className="flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-slate-50/80 transition-colors duration-200" 
+                className="group relative flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-blue-50/50 transition-all duration-300 cursor-default" 
                 style={{ ...anim(phase >= 5, 0), transitionDelay: "0.14s" }}
               >
-                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] leading-none tabular-nums">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] group-hover:text-[#1D68F2] group-hover:scale-105 leading-none tabular-nums transition-all duration-300">
                   {statsVisible ? team.value : "0"}
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-slate-600 mt-2 whitespace-nowrap">
+                <div className="text-xs sm:text-sm font-medium text-slate-600 group-hover:text-slate-900 mt-2 whitespace-nowrap transition-colors duration-200">
                   Team Members
                 </div>
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2.5px] bg-[#1D68F2] group-hover:w-12 transition-all duration-300 rounded-full" />
               </div>
 
               {/* Stat 4 — Best Branch Awards */}
               <div 
-                className="flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-slate-50/80 transition-colors duration-200" 
+                className="group relative flex flex-col items-center justify-center text-center px-4 py-5 sm:py-6 hover:bg-blue-50/50 transition-all duration-300 cursor-default" 
                 style={{ ...anim(phase >= 5, 0), transitionDelay: "0.21s" }}
               >
-                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] leading-none tabular-nums">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0A192F] group-hover:text-[#1D68F2] group-hover:scale-105 leading-none tabular-nums transition-all duration-300">
                   {statsVisible ? `${awards.value}+` : "0+"}
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-slate-600 mt-2 whitespace-nowrap">
+                <div className="text-xs sm:text-sm font-medium text-slate-600 group-hover:text-slate-900 mt-2 whitespace-nowrap transition-colors duration-200">
                   Best Branch Awards
                 </div>
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2.5px] bg-[#1D68F2] group-hover:w-12 transition-all duration-300 rounded-full" />
               </div>
 
             </div>

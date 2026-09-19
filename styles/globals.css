@@ -13,6 +13,7 @@ html {
 
 body {
   font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f8faff;
 }
 
 /* Custom geometric clipping for reference hero visual */

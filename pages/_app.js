@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import '../styles/globals.css'
 import '../src/index.css'
+import ParticleCanvas from '../src/components/ui/ParticleCanvas'
 
 export default function App({ Component, pageProps }) {
   const router = useRouter()
@@ -32,6 +33,7 @@ export default function App({ Component, pageProps }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/csi.png" />
       </Head>
+      <ParticleCanvas />
       <Component {...pageProps} />
     </>
   )

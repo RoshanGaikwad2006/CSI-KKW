@@ -139,9 +139,9 @@ const CustomButton: React.FC<{
     "font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 inline-flex items-center justify-center";
 
   const variantClasses = {
-    default: "bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500",
+    default: "bg-[#1D68F2] hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all duration-200",
     outline:
-      "border-2 border-gray-300 hover:border-blue-600 text-gray-700 hover:text-blue-600 bg-white",
+      "border border-slate-200 hover:border-[#1D68F2] text-slate-700 hover:text-[#1D68F2] hover:bg-blue-50/70 bg-white/90 backdrop-blur-sm hover:scale-105 active:scale-95 transition-all duration-200 shadow-xs",
   };
 
   const sizeClasses = {
@@ -201,7 +201,7 @@ export const Committee = (): JSX.Element => {
   const hasMoreMembers = visibleItems < sortedMembers.length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-transparent">
       <Navbar />
 
       {/* Main Content */}

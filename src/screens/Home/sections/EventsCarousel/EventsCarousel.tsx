@@ -117,7 +117,7 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
   };
 
   return (
-    <section id="events-section" className="w-full py-14 sm:py-16 bg-slate-50/60 border-y border-slate-100">
+    <section id="events-section" className="w-full py-14 sm:py-16 bg-transparent border-b border-slate-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -142,14 +142,14 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
             <div className="hidden sm:flex items-center gap-2">
               <button
                 onClick={scrollLeft}
-                className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-700 transition-colors shadow-xs focus:outline-none"
+                className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-[#1D68F2] hover:text-white hover:border-[#1D68F2] hover:scale-110 active:scale-95 flex items-center justify-center text-slate-700 transition-all duration-200 shadow-sm focus:outline-none cursor-pointer"
                 aria-label="Previous events"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={scrollRight}
-                className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-700 transition-colors shadow-xs focus:outline-none"
+                className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-[#1D68F2] hover:text-white hover:border-[#1D68F2] hover:scale-110 active:scale-95 flex items-center justify-center text-slate-700 transition-all duration-200 shadow-sm focus:outline-none cursor-pointer"
                 aria-label="Next events"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -161,21 +161,21 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
         {/* Events Cards Row */}
         <div
           ref={scrollContainerRef}
-          className="flex gap-6 overflow-x-auto pb-4 pt-1 snap-x scrollbar-none"
+          className="flex gap-6 overflow-x-auto pb-6 pt-2 snap-x scrollbar-none"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {staticUpcomingEvents.map((event) => (
             <div
               key={event.id}
               onClick={() => handleCardAction(event)}
-              className="group cursor-pointer flex-shrink-0 w-[300px] sm:w-[350px] lg:w-[380px] bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 overflow-hidden flex flex-col justify-between snap-start"
+              className="group cursor-pointer flex-shrink-0 w-[300px] sm:w-[350px] lg:w-[380px] bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-2xl hover:shadow-blue-500/15 hover:border-blue-400/80 hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col justify-between snap-start"
             >
               {/* Card Image with Badges */}
               <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
                 <img
                   src={event.image}
                   alt={event.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />
                 
                 {/* Dark gradient overlay */}
