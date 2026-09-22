@@ -447,6 +447,7 @@ export default function VisionWeekRegisterPage() {
                         <option value="Computer">Computer</option>
                         <option value="Information Technology">IT</option>
                         <option value="AIDS">AIDS</option>
+                        <option value="CSD">CSD</option>
                         <option value="E&TC">E&amp;TC</option>
                         <option value="Mechanical">Mechanical</option>
                         <option value="Civil">Civil</option>

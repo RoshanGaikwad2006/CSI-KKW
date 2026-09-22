@@ -433,6 +433,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
                     <option value="Computer">Computer</option>
                     <option value="Information Technology">Information Technology</option>
                     <option value="AIDS">AIDS</option>
+                    <option value="CSD">CSD</option>
                     <option value="E&TC">E&amp;TC</option>
                     <option value="Mechanical">Mechanical</option>
                     <option value="Civil">Civil</option>
