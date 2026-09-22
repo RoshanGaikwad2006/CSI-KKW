@@ -33,13 +33,13 @@ export const staticUpcomingEvents: UpcomingEventItem[] = [
   {
     id: "vision-week-2026",
     title: "Vision Week 2026",
-    subtitle: "5-Day Flagship Conclave: AI, SIH, Placement & GATE Prep",
+    subtitle: "Smarter Skills, Brighter Career • Explore • Create • Work Smarter",
     category: "FLAGSHIP",
     day: "26",
     month: "SEP",
     dateRange: "Sep 26 – 30, 2026",
-    location: "Online & Campus",
-    image: "/images/cohort.jpg",
+    location: "Online Sessions",
+    image: "/images/vision-week-cover.png",
     isVisionWeek: true,
   },
   {

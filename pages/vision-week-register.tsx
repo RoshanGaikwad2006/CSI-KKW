@@ -15,11 +15,11 @@ import {
 import { Button } from "../src/components/ui/button";
 
 const SESSIONS_LIST = [
-  { id: "day1", day: "Day 1 (26 Sept)", title: "AI Tools & Workflows" },
-  { id: "day2", day: "Day 2 (27 Sept)", title: "SIH (Smart India Hackathon)" },
-  { id: "day3", day: "Day 3 (28 Sept)", title: "Placement & Career Guidance" },
-  { id: "day4", day: "Day 4 (29 Sept)", title: "GATE – Information & Guidance" },
-  { id: "day5", day: "Day 5 (30 Sept)", title: "Soft Skills & Professional Grooming" },
+  { id: "day1", day: "Day 1 (26 Sept)", title: "AI Tools" },
+  { id: "day2", day: "Day 2 (27 Sept)", title: "SIH Session" },
+  { id: "day3", day: "Day 3 (28 Sept)", title: "Placement Roadmap" },
+  { id: "day4", day: "Day 4 (29 Sept)", title: "Expert Session" },
+  { id: "day5", day: "Day 5 (30 Sept)", title: "Higher Studies" },
 ];
 
 const DEFAULT_FORM = {
@@ -38,38 +38,41 @@ const DEFAULT_FORM = {
 
 const SESSION_PLAN = [
   {
-    day: "Day 1 (26 Sept)",
-    title: "AI Tools & Workflows",
-    subtitle: "Hands-on exposure to modern generative AI, developer tools & productivity workflows",
+    day: "Day 1 (26 Sept 2026)",
+    title: "AI Tools",
+    subtitle: "Hands-on exploration of generative AI, developer tools & smart productivity workflows",
   },
   {
-    day: "Day 2 (27 Sept)",
-    title: "SIH (Smart India Hackathon)",
-    subtitle: "Problem statement analysis, ideation, team formation & hackathon strategy",
+    day: "Day 2 (27 Sept 2026)",
+    title: "SIH Session",
+    subtitle: "Smart India Hackathon: Problem statement analysis, ideation, team formation & winning strategy",
   },
   {
-    day: "Day 3 (28 Sept)",
-    title: "Placement & Career Guidance",
-    subtitle: "Resume optimization, interview preparation, tech stacks & campus drive insights",
+    day: "Day 3 (28 Sept 2026)",
+    title: "Placement Roadmap",
+    subtitle: "Comprehensive roadmap for campus drives, resume building, tech skills & interview preparation",
   },
   {
-    day: "Day 4 (29 Sept)",
-    title: "GATE – Information & Guidance",
-    subtitle: "Exam pattern breakdown, preparation roadmap, PSUs & higher studies guidance",
+    day: "Day 4 (29 Sept 2026)",
+    title: "Expert Session",
+    subtitle: "Exclusive interactive session with industry leaders sharing real-world insights & corporate expectations",
   },
   {
-    day: "Day 5 (30 Sept)",
-    title: "Soft Skills & Professional Grooming",
-    subtitle: "Effective communication, public speaking, leadership & team collaboration",
+    day: "Day 5 (30 Sept 2026)",
+    title: "Higher Studies",
+    subtitle: "Comprehensive guidance on GATE, GRE, CAT, MS, MBA & academic/research career pathways",
   },
 ];
 
-
 const EVENT_DETAILS = [
-  { label: "DATE", value: "Sep 26 – 30, 2026" },
-  { label: "TIME", value: "" },
-  { label: "VENUE", value: "Online" },
-  { label: "ELIGIBILITY", value: "All Branches & Academic Years" }
+  { label: "DATES", value: "26/09/2026 – 30/09/2026" },
+  { label: "MODE", value: "Online Sessions" },
+  { label: "REGISTRATION FEE", value: "₹50 Only" },
+  { label: "THEME", value: "Smarter Skills, Brighter Career" },
+  { label: "TAGLINE", value: "Explore • Create • Work Smarter" },
+  { label: "ORGANIZER", value: "CSI Students' Chapter Nashik 2026-27" },
+  { label: "INSTITUTE", value: "KKWIEER, Nashik" },
+  { label: "ELIGIBILITY", value: "Open to All Students" },
 ];
 
 export default function VisionWeekRegisterPage() {
@@ -264,13 +267,25 @@ export default function VisionWeekRegisterPage() {
             <div className="absolute right-0 top-0 w-96 h-96 bg-[#1D68F2]/10 rounded-full blur-3xl pointer-events-none" />
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
+                <div className="text-[11px] font-bold tracking-widest text-blue-400 uppercase mb-1">
+                  K. K. Wagh Institute of Engineering Education &amp; Research, Nashik • CSI Students' Chapter Nashik 2026-27
+                </div>
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight font-display text-white">
                   VISION WEEK <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">2026</span>
                 </h1>
+                <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1">
+                  SMARTER SKILLS BRIGHTER CAREER • EXPLORE • CREATE • WORK SMARTER
+                </p>
               </div>
-              <div className="flex items-center gap-2 self-start md:self-auto">
-                <span className="px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 text-xs font-semibold text-slate-200 font-sans">
-                  Sep 26 – 30, 2026
+              <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+                <span className="px-3.5 py-1.5 rounded-xl bg-blue-500/20 border border-blue-400/30 text-xs font-bold text-blue-200">
+                  ONLINE SESSIONS
+                </span>
+                <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-xs font-bold text-emerald-300">
+                  REGISTRATION FEES: ₹50
+                </span>
+                <span className="px-3.5 py-1.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 text-xs font-semibold text-slate-200 font-sans">
+                  26/09/2026 – 30/09/2026
                 </span>
               </div>
             </div>
@@ -658,17 +673,17 @@ export default function VisionWeekRegisterPage() {
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
 
                 {/* 1. PAYMENT CARD */}
-                <div className="md:col-span-5 bg-white rounded-2xl border border-slate-300 shadow-sm p-6 flex flex-col items-center text-center">
-                  <h2 className="w-full text-sm font-bold text-[#0A192F] font-display tracking-wider uppercase mb-4 pb-2 border-b border-slate-200 text-left">
+                <div className="md:col-span-5 bg-white rounded-2xl border border-slate-300 shadow-sm p-4 sm:p-5 flex flex-col items-center text-center">
+                  <h2 className="w-full text-xs sm:text-sm font-bold text-[#0A192F] font-display tracking-wider uppercase mb-3 pb-2 border-b border-slate-200 text-left">
                     PAYMENT
                   </h2>
 
-                  <div className="flex flex-col items-center gap-4 my-2">
-                    <div className="w-52 h-52 sm:w-56 sm:h-56 rounded-2xl border border-slate-200 bg-slate-50 p-3 flex items-center justify-center relative overflow-hidden shadow-xs">
+                  <div className="w-full flex flex-col items-center gap-3 my-1">
+                    <div className="w-full max-w-[280px] sm:max-w-[310px] rounded-2xl border border-slate-800 bg-black p-2 flex items-center justify-center relative overflow-hidden shadow-lg">
                       <img
                         src="/images/payment-qr.png"
-                        alt="Payment QR Code"
-                        className="w-full h-full object-contain"
+                        alt="PhonePe Payment QR Code"
+                        className="w-full h-auto object-contain rounded-xl"
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).style.display = "none";
                           (e.currentTarget.nextElementSibling as HTMLElement).style.display = "flex";
@@ -684,8 +699,8 @@ export default function VisionWeekRegisterPage() {
                       ENTRY FEE: ₹50
                     </span>
 
-                    <p className="text-[11px] text-slate-500 mt-1 font-sans leading-snug">
-                      Scan QR code to pay entry fee &amp; attach transaction screenshot in form.
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-sans leading-snug text-center">
+                      Scan using PhonePe or any UPI app to pay ₹50, then enter your UTR/UPI ID &amp; upload screenshot below.
                     </p>
                   </div>
                 </div>

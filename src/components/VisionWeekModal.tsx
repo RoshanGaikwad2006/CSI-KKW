@@ -18,11 +18,11 @@ interface VisionWeekModalProps {
 }
 
 const SESSIONS_LIST = [
-  { id: "day1", day: "Day 1 (26 Sept)", title: "AI Tools & Workflows" },
-  { id: "day2", day: "Day 2 (27 Sept)", title: "SIH (Smart India Hackathon)" },
-  { id: "day3", day: "Day 3 (28 Sept)", title: "Placement & Career Guidance" },
-  { id: "day4", day: "Day 4 (29 Sept)", title: "GATE – Information & Guidance" },
-  { id: "day5", day: "Day 5 (30 Sept)", title: "Soft Skills & Professional Grooming" },
+  { id: "day1", day: "Day 1 (26 Sept)", title: "AI Tools" },
+  { id: "day2", day: "Day 2 (27 Sept)", title: "SIH Session" },
+  { id: "day3", day: "Day 3 (28 Sept)", title: "Placement Roadmap" },
+  { id: "day4", day: "Day 4 (29 Sept)", title: "Expert Session" },
+  { id: "day5", day: "Day 5 (30 Sept)", title: "Higher Studies" },
 ];
 
 export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
@@ -206,7 +206,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
             Vision Week 2026
           </h2>
           <p className="text-slate-300 text-xs sm:text-sm mt-1">
-            5-Day Career Elevation &amp; Skill Building Conclave
+            Smarter Skills, Brighter Career • Explore • Create • Work Smarter
           </p>
 
           <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-slate-300 font-medium">
@@ -216,7 +216,10 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
             </span>
             <span className="flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-[#1D68F2]" />
-              <span>Campus Wide &amp; Advanced Labs</span>
+              <span>Online Sessions</span>
+            </span>
+            <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+              <span>Fee: ₹50</span>
             </span>
           </div>
 
