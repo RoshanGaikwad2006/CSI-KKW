@@ -44,6 +44,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
   });
 
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
+  const [otherDepartment, setOtherDepartment] = useState("");
   const [ticketId, setTicketId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -139,6 +140,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
 
       const payload = {
         ...formData,
+        department: formData.department === "Other" ? (otherDepartment.trim() || "Other") : formData.department,
         track: sessionsText,
         selectedSessions,
         upiId: formData.upiId.trim(),
@@ -170,6 +172,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
     setSubmitted(false);
     setTicketId(null);
     setError(null);
+    setOtherDepartment("");
     setFormData({
       fullName: "",
       email: "",
@@ -442,6 +445,15 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
                     <option value="Robotics & Automation">Robotics &amp; Automation</option>
                     <option value="Other">Other</option>
                   </select>
+                  {formData.department === "Other" && (
+                    <input
+                      type="text"
+                      placeholder="Enter your department"
+                      value={otherDepartment}
+                      onChange={(e) => setOtherDepartment(e.target.value)}
+                      className="mt-2 w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1D68F2] focus:border-transparent transition-all"
+                    />
+                  )}
                 </div>
 
                 <div>

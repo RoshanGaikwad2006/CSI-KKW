@@ -80,6 +80,7 @@ export default function VisionWeekRegisterPage() {
   const allSessionLabels = SESSIONS_LIST.map((s) => `${s.day}: ${s.title}`);
   const [formData, setFormData] = useState(DEFAULT_FORM);
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
+  const [otherDepartment, setOtherDepartment] = useState("");
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [ticketId, setTicketId] = useState<string | null>(null);
@@ -197,6 +198,7 @@ export default function VisionWeekRegisterPage() {
 
       const payload = {
         ...formData,
+        department: formData.department === "Other" ? (otherDepartment.trim() || "Other") : formData.department,
         track: sessionsText,
         selectedSessions,
         upiId: formData.upiId.trim(),
@@ -227,6 +229,7 @@ export default function VisionWeekRegisterPage() {
     setSubmitted(false);
     setTicketId(null);
     setError(null);
+    setOtherDepartment("");
     setFormData(DEFAULT_FORM);
     setSelectedSessions([]);
     setScreenshotFile(null);
@@ -456,6 +459,15 @@ export default function VisionWeekRegisterPage() {
                         <option value="Robotics & Automation">Robotics &amp; Automation</option>
                         <option value="Other">Other</option>
                       </select>
+                      {formData.department === "Other" && (
+                        <input
+                          type="text"
+                          placeholder="Enter your department"
+                          value={otherDepartment}
+                          onChange={(e) => setOtherDepartment(e.target.value)}
+                          className="mt-2 w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                        />
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
