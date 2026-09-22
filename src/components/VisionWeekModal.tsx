@@ -45,6 +45,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
 
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
   const [otherDepartment, setOtherDepartment] = useState("");
+  const [otherCollege, setOtherCollege] = useState("");
   const [ticketId, setTicketId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -140,6 +141,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
 
       const payload = {
         ...formData,
+        college: formData.college === "Other" ? (otherCollege.trim() || "Other") : formData.college,
         department: formData.department === "Other" ? (otherDepartment.trim() || "Other") : formData.department,
         track: sessionsText,
         selectedSessions,
@@ -173,6 +175,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
     setTicketId(null);
     setError(null);
     setOtherDepartment("");
+    setOtherCollege("");
     setFormData({
       fullName: "",
       email: "",
@@ -252,17 +255,11 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
               </p>
 
               <div className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left mb-6 text-xs text-slate-700 space-y-1.5">
-                {ticketId && (
-                  <div className="flex justify-between border-b border-blue-200 bg-blue-50/80 -mx-4 -mt-4 px-4 py-2.5 rounded-t-2xl mb-1.5">
-                    <span className="font-semibold text-blue-700">Ticket ID:</span>
-                    <span className="font-mono font-extrabold text-[#1D68F2] tracking-wider">{ticketId}</span>
-                  </div>
-                )}
                 <div><span className="font-semibold text-slate-500">Candidate Email:</span> {formData.email}</div>
                 <div><span className="font-semibold text-slate-500">Phone:</span> {formData.phone}</div>
                 <div><span className="font-semibold text-slate-500">Sessions:</span> {selectedSessions.length === SESSIONS_LIST.length ? "All 5 Days (Full Conclave)" : selectedSessions.join(", ")}</div>
                 <div><span className="font-semibold text-slate-500">UPI ID / UTR:</span> {formData.upiId}</div>
-                <div><span className="font-semibold text-slate-500">College:</span> {formData.college}</div>
+                <div><span className="font-semibold text-slate-500">College:</span> {formData.college === "Other" ? (otherCollege || "Other") : formData.college}</div>
               </div>
 
               {/* Action buttons */}
@@ -480,13 +477,47 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
                   <label className="block text-xs font-bold text-[#0A192F] uppercase tracking-wider mb-1">
                     College Name
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="college"
                     value={formData.college}
                     onChange={handleChange}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D68F2] focus:border-transparent transition-all"
-                  />
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1D68F2] focus:border-transparent transition-all text-slate-900"
+                  >
+                    <option value="K. K. Wagh Institute of Engineering Education & Research, Nashik">
+                      K. K. Wagh Institute of Engineering Education &amp; Research, Nashik
+                    </option>
+                    <option value="KK Wagh Polytechnic, Nashik">
+                      KK Wagh Polytechnic, Nashik
+                    </option>
+                    <option value="MVP Karmaveer Adv. Baburao Ganpatrao Thakare College of Engineering (KBTCOE), Nashik">
+                      MVP Karmaveer Adv. Baburao Ganpatrao Thakare College of Engineering (KBTCOE), Nashik
+                    </option>
+                    <option value="Gokhale Education Society's R. H. Sapat College of Engineering, Management Studies and Research, Nashik">
+                      Gokhale Education Society's R. H. Sapat College of Engineering, Management Studies and Research, Nashik
+                    </option>
+                    <option value="MET's Institute of Engineering, Nashik">
+                      MET's Institute of Engineering, Nashik
+                    </option>
+                    <option value="Sandip Institute of Technology & Research Centre (SITRC), Nashik">
+                      Sandip Institute of Technology &amp; Research Centre (SITRC), Nashik
+                    </option>
+                    <option value="Guru Gobind Singh College of Engineering and Research Centre, Nashik">
+                      Guru Gobind Singh College of Engineering and Research Centre, Nashik
+                    </option>
+                    <option value="Matoshri College of Engineering and Research Centre, Nashik">
+                      Matoshri College of Engineering and Research Centre, Nashik
+                    </option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {formData.college === "Other" && (
+                    <input
+                      type="text"
+                      placeholder="Enter your college name"
+                      value={otherCollege}
+                      onChange={(e) => setOtherCollege(e.target.value)}
+                      className="mt-2 w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1D68F2] focus:border-transparent transition-all"
+                    />
+                  )}
                 </div>
 
                 <div>
