@@ -7,7 +7,6 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "../../../../components/ui/button";
 
@@ -198,7 +197,6 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
                       ? "bg-blue-600 text-white border-blue-400 shadow-md animate-pulse"
                       : "bg-[#0A192F]/80 text-white border-white/20"
                   }`}>
-                    {event.isVisionWeek && <Sparkles className="w-2.5 h-2.5 text-amber-300" />}
                     <span>{event.category}</span>
                   </span>
                 </div>
