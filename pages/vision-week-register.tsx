@@ -355,7 +355,7 @@ export default function VisionWeekRegisterPage() {
 
                   <div className="flex flex-col gap-3 w-full font-sans">
                     <a
-                      href="https://chat.whatsapp.com/E8rTeMVGUwkLMqo6pecxzZ"
+                      href="https://chat.whatsapp.com/IOXB6jA3vtV7Bx0IY10KTb"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba56] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:shadow-lg"

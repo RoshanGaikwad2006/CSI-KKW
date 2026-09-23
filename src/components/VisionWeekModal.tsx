@@ -265,7 +265,7 @@ export const VisionWeekModal: React.FC<VisionWeekModalProps> = ({
               {/* Action buttons */}
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
                 <a
-                  href="https://chat.whatsapp.com/E8rTeMVGUwkLMqo6pecxzZ"
+                  href="https://chat.whatsapp.com/IOXB6jA3vtV7Bx0IY10KTb"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba56] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all"
