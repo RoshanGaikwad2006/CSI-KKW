@@ -26,7 +26,7 @@ flowchart LR
 
 | A | B | C | D | E | F | G | H | I | J | K | L |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| **Ticket ID** | **Event Name** | **Full Name** | **Email** | **Contact Number** | **Department** | **Year** | **Sessions Attending** | **UPI ID / UTR** | **College / PRN** | **Payment Proof URL** | **Timestamp** |
+| **Ticket ID** | **Event Name** | **Full Name** | **Email** | **Contact Number** | **Department** | **Year** | **Sessions Attending** | **UPI ID / UTR** | **College** | **Payment Proof URL** | **Timestamp** |
 
 ---
 
@@ -42,7 +42,7 @@ When 400 students register, multiple students may click submit simultaneously. S
  * CSI KKWIEER Event Registration Webhook
  * Handles concurrent student submissions safely using LockService.
  * Perfectly mapped to your 12 Google Sheet columns:
- * [Ticket ID, Event Name, Full Name, Email, Contact Number, Department, Year, Sessions Attending, UPI ID / UTR, College / PRN, Payment Proof URL, Timestamp]
+ * [Ticket ID, Event Name, Full Name, Email, Contact Number, Department, Year, Sessions Attending, UPI ID / UTR, College, Payment Proof URL, Timestamp]
  */
 function doPost(e) {
   // 1. Script Lock to prevent race conditions during traffic spikes
@@ -83,11 +83,10 @@ function doPost(e) {
 
     var upiId = data.upiId || "N/A";
     
-    var collegePrn = data.college || "";
+    var college = data.college || "KKWIEER";
     if (data.prn) {
-      collegePrn = collegePrn ? collegePrn + " (PRN: " + data.prn + ")" : "PRN: " + data.prn;
+      college = college + " (PRN: " + data.prn + ")";
     }
-    if (!collegePrn) collegePrn = "KKWIEER";
 
     var screenshot = data.paymentScreenshot || data.paymentProofUrl || "N/A";
     var timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
@@ -103,7 +102,7 @@ function doPost(e) {
       year,            // Col G: Year
       sessions,        // Col H: Sessions Attending
       upiId,           // Col I: UPI ID / UTR
-      collegePrn,      // Col J: College / PRN
+      college,         // Col J: College
       screenshot,      // Col K: Payment Proof URL
       timestamp        // Col L: Timestamp
     ]);

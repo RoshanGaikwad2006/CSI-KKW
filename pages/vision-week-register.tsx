@@ -29,7 +29,6 @@ const DEFAULT_FORM = {
   college: "K. K. Wagh Institute of Engineering Education & Research, Nashik",
   department: "",
   year: "Third Year (TE)",
-  prn: "",
   track: "",
   upiId: "",
   comments: "",
@@ -554,67 +553,52 @@ const compressImage = (
                     </div>
                   </div>
 
-                  {/* College & Roll No / PRN */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
-                        COLLEGE NAME
-                      </label>
-                      <select
-                        name="college"
-                        value={formData.college}
-                        onChange={handleChange}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
-                      >
-                        <option value="K. K. Wagh Institute of Engineering Education & Research, Nashik">
-                          K. K. Wagh Institute of Engineering Education &amp; Research, Nashik
-                        </option>
-                        <option value="KK Wagh Polytechnic, Nashik">
-                          KK Wagh Polytechnic, Nashik
-                        </option>
-                        <option value="MVP Karmaveer Adv. Baburao Ganpatrao Thakare College of Engineering (KBTCOE), Nashik">
-                          MVP Karmaveer Adv. Baburao Ganpatrao Thakare College of Engineering (KBTCOE), Nashik
-                        </option>
-                        <option value="Gokhale Education Society's R. H. Sapat College of Engineering, Management Studies and Research, Nashik">
-                          Gokhale Education Society's R. H. Sapat College of Engineering, Management Studies and Research, Nashik
-                        </option>
-                        <option value="MET's Institute of Engineering, Nashik">
-                          MET's Institute of Engineering, Nashik
-                        </option>
-                        <option value="Sandip Institute of Technology & Research Centre (SITRC), Nashik">
-                          Sandip Institute of Technology &amp; Research Centre (SITRC), Nashik
-                        </option>
-                        <option value="Guru Gobind Singh College of Engineering and Research Centre, Nashik">
-                          Guru Gobind Singh College of Engineering and Research Centre, Nashik
-                        </option>
-                        <option value="Matoshri College of Engineering and Research Centre, Nashik">
-                          Matoshri College of Engineering and Research Centre, Nashik
-                        </option>
-                        <option value="Other">Other</option>
-                      </select>
-                      {formData.college === "Other" && (
-                        <input
-                          type="text"
-                          placeholder="Enter your college name"
-                          value={otherCollege}
-                          onChange={(e) => setOtherCollege(e.target.value)}
-                          className="mt-2 w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
-                        />
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
-                        ROLL / PRN
-                      </label>
+                  {/* College Name */}
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
+                      COLLEGE NAME
+                    </label>
+                    <select
+                      name="college"
+                      value={formData.college}
+                      onChange={handleChange}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                    >
+                      <option value="K. K. Wagh Institute of Engineering Education & Research, Nashik">
+                        K. K. Wagh Institute of Engineering Education &amp; Research, Nashik
+                      </option>
+                      <option value="KK Wagh Polytechnic, Nashik">
+                        KK Wagh Polytechnic, Nashik
+                      </option>
+                      <option value="MVP Karmaveer Adv. Baburao Ganpatrao Thakare College of Engineering (KBTCOE), Nashik">
+                        MVP Karmaveer Adv. Baburao Ganpatrao Thakare College of Engineering (KBTCOE), Nashik
+                      </option>
+                      <option value="Gokhale Education Society's R. H. Sapat College of Engineering, Management Studies and Research, Nashik">
+                        Gokhale Education Society's R. H. Sapat College of Engineering, Management Studies and Research, Nashik
+                      </option>
+                      <option value="MET's Institute of Engineering, Nashik">
+                        MET's Institute of Engineering, Nashik
+                      </option>
+                      <option value="Sandip Institute of Technology & Research Centre (SITRC), Nashik">
+                        Sandip Institute of Technology &amp; Research Centre (SITRC), Nashik
+                      </option>
+                      <option value="Guru Gobind Singh College of Engineering and Research Centre, Nashik">
+                        Guru Gobind Singh College of Engineering and Research Centre, Nashik
+                      </option>
+                      <option value="Matoshri College of Engineering and Research Centre, Nashik">
+                        Matoshri College of Engineering and Research Centre, Nashik
+                      </option>
+                      <option value="Other">Other</option>
+                    </select>
+                    {formData.college === "Other" && (
                       <input
                         type="text"
-                        name="prn"
-                        value={formData.prn}
-                        onChange={handleChange}
-                        placeholder="21U123"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                        placeholder="Enter your college name"
+                        value={otherCollege}
+                        onChange={(e) => setOtherCollege(e.target.value)}
+                        className="mt-2 w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
                       />
-                    </div>
+                    )}
                   </div>
 
                   {/* Sessions Selection */}
