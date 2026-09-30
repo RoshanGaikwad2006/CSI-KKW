@@ -24,7 +24,6 @@ export interface UpcomingEventItem {
   dateRange: string;
   location: string;
   image: string;
-  isVisionWeek?: boolean;
   externalLink?: string;
 }
 
@@ -39,7 +38,6 @@ export const staticUpcomingEvents: UpcomingEventItem[] = [
     dateRange: "Sep 26 – 30, 2026",
     location: "Online Sessions",
     image: "/images/vision-week-cover.png",
-    isVisionWeek: true,
   },
   {
     id: "expert-talk-2026",
@@ -106,9 +104,7 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
   };
 
   const handleCardAction = (event: UpcomingEventItem) => {
-    if (event.isVisionWeek) {
-      router.push("/vision-week-register");
-    } else if (event.externalLink) {
+    if (event.externalLink) {
       window.open(event.externalLink, "_blank");
     } else {
       router.push("/events");
@@ -192,11 +188,7 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
 
                 {/* Category Pill (Top Right) */}
                 <div className="absolute top-3 right-3">
-                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider uppercase backdrop-blur-md border ${
-                    event.isVisionWeek
-                      ? "bg-blue-600 text-white border-blue-400 shadow-md animate-pulse"
-                      : "bg-[#0A192F]/80 text-white border-white/20"
-                  }`}>
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider uppercase backdrop-blur-md border bg-[#0A192F]/80 text-white border-white/20">
                     <span>{event.category}</span>
                   </span>
                 </div>
@@ -226,18 +218,11 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
                     </div>
                   </div>
 
-                  {/* Circular Arrow Button / Register action */}
+                  {/* Circular Arrow Button */}
                   <div className="flex items-center">
-                    {event.isVisionWeek ? (
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-50 text-[#1D68F2] text-xs font-bold group-hover:bg-[#1D68F2] group-hover:text-white transition-all shadow-xs">
-                        <span>Register</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </span>
-                    ) : (
-                      <div className="w-9 h-9 rounded-full border border-slate-200 group-hover:border-[#1D68F2] group-hover:bg-[#1D68F2] text-slate-600 group-hover:text-white flex items-center justify-center transition-all">
-                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-                      </div>
-                    )}
+                    <div className="w-9 h-9 rounded-full border border-slate-200 group-hover:border-[#1D68F2] group-hover:bg-[#1D68F2] text-slate-600 group-hover:text-white flex items-center justify-center transition-all">
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                    </div>
                   </div>
                 </div>
               </div>

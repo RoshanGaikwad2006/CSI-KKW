@@ -1,5 +1,4 @@
 import React from "react";
-import { useRouter } from "next/router";
 import { Navbar } from "../../components/ui/navbar";
 import { HeroSection } from "./sections/HeroSection";
 import { EventsCarousel } from "./sections/EventsCarousel";
@@ -7,36 +6,16 @@ import { GallerySection } from "./sections/GallerySection/GallerySection";
 import { AboutUs } from "./sections/AboutUsSection";
 import CommitteeMembersCarousel from "./sections/CommitteeMembersCarousel/CommitteeMembersCarousel";
 import { FooterSection } from "./sections/FooterSection";
-import Snackbar from "../../components/ui/snackbar";
 import { Card } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Award, Network, Users, Calendar } from "lucide-react";
 
 export const Home = (): JSX.Element => {
-  const router = useRouter();
-
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-transparent relative font-['Inter',sans-serif] text-slate-900 overflow-x-hidden">
       
-      {/* 1. Vision Week Event Popup Card */}
-      <Snackbar
-        event={{
-          id: 6,
-          title: "Vision Week 2026",
-          category: "upcoming",
-          date: "Sep 26 – 30, 2026",
-          time: "Online Sessions",
-          location: "Online Sessions",
-          description: "Smarter Skills, Brighter Career • Explore • Create • Work Smarter. 5-day online masterclasses on AI Tools, SIH, Placement Roadmap, Expert Session & Higher Studies!",
-          image: "/images/vision-week.png",
-          attendees: null,
-          featured: true,
-        }}
-        onRegisterClick={() => router.push("/vision-week-register")}
-      />
-
-      {/* 2. Top Navigation Bar */}
-      <Navbar onOpenJoinModal={() => router.push("/vision-week-register")} />
+      {/* Navigation Bar */}
+      <Navbar />
 
       {/* 3. New Hero Section (Reference Design) */}
       <HeroSection

@@ -214,27 +214,6 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed mt-4">
               {event.description}
             </p>
-
-            {event.id === "vision-week-2026" && (
-              <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg shadow-blue-500/20">
-                <div>
-                  <div className="font-bold text-sm sm:text-base flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-300" />
-                    Dedicated 5-Day Multi-Session Portal
-                  </div>
-                  <div className="text-xs text-blue-100 mt-0.5">
-                    Select specific workshop days, tracks, and upload payment confirmation.
-                  </div>
-                </div>
-                <a
-                  href="/vision-week-register"
-                  className="px-4 py-2 rounded-xl bg-white text-[#1D68F2] hover:bg-blue-50 text-xs font-bold whitespace-nowrap shadow-sm transition-all flex items-center gap-1.5"
-                >
-                  <span>Open Session Portal</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            )}
           </div>
 
           {/* Key Info Chips (Horizontal Row) */}
@@ -284,10 +263,10 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
             </div>
           )}
 
-          {/* What to Expect? Section */}
+          {/* Event Highlights / What to Expect Section */}
           <div className="pt-2">
             <h3 className="text-lg font-bold text-[#0A192F] mb-4">
-              What to Expect?
+              {event.registrationClosed ? "Event Highlights & Key Takeaways" : "What to Expect"}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {(event.whatToExpect || []).map((item, idx) => (
@@ -364,10 +343,12 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
               </div>
               <div>
                 <h3 className="text-lg font-bold text-[#0A192F]">
-                  Register for This Event
+                  {event.registrationClosed ? "Registration Status" : "Register for This Event"}
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Fill in the details below to confirm your participation.
+                  {event.registrationClosed
+                    ? "Official attendance and event completion record."
+                    : "Fill in the details below to confirm your participation."}
                 </p>
               </div>
             </div>

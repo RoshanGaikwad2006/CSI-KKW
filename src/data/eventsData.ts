@@ -32,8 +32,8 @@ export const eventsData: EventItem[] = [
     id: "vision-week-2026",
     title: "Vision Week 2026",
     subtitle: "Smarter Skills, Brighter Career • Explore • Create • Work Smarter",
-    category: "upcoming",
-    categoryBadge: "UPCOMING",
+    category: "workshops",
+    categoryBadge: "FLAGSHIP",
     dateBadge: {
       month: "SEP",
       day: "26",
@@ -44,12 +44,12 @@ export const eventsData: EventItem[] = [
     location: "Online Sessions",
     venueFull: "Online Google Meet Sessions (CSI KKWIEER)",
     description:
-      "Join us for Vision Week 2026 organized by CSI Students' Chapter Nashik 2026-27 at K. K. Wagh Institute of Engineering Education & Research. A transformative 5-day online conclave featuring: Day 1 AI Tools (26/09), Day 2 SIH Session (27/09), Day 3 Placement Roadmap (28/09), Day 4 Expert Session (29/09), and Day 5 Higher Studies (30/09). Registration Fee: ₹50.",
+      "A transformative 5-day online conclave organized by CSI Students' Chapter Nashik 2026-27 at K. K. Wagh Institute of Engineering Education & Research featuring: Day 1 AI Tools (26/09), Day 2 SIH Session (27/09), Day 3 Placement Roadmap (28/09), Day 4 Expert Session (29/09), and Day 5 Higher Studies (30/09).",
     image: "/images/vision-week-cover.png",
-    attendees: null,
-    expectedAttendees: "500+ Registered Students",
+    attendees: "100+" ,
+    expectedAttendees: "100+ Attendees",
     featured: true,
-    registrationClosed: false,
+    registrationClosed: true,
     tags: ["Vision Week", "AI Tools", "SIH", "Placement Roadmap", "Higher Studies", "Flagship"],
     whatToExpect: [
       {
