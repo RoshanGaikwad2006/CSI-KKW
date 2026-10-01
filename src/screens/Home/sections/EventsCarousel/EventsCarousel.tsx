@@ -30,9 +30,9 @@ export interface UpcomingEventItem {
 export const staticUpcomingEvents: UpcomingEventItem[] = [
   {
     id: "vision-week-2026",
-    title: "Vision Week 2026",
-    subtitle: "Smarter Skills, Brighter Career • Explore • Create • Work Smarter",
-    category: "FLAGSHIP",
+    title: "Vision Week 2.0 (2026)",
+    subtitle: "5-Day Flagship Conclave • AI Tools, SIH, Placements & Study Abroad",
+    category: "CONCLUDED",
     day: "26",
     month: "SEP",
     dateRange: "Sep 26 – 30, 2026",
@@ -104,10 +104,12 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
   };
 
   const handleCardAction = (event: UpcomingEventItem) => {
-    if (event.externalLink) {
+    if (event.id === "vision-week-2026") {
+      router.push("/events?id=vision-week-2026");
+    } else if (event.externalLink) {
       window.open(event.externalLink, "_blank");
     } else {
-      router.push("/events");
+      router.push(`/events?id=${event.id}`);
     }
   };
 
@@ -218,11 +220,18 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
                     </div>
                   </div>
 
-                  {/* Circular Arrow Button */}
+                  {/* Circular Arrow Button / Action */}
                   <div className="flex items-center">
-                    <div className="w-9 h-9 rounded-full border border-slate-200 group-hover:border-[#1D68F2] group-hover:bg-[#1D68F2] text-slate-600 group-hover:text-white flex items-center justify-center transition-all">
-                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-                    </div>
+                    {event.id === "vision-week-2026" ? (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-50 text-[#1D68F2] text-xs font-bold group-hover:bg-[#1D68F2] group-hover:text-white transition-all shadow-xs">
+                        <span>View Recap</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    ) : (
+                      <div className="w-9 h-9 rounded-full border border-slate-200 group-hover:border-[#1D68F2] group-hover:bg-[#1D68F2] text-slate-600 group-hover:text-white flex items-center justify-center transition-all">
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

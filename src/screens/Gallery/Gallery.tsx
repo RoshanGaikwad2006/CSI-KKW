@@ -48,6 +48,17 @@ type Event = {
 
 const EVENTS: Event[] = [
     {
+        id: "vision-week-2026",
+        name: "Vision Week 2.0 (2026)",
+        date: "26th – 30th September 2026",
+        location: "Online Conclave",
+        category: "Workshop",
+        description: "5-Day Flagship Conclave: AI Tools, SIH Winners Blueprint, Placement Roadmap, Expert Sessions & Higher Studies Abroad",
+        coverImage: "/api/event-image?id=1VbR-xsypWJK_hjFpMGycabyxVTaflV9J",
+        photoCount: 21,
+        participants: 520
+    },
+    {
         id: "installation-2026",
         name: "CSI Installation Ceremony 2026",
         date: "August 2026",
@@ -152,6 +163,36 @@ const EVENTS: Event[] = [
 ];
 
 const EVENT_PHOTOS: EventPhoto[] = [
+    // Vision Week 2.0 (2026) photos (Hosted via /api/event-image)
+    // Day 2: Smart India Hackathon
+    { id: 301, src: "/api/event-image?id=1VbR-xsypWJK_hjFpMGycabyxVTaflV9J", title: "Day 2: SIH Blueprint & Winning Strategy", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop", description: "SIH Winners Oceania & Meghraj sharing winning blueprints" },
+    { id: 302, src: "/api/event-image?id=1QGUIJM2HMNFERP1dgisl4hMrYtvTAzu-", title: "Day 2: Smart India Hackathon Problem Statements", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop" },
+    { id: 303, src: "/api/event-image?id=1PFnKXNKh4znrlVfIi_3FVWxMaAUs2mmY", title: "Day 2: Interactive Student Discussion", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop" },
+    { id: 304, src: "/api/event-image?id=1LXULDx8enXtrt-aEP2fh-WWxuzZwcbg5", title: "Day 2: Hackathon Journey & Grand Finale Insights", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop" },
+    { id: 305, src: "/api/event-image?id=1ZlKREBMwj0S7UMyAjvNFN_COMeP3zVvJ", title: "Day 2: Meet with Hon. PM Modi & President Experience", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop" },
+    { id: 306, src: "/api/event-image?id=16b-U6_n8ccshbyipkCpw6daClvtXWnH7", title: "Day 2: Live Mentorship & Code Execution Guidance", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop" },
+    { id: 307, src: "/api/event-image?id=1r1aPUTV5qYW7Ba8kUIWhtz-6baRgTvFl", title: "Day 2: Core Committee Coordination & Audience", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop" },
+    { id: 308, src: "/api/event-image?id=1VWtrbBKe5RLsNE_eDrynHby5N8_eHsiZ", title: "Day 2: Key Takeaways & Hackathon Guidelines", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop" },
+    { id: 309, src: "/api/event-image?id=13jn085E6QC5dhFXqlhaf8W7FXmuoad78", title: "Day 2: Felicitation & Concluding Moments", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop" },
+
+    // Day 3: Placement Roadmap
+    { id: 310, src: "/api/event-image?id=1kvK2vXk3b4fL6rAF_lHYjevQILfaCwKA", title: "Day 3: Tier-1 Placement Roadmap with Sakshi Pawar", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "28 September 2026", category: "Workshop", description: "Placed at Morgan Stanley • SIH Winner & Former CSI President" },
+    { id: 311, src: "/api/event-image?id=1xY6_vIjCaCTkunhSmKNvRTMYrK7YhoMu", title: "Day 3: Morgan Stanley Coding Rounds & DSA Strategy", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "28 September 2026", category: "Workshop" },
+    { id: 312, src: "/api/event-image?id=1X6cRB6IpdCpPyYQwXtNi02GzB817EVdK", title: "Day 3: Resume Review & Competitive Profile Building", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "28 September 2026", category: "Workshop" },
+    { id: 313, src: "/api/event-image?id=1S7mSSmIB2nn6pSaS0OJFtE49LABvLS0U", title: "Day 3: Student Q&A & Interview Tips with Former President", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "28 September 2026", category: "Workshop" },
+
+    // Day 4: Cloud & Tech Talk
+    { id: 314, src: "/api/event-image?id=171MqA-MA2XrH8nPdMXMQDCvHuI04TpFA", title: "Day 4: Industry Expert Talk with Kundan & Naman", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "29 September 2026", category: "Workshop", description: "Kundan (GCP Facilitator) & Naman (Placed at Aress)" },
+    { id: 315, src: "/api/event-image?id=1eSagH6CvtA-QD-joGxSatSXXEXqu_4jW", title: "Day 4: Google Cloud Architecture & Global Pitching", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "29 September 2026", category: "Workshop" },
+    { id: 316, src: "/api/event-image?id=19i4OBpeGgqxAGqNLHVe4zBOcaL4BQ4uN", title: "Day 4: Full Stack Engineering & Aress Placement Preparation", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "29 September 2026", category: "Workshop" },
+    { id: 317, src: "/api/event-image?id=1t0gUlcIzYRl_PfeRYrspVBlbZ4gEUapJ", title: "Day 4: Live Tech Stack Discussion & Student Guidance", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "29 September 2026", category: "Workshop" },
+
+    // Day 5: Higher Studies Abroad
+    { id: 318, src: "/api/event-image?id=1RzXSBcYeTG8pnZ_CFZe8yPshn51c1YXC", title: "Day 5: Mastering Higher Studies Abroad with Hargun Singh", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "30 September 2026", category: "Workshop", description: "Alliance Manchester, United Kingdom" },
+    { id: 319, src: "/api/event-image?id=1gUi6ePZ3CwldVmBugZtb-qQLAyqQDuX4", title: "Day 5: UK University Applications, SOPs, GRE & Visas", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "30 September 2026", category: "Workshop" },
+    { id: 320, src: "/api/event-image?id=1xltq8kByf4_1WLoi4yd5xvhUGsDfuIdX", title: "Day 5: Scholarships & Alliance Manchester Student Journey", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "30 September 2026", category: "Workshop" },
+    { id: 321, src: "/api/event-image?id=1crR99IXXPzflEUv0T8Rh5ST-ivuJ5G37", title: "Day 5: Vision Week 2.0 Grand Conclave Valedictory", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "30 September 2026", category: "Workshop" },
+
     // Installation Ceremony 2026 photos (CDN hosted)
     { id: 101, src: "https://files.catbox.moe/5yzddm.jpg", title: "CSI Installation Ceremony 2026", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },
     { id: 102, src: "https://files.catbox.moe/1cbcbg.jpg", title: "", eventId: "installation-2026", eventName: "CSI Installation Ceremony 2026", date: "August 2026", category: "Ceremony" },

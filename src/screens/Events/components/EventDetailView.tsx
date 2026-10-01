@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Calendar,
   MapPin,
@@ -19,6 +19,11 @@ import {
   Check,
   AlertCircle,
   Loader2,
+  Camera,
+  Eye,
+  X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { EventItem } from "@/data/eventsData";
 
@@ -53,6 +58,9 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
   onBack,
   onRegistrationComplete,
 }) => {
+  const [selectedDayFilter, setSelectedDayFilter] = useState<string>("All");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -65,6 +73,44 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const availableDays = [
+    "All",
+    ...Array.from(new Set((event.photos || []).map((p) => p.day).filter(Boolean) as string[])),
+  ];
+
+  const currentPhotos = (event.photos || []).filter((p) => {
+    if (selectedDayFilter === "All") return true;
+    return p.day === selectedDayFilter;
+  });
+
+  // Lightbox keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (lightboxIndex === null) return;
+      if (e.key === "Escape") setLightboxIndex(null);
+      if (e.key === "ArrowRight") {
+        setLightboxIndex((prev) => (prev !== null ? (prev + 1) % currentPhotos.length : null));
+      }
+      if (e.key === "ArrowLeft") {
+        setLightboxIndex((prev) => (prev !== null ? (prev - 1 + currentPhotos.length) % currentPhotos.length : null));
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxIndex, currentPhotos.length]);
+
+  // Lock body scroll during lightbox
+  useEffect(() => {
+    if (lightboxIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [lightboxIndex]);
 
   const validate = () => {
     const errs: Record<string, string> = {};
@@ -214,6 +260,30 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed mt-4">
               {event.description}
             </p>
+
+            {event.id === "vision-week-2026" && (
+              <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-[#0A192F] via-[#102a4e] to-[#1D68F2] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg shadow-blue-500/20 border border-blue-400/30">
+                <div>
+                  <div className="font-bold text-sm sm:text-base flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                    Vision Week 2.0 Concluded Successfully!
+                  </div>
+                  <div className="text-xs text-blue-100/90 mt-0.5">
+                    500+ attendees participated in 5 days of inspiring masterclasses. Explore day-wise photo memories below!
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const el = document.getElementById("event-gallery-section");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="px-4 py-2 rounded-xl bg-white text-[#1D68F2] hover:bg-blue-50 text-xs font-bold whitespace-nowrap shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>View Photos ({event.photos?.length || 21})</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Key Info Chips (Horizontal Row) */}
@@ -285,6 +355,72 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
               ))}
             </div>
           </div>
+
+          {/* Event Photo Gallery Section */}
+          {event.photos && event.photos.length > 0 && (
+            <div id="event-gallery-section" className="pt-4 scroll-mt-24">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-[#0A192F] flex items-center gap-2">
+                    <Camera className="w-5 h-5 text-[#1D68F2]" />
+                    <span>Event Photo Gallery & Day-wise Memories</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Explore live moments, keynote presentations, and student interactions.
+                  </p>
+                </div>
+
+                {/* Day Filter Pills */}
+                {availableDays.length > 1 && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                    {availableDays.map((day) => (
+                      <button
+                        key={day}
+                        onClick={() => setSelectedDayFilter(day)}
+                        className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                          selectedDayFilter === day
+                            ? "bg-[#1D68F2] text-white shadow-sm"
+                            : "bg-slate-100 hover:bg-slate-200 text-slate-600"
+                        }`}
+                      >
+                        {day === "All" ? `All Days (${event.photos?.length})` : day}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Photo Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {currentPhotos.map((photo, pIdx) => (
+                  <div
+                    key={pIdx}
+                    onClick={() => setLightboxIndex(pIdx)}
+                    className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-200 shadow-xs cursor-pointer hover:shadow-md transition-all"
+                  >
+                    <img
+                      src={photo.src}
+                      alt={photo.caption}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
+                    {photo.day && (
+                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-[#1D68F2]/90 backdrop-blur-xs text-[10px] font-bold text-white shadow-xs">
+                        {photo.day}
+                      </span>
+                    )}
+                    <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-white">
+                      <span className="text-[11px] font-medium line-clamp-1 text-slate-100">
+                        {photo.caption}
+                      </span>
+                      <Eye className="w-3.5 h-3.5 text-cyan-300 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity ml-1" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Venue & Map Section */}
           <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -582,6 +718,67 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
       </div>
 
       </div>
+
+      {/* Lightbox Modal */}
+      {lightboxIndex !== null && currentPhotos[lightboxIndex] && (
+        <div
+          className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6"
+          onClick={() => setLightboxIndex(null)}
+        >
+          {/* Close Button */}
+          <button
+            onClick={() => setLightboxIndex(null)}
+            className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close image"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          {/* Left Arrow */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxIndex((prev) => (prev !== null ? (prev - 1 + currentPhotos.length) % currentPhotos.length : null));
+            }}
+            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 border border-white/20 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-lg"
+            aria-label="Previous photo"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+
+          {/* Right Arrow */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxIndex((prev) => (prev !== null ? (prev + 1) % currentPhotos.length : null));
+            }}
+            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 border border-white/20 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-lg"
+            aria-label="Next photo"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
+          {/* Image Container */}
+          <div
+            className="relative max-w-4xl max-h-[85vh] flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={currentPhotos[lightboxIndex].src}
+              alt={currentPhotos[lightboxIndex].caption}
+              className="max-h-[76vh] max-w-[90vw] object-contain rounded-xl shadow-2xl"
+            />
+            <div className="mt-3 flex items-center justify-between w-full text-white text-xs sm:text-sm px-2">
+              <span className="font-semibold text-slate-200">
+                {currentPhotos[lightboxIndex].caption}
+              </span>
+              <span className="text-slate-400 font-medium whitespace-nowrap ml-4">
+                {lightboxIndex + 1} / {currentPhotos.length}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

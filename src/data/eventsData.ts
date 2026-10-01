@@ -20,6 +20,11 @@ export interface EventItem {
   featured?: boolean;
   registrationClosed?: boolean;
   tags?: string[];
+  photos?: {
+    src: string;
+    caption: string;
+    day?: string;
+  }[];
   whatToExpect?: {
     title: string;
     desc: string;
@@ -30,51 +35,78 @@ export interface EventItem {
 export const eventsData: EventItem[] = [
   {
     id: "vision-week-2026",
-    title: "Vision Week 2026",
+    title: "Vision Week 2.0 (2026)",
     subtitle: "Smarter Skills, Brighter Career • Explore • Create • Work Smarter",
     category: "workshops",
-    categoryBadge: "FLAGSHIP",
+    categoryBadge: "CONCLUDED",
     dateBadge: {
       month: "SEP",
       day: "26",
       year: "2026",
     },
     dateRange: "Sep 26 – 30, 2026",
-    time: "Online Sessions",
-    location: "Online Sessions",
-    venueFull: "Online Google Meet Sessions (CSI KKWIEER)",
+    time: "7:00 PM – 8:00 PM",
+    location: "Online Conclave",
+    venueFull: "Online Google Meet Sessions (CSI KKWIEER Chapter)",
     description:
-      "A transformative 5-day online conclave organized by CSI Students' Chapter Nashik 2026-27 at K. K. Wagh Institute of Engineering Education & Research featuring: Day 1 AI Tools (26/09), Day 2 SIH Session (27/09), Day 3 Placement Roadmap (28/09), Day 4 Expert Session (29/09), and Day 5 Higher Studies (30/09).",
+      "Vision Week 2.0 (2026) organized by CSI Students' Chapter Nashik 2026-27 at K. K. Wagh Institute of Engineering Education & Research was a monumental success! A transformative 5-day online series featuring: Day 1 AI Tools (Tejas Adhiya), Day 2 SIH Session (Oceania Kshetrimayum & Meghraj Bhavsar), Day 3 Placement Roadmap (Sakshi Pawar - Morgan Stanley), Day 4 Expert Session (Kundan Suryawanshi & Naman Verma), and Day 5 Higher Studies (Hargun Singh Kochhar - Alliance Manchester, UK). Over 500+ students actively participated across the 5 days.",
     image: "/images/vision-week-cover.png",
-    attendees: "100+" ,
-    expectedAttendees: "100+ Attendees",
+    attendees: 520,
+    expectedAttendees: "500+ Attendees",
     featured: true,
     registrationClosed: true,
-    tags: ["Vision Week", "AI Tools", "SIH", "Placement Roadmap", "Higher Studies", "Flagship"],
+    tags: ["Vision Week", "AI Tools", "SIH", "Placement Roadmap", "Higher Studies", "Flagship", "Concluded"],
+    photos: [
+      // Day 2 Photos (Hosted via /api/event-image)
+      { src: "/api/event-image?id=1VbR-xsypWJK_hjFpMGycabyxVTaflV9J", caption: "SIH Blueprint & Winning Strategy Presentation", day: "Day 2" },
+      { src: "/api/event-image?id=1QGUIJM2HMNFERP1dgisl4hMrYtvTAzu-", caption: "Smart India Hackathon Problem Statements", day: "Day 2" },
+      { src: "/api/event-image?id=1PFnKXNKh4znrlVfIi_3FVWxMaAUs2mmY", caption: "Interactive Student Q&A with Oceania & Meghraj", day: "Day 2" },
+      { src: "/api/event-image?id=1LXULDx8enXtrt-aEP2fh-WWxuzZwcbg5", caption: "Ideation to Grand Finale Hackathon Roadmap", day: "Day 2" },
+      { src: "/api/event-image?id=1ZlKREBMwj0S7UMyAjvNFN_COMeP3zVvJ", caption: "Rashtrapati Bhavan & Meeting PM Modi Experience", day: "Day 2" },
+      { src: "/api/event-image?id=16b-U6_n8ccshbyipkCpw6daClvtXWnH7", caption: "Live Mentorship & Code Execution Guidance", day: "Day 2" },
+      { src: "/api/event-image?id=1r1aPUTV5qYW7Ba8kUIWhtz-6baRgTvFl", caption: "Core Committee Coordination & Audience", day: "Day 2" },
+      { src: "/api/event-image?id=1VWtrbBKe5RLsNE_eDrynHby5N8_eHsiZ", caption: "Key Takeaways & Evaluation Criteria", day: "Day 2" },
+      { src: "/api/event-image?id=13jn085E6QC5dhFXqlhaf8W7FXmuoad78", caption: "Day 2 SIH Masterclass Conclusion", day: "Day 2" },
+      // Day 3 Photos
+      { src: "/api/event-image?id=1kvK2vXk3b4fL6rAF_lHYjevQILfaCwKA", caption: "Tier-1 Placement Roadmap with Sakshi Pawar", day: "Day 3" },
+      { src: "/api/event-image?id=1xY6_vIjCaCTkunhSmKNvRTMYrK7YhoMu", caption: "Morgan Stanley Coding Rounds & DSA Strategy", day: "Day 3" },
+      { src: "/api/event-image?id=1X6cRB6IpdCpPyYQwXtNi02GzB817EVdK", caption: "Resume Review & Competitive Profile Building", day: "Day 3" },
+      { src: "/api/event-image?id=1S7mSSmIB2nn6pSaS0OJFtE49LABvLS0U", caption: "Student Q&A & Interview Tips with Former President", day: "Day 3" },
+      // Day 4 Photos
+      { src: "/api/event-image?id=171MqA-MA2XrH8nPdMXMQDCvHuI04TpFA", caption: "Industry Expert Talk with Kundan & Naman", day: "Day 4" },
+      { src: "/api/event-image?id=1eSagH6CvtA-QD-joGxSatSXXEXqu_4jW", caption: "Google Cloud Architecture & Global Pitching", day: "Day 4" },
+      { src: "/api/event-image?id=19i4OBpeGgqxAGqNLHVe4zBOcaL4BQ4uN", caption: "Full Stack Engineering & Aress Placement Preparation", day: "Day 4" },
+      { src: "/api/event-image?id=1t0gUlcIzYRl_PfeRYrspVBlbZ4gEUapJ", caption: "Live Tech Stack Discussion & Student Guidance", day: "Day 4" },
+      // Day 5 Photos
+      { src: "/api/event-image?id=1RzXSBcYeTG8pnZ_CFZe8yPshn51c1YXC", caption: "Mastering Higher Studies Abroad with Hargun Singh", day: "Day 5" },
+      { src: "/api/event-image?id=1gUi6ePZ3CwldVmBugZtb-qQLAyqQDuX4", caption: "UK University Applications, SOPs, GRE & Visas", day: "Day 5" },
+      { src: "/api/event-image?id=1xltq8kByf4_1WLoi4yd5xvhUGsDfuIdX", caption: "Scholarships & Alliance Manchester Student Journey", day: "Day 5" },
+      { src: "/api/event-image?id=1crR99IXXPzflEUv0T8Rh5ST-ivuJ5G37", caption: "Vision Week 2.0 Grand Conclave Valedictory", day: "Day 5" },
+    ],
     whatToExpect: [
       {
         title: "Day 1: AI Tools (26/09/2026)",
-        desc: "Hands-on exposure to modern generative AI, developer tools & smart productivity workflows.",
+        desc: "Hands-on masterclass with Tejas Adhiya (7x Hackathon Winner) on generative AI tools.",
         icon: "sessions",
       },
       {
         title: "Day 2: SIH Session (27/09/2026)",
-        desc: "Smart India Hackathon problem statements, ideation, team formation & winning hackathon strategies.",
+        desc: "Oceania & Meghraj sharing winning blueprints & meet with Hon. PM & President.",
         icon: "talks",
       },
       {
         title: "Day 3: Placement Roadmap (28/09/2026)",
-        desc: "Comprehensive roadmap for campus drives, resume building, interview prep & core tech competencies.",
+        desc: "Sakshi Pawar (Morgan Stanley) sharing step-by-step Tier-1 placement strategies.",
         icon: "drive",
       },
       {
         title: "Day 4: Expert Session (29/09/2026)",
-        desc: "Exclusive interactive session with industry leaders and technical experts sharing industry vision.",
+        desc: "Kundan Suryawanshi (GCP Facilitator) & Naman Verma (Aress) on industry growth.",
         icon: "talks",
       },
       {
         title: "Day 5: Higher Studies (30/09/2026)",
-        desc: "Comprehensive guidance on GATE, GRE, CAT, higher education opportunities & research paths.",
+        desc: "Hargun Singh Kochhar (Alliance Manchester, UK) on global higher education.",
         icon: "cert",
       },
     ],

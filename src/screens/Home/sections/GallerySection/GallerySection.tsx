@@ -14,31 +14,31 @@ export interface MomentPhoto {
 export const momentsData: MomentPhoto[] = [
   {
     id: 1,
+    src: "/api/event-image?id=1VbR-xsypWJK_hjFpMGycabyxVTaflV9J",
+    title: "Vision Week 2.0 Conclave 2026",
+    category: "Flagship",
+    date: "September 2026",
+  },
+  {
+    id: 2,
     src: "https://files.catbox.moe/5yzddm.jpg",
     title: "CSI Installation Ceremony 2026",
     category: "Ceremony",
     date: "August 2026",
   },
   {
-    id: 2,
+    id: 3,
     src: "https://files.catbox.moe/smyr5w.jpg",
     title: "Global IT Careers 2027+ by Dr. Deepak Shikarpur",
     category: "Expert Talk",
     date: "September 2026",
   },
   {
-    id: 3,
+    id: 4,
     src: "/images/cohort.jpg",
     title: "Google Cloud Cohort",
     category: "Workshop",
     date: "August 2025",
-  },
-  {
-    id: 4,
-    src: "/images/csi_img1.png",
-    title: "National Student Convention",
-    category: "Convention",
-    date: "December 2024",
   },
 ];
 
