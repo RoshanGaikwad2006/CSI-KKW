@@ -10,15 +10,12 @@ import {
   ArrowRight,
   Filter,
   Sparkles,
-  Layers,
-  Monitor,
 } from "lucide-react";
 import { Navbar } from "../../components/ui/navbar";
 import { eventsData, EventItem } from "@/data/eventsData";
 import { EventDetailView } from "./components/EventDetailView";
 import { RegistrationSuccessView } from "./components/RegistrationSuccessView";
 import { ConfirmationEmailModal } from "./components/ConfirmationEmailModal";
-import { CaseStudyPresentation } from "./components/CaseStudyPresentation";
 
 const CATEGORIES = [
   { id: "all", label: "All Events" },
@@ -32,9 +29,6 @@ const CATEGORIES = [
 export const Events = (): JSX.Element => {
   const router = useRouter();
 
-  // Mode: "interactive" (default live flow) | "case-study" (multi-screen presentation)
-  const [viewMode, setViewMode] = useState<"interactive" | "case-study">("interactive");
-  
   // Interactive Flow States:
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState("all");
@@ -42,10 +36,15 @@ export const Events = (): JSX.Element => {
   const [registrationSuccessData, setRegistrationSuccessData] = useState<any | null>(null);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
-  // Check URL query parameters (e.g. /events?id=e-yantran-2026 or ?view=case-study)
+  // Check URL query parameters (e.g. /events?id=e-yantran-2026)
   useEffect(() => {
-    if (router.query.view === "case-study") {
-      setViewMode("case-study");
+    // If legacy ?view=case-study was accessed, clean up URL to standard /events
+    if (router.query.view) {
+      router.replace(
+        router.query.id ? `/events?id=${router.query.id}` : "/events",
+        undefined,
+        { shallow: true }
+      );
     }
     if (router.query.id && typeof router.query.id === "string") {
       setSelectedEventId(router.query.id);
@@ -87,67 +86,7 @@ export const Events = (): JSX.Element => {
       {/* Top Navigation Bar */}
       <Navbar />
 
-      {/* Mode Switcher Bar (Interactive Live vs Case Study Showcase) */}
-      <div className="w-full bg-white/80 backdrop-blur-md border-b border-slate-200/90 py-2.5 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-slate-600">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-semibold text-slate-800">CSI KKWIEER Event Platform</span>
-            <span className="text-slate-400 hidden sm:inline">• Production-Ready UI/UX System</span>
-          </div>
-
-          {/* Toggle Pills */}
-          <div className="inline-flex rounded-xl bg-slate-200/80 p-1 border border-slate-300/60">
-            <button
-              onClick={() => {
-                setViewMode("interactive");
-                router.replace("/events", undefined, { shallow: true });
-              }}
-              className={`flex items-center gap-1.5 px-3.5 py-1 rounded-lg font-bold text-xs transition-all ${
-                viewMode === "interactive"
-                  ? "bg-white text-[#1D68F2] shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <Monitor className="w-3.5 h-3.5" />
-              <span>Live Interactive Flow</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setViewMode("case-study");
-                router.replace("/events?view=case-study", undefined, { shallow: true });
-              }}
-              className={`flex items-center gap-1.5 px-3.5 py-1 rounded-lg font-bold text-xs transition-all ${
-                viewMode === "case-study"
-                  ? "bg-[#1D68F2] text-white shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>Multi-Screen UI/UX Case Study</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ========================================================= */}
-      {/* VIEW 1: MULTI-SCREEN UI/UX CASE STUDY PRESENTATION        */}
-      {/* ========================================================= */}
-      {viewMode === "case-study" && (
-        <CaseStudyPresentation
-          onSelectEventForLive={(id) => {
-            setViewMode("interactive");
-            handleSelectEvent(id);
-          }}
-        />
-      )}
-
-      {/* ========================================================= */}
-      {/* VIEW 2: LIVE INTERACTIVE FLOW (SCREEN 1, 2, 3)            */}
-      {/* ========================================================= */}
-      {viewMode === "interactive" && (
-        <main className="w-full flex-1">
+      <main className="w-full flex-1">
           
           {/* STATE A: Detailed Event View or Registration Success */}
           {selectedEvent ? (
@@ -369,7 +308,6 @@ export const Events = (): JSX.Element => {
           )}
 
         </main>
-      )}
 
       {/* Confirmation Email Preview Modal (Screen 4) */}
       {selectedEvent && (
