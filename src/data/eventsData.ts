@@ -57,6 +57,14 @@ export const eventsData: EventItem[] = [
     registrationClosed: true,
     tags: ["Vision Week", "AI Tools", "SIH", "Placement Roadmap", "Higher Studies", "Flagship", "Concluded"],
     photos: [
+      // Day 1 Photos: AI Tools Masterclass with Tejas Adhiya
+      { src: "/images/events/vision-week/day1/day1-keynote-kickoff.webp", caption: "Day 1: Keynote Kick-off with Tejas Adhiya (100+ Participants)", day: "Day 1" },
+      { src: "/images/events/vision-week/day1/day1-prompting-problem.webp", caption: "Day 1: Prompt Engineering & Context Architecture Framework", day: "Day 1" },
+      { src: "/images/events/vision-week/day1/day1-wispr-flow.webp", caption: "Day 1: Wispr Flow AI Voice-to-Text & Productive Workflows", day: "Day 1" },
+      { src: "/images/events/vision-week/day1/day1-manus-computer-use.webp", caption: "Day 1: Manus Autonomous AI Agent & Computer-Use Demo", day: "Day 1" },
+      { src: "/images/events/vision-week/day1/day1-openrouter-architecture.webp", caption: "Day 1: OpenRouter Multi-Model LLM Architecture & Routing", day: "Day 1" },
+      { src: "/images/events/vision-week/day1/day1-student-qa.webp", caption: "Day 1: Live Interactive Student Q&A with 100+ Attendees", day: "Day 1" },
+      { src: "/images/events/vision-week/day1/day1-valedictory-conclusion.webp", caption: "Day 1: Valedictory & AI Tools Masterclass Conclusion", day: "Day 1" },
       // Day 2 Photos (Hosted via /api/event-image)
       { src: "/api/event-image?id=1VbR-xsypWJK_hjFpMGycabyxVTaflV9J", caption: "SIH Blueprint & Winning Strategy Presentation", day: "Day 2" },
       { src: "/api/event-image?id=1QGUIJM2HMNFERP1dgisl4hMrYtvTAzu-", caption: "Smart India Hackathon Problem Statements", day: "Day 2" },

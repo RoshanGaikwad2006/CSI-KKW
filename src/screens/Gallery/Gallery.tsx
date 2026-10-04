@@ -55,7 +55,7 @@ const EVENTS: Event[] = [
         category: "Workshop",
         description: "5-Day Flagship Conclave: AI Tools, SIH Winners Blueprint, Placement Roadmap, Expert Sessions & Higher Studies Abroad",
         coverImage: "/api/event-image?id=1VbR-xsypWJK_hjFpMGycabyxVTaflV9J",
-        photoCount: 21,
+        photoCount: 28,
         participants: 520
     },
     {
@@ -163,7 +163,16 @@ const EVENTS: Event[] = [
 ];
 
 const EVENT_PHOTOS: EventPhoto[] = [
-    // Vision Week 2.0 (2026) photos (Hosted via /api/event-image)
+    // Vision Week 2.0 (2026) photos
+    // Day 1: AI Tools Masterclass with Tejas Adhiya
+    { id: 291, src: "/images/events/vision-week/day1/day1-keynote-kickoff.webp", title: "Day 1: Keynote Kick-off with Tejas Adhiya (100+ Participants)", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "26 September 2026", category: "Workshop", description: "Tejas Adhiya • 7x Hackathon Winner & Universal AI Univ President" },
+    { id: 292, src: "/images/events/vision-week/day1/day1-prompting-problem.webp", title: "Day 1: Prompt Engineering & Context Architecture Framework", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "26 September 2026", category: "Workshop" },
+    { id: 293, src: "/images/events/vision-week/day1/day1-wispr-flow.webp", title: "Day 1: Wispr Flow AI Voice-to-Text & Productive Workflows", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "26 September 2026", category: "Workshop" },
+    { id: 294, src: "/images/events/vision-week/day1/day1-manus-computer-use.webp", title: "Day 1: Manus Autonomous AI Agent & Computer-Use Demo", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "26 September 2026", category: "Workshop" },
+    { id: 295, src: "/images/events/vision-week/day1/day1-openrouter-architecture.webp", title: "Day 1: OpenRouter Multi-Model LLM Architecture & Routing", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "26 September 2026", category: "Workshop" },
+    { id: 296, src: "/images/events/vision-week/day1/day1-student-qa.webp", title: "Day 1: Live Interactive Student Q&A with 100+ Attendees", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "26 September 2026", category: "Workshop" },
+    { id: 297, src: "/images/events/vision-week/day1/day1-valedictory-conclusion.webp", title: "Day 1: Valedictory & AI Tools Masterclass Conclusion", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "26 September 2026", category: "Workshop" },
+
     // Day 2: Smart India Hackathon
     { id: 301, src: "/api/event-image?id=1VbR-xsypWJK_hjFpMGycabyxVTaflV9J", title: "Day 2: SIH Blueprint & Winning Strategy", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop", description: "SIH Winners Oceania & Meghraj sharing winning blueprints" },
     { id: 302, src: "/api/event-image?id=1QGUIJM2HMNFERP1dgisl4hMrYtvTAzu-", title: "Day 2: Smart India Hackathon Problem Statements", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "27 September 2026", category: "Workshop" },

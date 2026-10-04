@@ -279,7 +279,7 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
                   }}
                   className="px-4 py-2 rounded-xl bg-white text-[#1D68F2] hover:bg-blue-50 text-xs font-bold whitespace-nowrap shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>View Photos ({event.photos?.length || 21})</span>
+                  <span>View Photos ({event.photos?.length || 28})</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
