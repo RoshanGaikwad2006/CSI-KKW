@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import SEO from "../src/components/SEO";
+import { getBreadcrumbSchema } from "../src/lib/schema";
 import {
   CheckCircle2,
   ArrowRight,
@@ -301,12 +303,29 @@ const compressImage = (
 
   return (
     <>
+      <SEO
+        title="Vision Week 2026 Registration"
+        description="Register for Vision Week 2026 — 5 Days Interactive Sessions on AI Tools, SIH Strategy, Placement Roadmap, Expert Insights & Higher Studies by CSI KKWIEER."
+        canonical="/vision-week-register"
+        ogImage="/images/vision-week-cover.png"
+        keywords={[
+          "Vision Week 2026",
+          "Vision Week Registration",
+          "CSI KKWIEER",
+          "AI Tools Workshop",
+          "Smart India Hackathon SIH",
+          "Placement Preparation",
+          "Higher Studies Guidance",
+          "KKWIEER Online Conclave"
+        ]}
+        jsonLd={[
+          getBreadcrumbSchema([
+            { name: "Events", path: "/events" },
+            { name: "Vision Week 2026 Registration", path: "/vision-week-register" },
+          ]),
+        ]}
+      />
       <Head>
-        <title>Vision Week 2026 Registration | CSI KKWIEER</title>
-        <meta
-          name="description"
-          content="Register for Vision Week 2026 — 5 Days Sessions on AI Tools, SIH, Placement Guidance, GATE Prep & Soft Skills by CSI KKWIEER."
-        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

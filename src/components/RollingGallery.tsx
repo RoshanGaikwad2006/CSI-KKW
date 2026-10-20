@@ -130,7 +130,7 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({ autoplay = false, pause
                 transform: `rotateY(${(360 / faceCount) * i}deg) translateZ(${radius}px)`
               }}
             >
-              <img src={url} alt="gallery" className="gallery-img" />
+              <img src={url} alt="CSI KKWIEER Event Moment" className="gallery-img" />
             </div>
           ))}
         </motion.div>

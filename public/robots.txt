@@ -1,0 +1,11 @@
+# Robots.txt for CSI KKWIEER Student Branch
+# https://csikkwieer.in
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /portal/
+Disallow: /demo
+
+# Host & Sitemaps
+Sitemap: https://csikkwieer.in/sitemap.xml

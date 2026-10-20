@@ -618,7 +618,7 @@ const Gallery = (): JSX.Element => {
                                                 <div className="aspect-[4/3] overflow-hidden">
                                                     <img
                                                         src={photo.src}
-                                                        alt={photo.title}
+                                                        alt={photo.title || photo.eventName || "CSI KKWIEER Event Photo"}
                                                         loading="lazy"
                                                         className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
                                                     />
@@ -723,7 +723,7 @@ const Gallery = (): JSX.Element => {
                         <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10">
                             <img
                                 src={filteredPhotos[lightboxIndex].src}
-                                alt={filteredPhotos[lightboxIndex].title}
+                                alt={filteredPhotos[lightboxIndex].title || filteredPhotos[lightboxIndex].eventName || "CSI KKWIEER Event Photo"}
                                 className="w-full max-h-[70vh] object-contain"
                             />
 

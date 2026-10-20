@@ -1,6 +1,7 @@
 import React from "react";
 import { CoverFlowCarousel, CarouselItem } from "@/components/ui/3-d-coverflow-carousel";
 import { Navbar } from "@/components/ui/navbar";
+import SEO from "../src/components/SEO";
 
 const demoItems: CarouselItem[] = [
   {
@@ -22,6 +23,7 @@ const demoItems: CarouselItem[] = [
 export default function Demo() {
   return (
     <div className="w-full min-h-screen bg-[#0c0a09] flex flex-col items-center justify-start">
+      <SEO title="3D Coverflow Demo" noindex={true} />
       <Navbar />
       <div className="w-full max-w-7xl px-4 pt-12 pb-4 text-center">
         <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-3">
