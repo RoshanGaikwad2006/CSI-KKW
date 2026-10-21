@@ -23,6 +23,7 @@ const DEFAULT_FORM = {
   fullName: "",
   email: "",
   phone: "",
+  college: "K. K. Wagh Institute of Engineering Education & Research, Nashik",
   department: "",
   year: "Third Year (TE)",
   upiId: "",
@@ -59,6 +60,7 @@ const EVENT_ROUNDS = [
 export default function C2CRegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState(DEFAULT_FORM);
+  const [otherCollege, setOtherCollege] = useState("");
   const [otherDepartment, setOtherDepartment] = useState("");
   const [otherYear, setOtherYear] = useState("");
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
@@ -176,6 +178,12 @@ export default function C2CRegisterPage() {
       return;
     }
 
+    if (formData.college === "Other" && !otherCollege.trim()) {
+      setError("Please specify your College / Institute full name.");
+      setLoading(false);
+      return;
+    }
+
     if (!formData.upiId.trim()) {
       setError("Please enter your UPI ID or Transaction ID (UTR).");
       setLoading(false);
@@ -210,6 +218,11 @@ export default function C2CRegisterPage() {
         }
       }
 
+      const finalCollege =
+        formData.college === "Other"
+          ? otherCollege.trim() || "Other"
+          : formData.college;
+
       const finalYear =
         formData.year === "Other"
           ? otherYear.trim() || "Other"
@@ -224,7 +237,7 @@ export default function C2CRegisterPage() {
         fullName: formData.fullName.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
-        college: "K. K. Wagh Institute of Engineering Education & Research, Nashik",
+        college: finalCollege,
         department: finalDepartment,
         year: finalYear,
         upiId: formData.upiId.trim(),
@@ -265,6 +278,7 @@ export default function C2CRegisterPage() {
     setSubmitted(false);
     setTicketId(null);
     setError(null);
+    setOtherCollege("");
     setOtherDepartment("");
     setOtherYear("");
     setFormData(DEFAULT_FORM);
@@ -272,6 +286,8 @@ export default function C2CRegisterPage() {
     setScreenshotPreview(null);
   };
 
+  const finalCollegeDisplay =
+    formData.college === "Other" ? otherCollege || "Other" : formData.college;
   const finalYearDisplay =
     formData.year === "Other" ? otherYear || "Other" : formData.year;
   const finalDeptDisplay =
@@ -373,7 +389,7 @@ export default function C2CRegisterPage() {
                     <div className="flex justify-between border-b border-slate-200 pb-1.5">
                       <span className="font-semibold text-slate-500">INSTITUTE</span>
                       <span className="font-bold text-slate-900 text-right max-w-[65%] truncate">
-                        KKWIEER, Nashik
+                        {finalCollegeDisplay}
                       </span>
                     </div>
                     <div className="flex justify-between border-b border-slate-200 pb-1.5">
@@ -450,17 +466,53 @@ export default function C2CRegisterPage() {
                     </div>
                   )}
 
-                  {/* College Notice Badge (Fixed to KKWIEER as requested) */}
-                  <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-200 flex items-center gap-2.5 text-xs text-[#0A192F]">
-                    <Building2 className="w-4 h-4 text-[#1D68F2] shrink-0" />
-                    <div>
-                      <span className="font-bold text-[#1D68F2] uppercase text-[10px] block tracking-wider">
-                        INSTITUTE
-                      </span>
-                      <span className="font-semibold text-slate-800 text-[11px]">
-                        K. K. Wagh Institute of Engineering Education &amp; Research (KKWIEER)
-                      </span>
-                    </div>
+                  {/* College / Institute Selection */}
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
+                      COLLEGE / INSTITUTE <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="college"
+                      value={formData.college}
+                      onChange={handleChange}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                    >
+                      <option value="K. K. Wagh Institute of Engineering Education & Research, Nashik">
+                        K. K. Wagh Institute of Engineering Education &amp; Research (KKWIEER), Nashik
+                      </option>
+                      <option value="KK Wagh Polytechnic, Nashik">
+                        KK Wagh Polytechnic, Nashik
+                      </option>
+                      <option value="MVP K.B.T. College of Engineering (KBTCOE), Nashik">
+                        MVP's K.B.T. College of Engineering (KBTCOE), Nashik
+                      </option>
+                      <option value="G.E.S. R. H. Sapat College of Engineering, Nashik">
+                        G.E.S. R. H. Sapat College of Engineering, Nashik
+                      </option>
+                      <option value="MET's Institute of Engineering (BKC), Nashik">
+                        MET's Institute of Engineering (BKC), Nashik
+                      </option>
+                      <option value="Sandip Institute of Technology & Research Centre (SITRC), Nashik">
+                        Sandip Institute of Technology &amp; Research Centre (SITRC), Nashik
+                      </option>
+                      <option value="Guru Gobind Singh College of Engineering, Nashik">
+                        Guru Gobind Singh College of Engineering, Nashik
+                      </option>
+                      <option value="Matoshri College of Engineering, Nashik">
+                        Matoshri College of Engineering, Nashik
+                      </option>
+                      <option value="Other">Other (Enter Your College Name)</option>
+                    </select>
+
+                    {formData.college === "Other" && (
+                      <input
+                        type="text"
+                        placeholder="Enter your college / institute full name"
+                        value={otherCollege}
+                        onChange={(e) => setOtherCollege(e.target.value)}
+                        className="mt-2 w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                      />
+                    )}
                   </div>
 
                   {/* Full Name */}
