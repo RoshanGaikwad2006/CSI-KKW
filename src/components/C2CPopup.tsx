@@ -45,11 +45,7 @@ export const C2CPopup: React.FC<C2CPopupProps> = ({
 
   const handleRegister = () => {
     handleClose();
-    if (onRegisterClick) {
-      onRegisterClick();
-    } else {
-      router.push("/c2c-register");
-    }
+    router.push("/c2c-register");
   };
 
   if (!open) return null;

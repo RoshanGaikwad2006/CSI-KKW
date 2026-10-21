@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Navbar } from "../../components/ui/navbar";
 import { HeroSection } from "./sections/HeroSection";
 import { EventsCarousel } from "./sections/EventsCarousel";
@@ -10,10 +10,8 @@ import { Card } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Award, Network, Users, Calendar } from "lucide-react";
 import { C2CPopup } from "../../components/C2CPopup";
-import { C2CModal } from "../../components/C2CModal";
 
 export const Home = (): JSX.Element => {
-  const [isC2CModalOpen, setIsC2CModalOpen] = useState(false);
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-transparent relative font-['Inter',sans-serif] text-slate-900 overflow-x-hidden">
       
@@ -122,11 +120,8 @@ export const Home = (): JSX.Element => {
         <FooterSection />
       </div>
 
-      {/* C2C 5.0 Poster Popup (Ready Locally - displays /images/c2c.png until new poster is provided) */}
-      <C2CPopup onRegisterClick={() => setIsC2CModalOpen(true)} />
-
-      {/* C2C 5.0 Registration Modal Popup */}
-      <C2CModal isOpen={isC2CModalOpen} onClose={() => setIsC2CModalOpen(false)} />
+      {/* C2C 5.0 Poster Popup (Redirects directly to /c2c-register) */}
+      <C2CPopup />
 
     </div>
   );
