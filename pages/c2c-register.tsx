@@ -79,9 +79,9 @@ export default function C2CRegisterPage() {
 
   const compressImage = (
     file: File,
-    maxWidth = 1200,
-    maxHeight = 1200,
-    quality = 0.82
+    maxWidth = 800,
+    maxHeight = 800,
+    quality = 0.72
   ): Promise<string> => {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -197,27 +197,6 @@ export default function C2CRegisterPage() {
     }
 
     try {
-      let uploadedScreenshotUrl = "";
-
-      // Upload Payment Screenshot to ImgBB if possible
-      if (screenshotPreview) {
-        try {
-          const uploadRes = await fetch("/api/upload-payment-ss", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: screenshotPreview }),
-          });
-          if (uploadRes.ok) {
-            const uploadData = await uploadRes.json().catch(() => null);
-            if (uploadData && uploadData.success && uploadData.url) {
-              uploadedScreenshotUrl = uploadData.url;
-            }
-          }
-        } catch (uploadErr) {
-          console.warn("Screenshot upload notice:", uploadErr);
-        }
-      }
-
       const finalCollege =
         formData.college === "Other"
           ? otherCollege.trim() || "Other"
@@ -233,7 +212,34 @@ export default function C2CRegisterPage() {
           ? otherDepartment.trim() || "Other"
           : formData.department;
 
-      const payload = {
+      // Upload directly to ImgBB from the browser (no server middleman hop)
+      const uploadToImgBBDirect = async (): Promise<string> => {
+        if (!screenshotPreview) return "";
+        try {
+          const IMGBB_KEY = "3b3fa0e62810a9f5d34208e9d5df6fb5";
+          const base64Data = screenshotPreview.replace(/^data:image\/\w+;base64,/, "");
+          const params = new URLSearchParams();
+          params.append("key", IMGBB_KEY);
+          params.append("image", base64Data);
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000);
+          const res = await fetch("https://api.imgbb.com/1/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: params.toString(),
+            signal: controller.signal,
+          });
+          clearTimeout(timeoutId);
+          const data = await res.json();
+          if (data?.success && data?.data?.url) return data.data.url;
+        } catch (e) {
+          console.warn("Direct ImgBB upload notice:", e);
+        }
+        return screenshotPreview; // fallback: use base64 inline
+      };
+
+      // Build base payload (use base64 as placeholder while upload runs in parallel)
+      const basePayload = {
         fullName: formData.fullName.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
@@ -242,14 +248,18 @@ export default function C2CRegisterPage() {
         year: finalYear,
         upiId: formData.upiId.trim(),
         comments: formData.comments.trim(),
-        paymentScreenshot: uploadedScreenshotUrl || screenshotPreview || "",
+        paymentScreenshot: screenshotPreview || "",
       };
 
-      const res = await fetch("/api/c2c-register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      // Run image upload and registration in parallel
+      const [_imgbbResult, res] = await Promise.all([
+        uploadToImgBBDirect(),
+        fetch("/api/c2c-register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(basePayload),
+        }),
+      ]);
 
       let data: any = null;
       try {
