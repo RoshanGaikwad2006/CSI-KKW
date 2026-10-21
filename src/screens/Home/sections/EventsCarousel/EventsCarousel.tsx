@@ -29,6 +29,17 @@ export interface UpcomingEventItem {
 
 export const staticUpcomingEvents: UpcomingEventItem[] = [
   {
+    id: "campus-to-corporate-5",
+    title: "From Campus to Corporate 5.0",
+    subtitle: "Placement Drive • Round 1: Apti & Coding (DSA) • Round 2: GD • Round 3: Technical + HR Interview",
+    category: "REGISTRATION OPEN",
+    day: "C2C",
+    month: "5.0",
+    dateRange: "Upcoming • KKWIEER, Nashik",
+    location: "KKWIEER Campus, Nashik",
+    image: "/images/c2c.png",
+  },
+  {
     id: "vision-week-2026",
     title: "Vision Week 2.0 (2026)",
     subtitle: "5-Day Flagship Conclave • AI Tools, SIH, Placements & Study Abroad",
@@ -104,7 +115,9 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
   };
 
   const handleCardAction = (event: UpcomingEventItem) => {
-    if (event.id === "vision-week-2026") {
+    if (event.id === "campus-to-corporate-5") {
+      router.push("/c2c-register");
+    } else if (event.id === "vision-week-2026") {
       router.push("/events?id=vision-week-2026");
     } else if (event.externalLink) {
       window.open(event.externalLink, "_blank");
@@ -222,7 +235,12 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
 
                   {/* Circular Arrow Button / Action */}
                   <div className="flex items-center">
-                    {event.id === "vision-week-2026" ? (
+                    {event.id === "campus-to-corporate-5" ? (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-xs">
+                        <span>Register Now</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    ) : event.id === "vision-week-2026" ? (
                       <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-50 text-[#1D68F2] text-xs font-bold group-hover:bg-[#1D68F2] group-hover:text-white transition-all shadow-xs">
                         <span>View Recap</span>
                         <ArrowRight className="w-3.5 h-3.5" />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Calendar,
   MapPin,
@@ -260,6 +261,27 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed mt-4">
               {event.description}
             </p>
+
+            {event.id === "campus-to-corporate-5" && (
+              <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-[#0A192F] via-[#0D2447] to-[#1D68F2] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg shadow-blue-500/20 border border-blue-400/30">
+                <div>
+                  <div className="font-bold text-sm sm:text-base flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
+                    From Campus to Corporate 5.0 Registrations Open!
+                  </div>
+                  <div className="text-xs text-blue-100/90 mt-0.5">
+                    3-Stage Placement Simulation: Round 1 Apti &amp; Coding (DSA) • Round 2 GD • Round 3 Technical + HR Interview.
+                  </div>
+                </div>
+                <Link
+                  href="/c2c-register"
+                  className="px-4 py-2 rounded-xl bg-white text-[#1D68F2] hover:bg-blue-50 text-xs font-bold whitespace-nowrap shadow-sm transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+                >
+                  <span>Open Full Form</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            )}
 
             {event.id === "vision-week-2026" && (
               <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-[#0A192F] via-[#102a4e] to-[#1D68F2] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg shadow-blue-500/20 border border-blue-400/30">

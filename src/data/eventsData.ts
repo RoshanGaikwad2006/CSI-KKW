@@ -34,6 +34,52 @@ export interface EventItem {
 
 export const eventsData: EventItem[] = [
   {
+    id: "campus-to-corporate-5",
+    title: "From Campus to Corporate 5.0",
+    subtitle: "Flagship Placement & Career Readiness Series",
+    category: "workshops",
+    categoryBadge: "REGISTRATION OPEN",
+    dateBadge: {
+      month: "OCT",
+      day: "C2C",
+      year: "2026",
+    },
+    dateRange: "Upcoming • KKWIEER, Nashik",
+    time: "9:00 AM – 5:00 PM",
+    location: "KKWIEER Campus, Nashik",
+    venueFull: "Multiple Campus Labs, KKWIEER, Nashik",
+    description:
+      "Step into the corporate world with confidence! From Campus to Corporate 5.0 is the premier mock placement drive organized by CSI Students' Chapter Nashik 2026-27 at KKWIEER. Featuring 3 realistic hiring stages: Round 1 Aptitude & Coding (DSA), Round 2 Group Discussion (GD), and Round 3 Technical & Personal HR Interviews.",
+    image: "/images/c2c.png",
+    attendees: 150,
+    expectedAttendees: "150+ Attendees",
+    featured: true,
+    registrationClosed: false,
+    tags: ["Campus to Corporate", "Placements", "Mock Drives", "Technical Rounds", "HR Round", "Mentorship", "KKWIEER"],
+    whatToExpect: [
+      {
+        title: "Round 1: Apti & Coding (DSA)",
+        desc: "Quantitative & logical aptitude test combined with live DSA problem-solving challenges.",
+        icon: "sessions",
+      },
+      {
+        title: "Round 2: Group Discussion",
+        desc: "Structured corporate GD evaluation focusing on communication, teamwork & articulation.",
+        icon: "talks",
+      },
+      {
+        title: "Round 3: Technical & HR",
+        desc: "Comprehensive technical interview panel followed by corporate HR behavioral assessment.",
+        icon: "drive",
+      },
+      {
+        title: "Verified Certificate",
+        desc: "Official CSI KKWIEER certificate endorsing professional corporate readiness.",
+        icon: "cert",
+      },
+    ],
+  },
+  {
     id: "vision-week-2026",
     title: "Vision Week 2.0 (2026)",
     subtitle: "Smarter Skills, Brighter Career • Explore • Create • Work Smarter",

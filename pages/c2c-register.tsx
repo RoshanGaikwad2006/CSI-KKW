@@ -1,0 +1,756 @@
+import React, { useState } from "react";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import SEO from "../src/components/SEO";
+import {
+  CheckCircle2,
+  ArrowRight,
+  ExternalLink,
+  AlertCircle,
+  Loader2,
+  ArrowLeft,
+  QrCode,
+  Upload,
+  X,
+  Building2,
+  Briefcase,
+  GraduationCap,
+  Sparkles,
+} from "lucide-react";
+import { Button } from "../src/components/ui/button";
+
+const DEFAULT_FORM = {
+  fullName: "",
+  email: "",
+  phone: "",
+  department: "",
+  year: "Third Year (TE)",
+  upiId: "",
+  comments: "",
+  paymentScreenshot: "",
+};
+
+const EVENT_DETAILS = [
+  { label: "EVENT", value: "From Campus to Corporate 5.0" },
+  { label: "INSTITUTE", value: "KKWIEER, Nashik" },
+  { label: "REGISTRATION FEE", value: "₹50 Only" },
+  { label: "ORGANIZER", value: "CSI Students' Chapter Nashik 2026-27" },
+];
+
+const EVENT_ROUNDS = [
+  {
+    module: "Round 1",
+    title: "Aptitude & Coding (DSA)",
+    desc: "Quantitative & logical aptitude test combined with live Data Structures & Algorithms (DSA) problem-solving challenges.",
+  },
+  {
+    module: "Round 2",
+    title: "Group Discussion (GD)",
+    desc: "Structured corporate GD evaluation focusing on communication skills, articulation, teamwork, and critical analysis.",
+  },
+  {
+    module: "Round 3",
+    title: "Technical & Personal HR Interview",
+    desc: "In-depth technical mock interview panel evaluating project work and fundamentals, followed by personal HR behavioral assessment.",
+  },
+];
+
+export default function C2CRegisterPage() {
+  const router = useRouter();
+  const [formData, setFormData] = useState(DEFAULT_FORM);
+  const [otherDepartment, setOtherDepartment] = useState("");
+  const [otherYear, setOtherYear] = useState("");
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const [ticketId, setTicketId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (error) setError(null);
+  };
+
+  const compressImage = (
+    file: File,
+    maxWidth = 1200,
+    maxHeight = 1200,
+    quality = 0.82
+  ): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = (event.target?.result as string) || "";
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth || height > maxHeight) {
+            if (width > height) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          } else {
+            resolve((event.target?.result as string) || "");
+          }
+        };
+        img.onerror = () => resolve((event.target?.result as string) || "");
+      };
+      reader.onerror = () => resolve("");
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 20 * 1024 * 1024) {
+      setError("Payment screenshot image size must be under 20MB.");
+      return;
+    }
+
+    setScreenshotFile(file);
+    try {
+      const compressedDataUrl = await compressImage(file);
+      setScreenshotPreview(compressedDataUrl);
+    } catch {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setScreenshotPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+    if (error) setError(null);
+  };
+
+  const handleRemoveScreenshot = () => {
+    setScreenshotFile(null);
+    setScreenshotPreview(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    // Validations
+    if (!formData.fullName.trim() || !formData.email.trim() || !formData.phone.trim()) {
+      setError("Please fill in all mandatory fields (Full Name, Email Address, WhatsApp Phone).");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.department.trim()) {
+      setError("Please select your Department.");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.year === "Other" && !otherYear.trim()) {
+      setError("Please specify your Academic Year or Course.");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.department === "Other" && !otherDepartment.trim()) {
+      setError("Please specify your Department name.");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.upiId.trim()) {
+      setError("Please enter your UPI ID or Transaction ID (UTR).");
+      setLoading(false);
+      return;
+    }
+
+    if (!screenshotPreview) {
+      setError("Please upload your Payment Transaction Screenshot before submitting.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      let uploadedScreenshotUrl = "";
+
+      // Upload Payment Screenshot to ImgBB if possible
+      if (screenshotPreview) {
+        try {
+          const uploadRes = await fetch("/api/upload-payment-ss", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: screenshotPreview }),
+          });
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json().catch(() => null);
+            if (uploadData && uploadData.success && uploadData.url) {
+              uploadedScreenshotUrl = uploadData.url;
+            }
+          }
+        } catch (uploadErr) {
+          console.warn("Screenshot upload notice:", uploadErr);
+        }
+      }
+
+      const finalYear =
+        formData.year === "Other"
+          ? otherYear.trim() || "Other"
+          : formData.year;
+
+      const finalDepartment =
+        formData.department === "Other"
+          ? otherDepartment.trim() || "Other"
+          : formData.department;
+
+      const payload = {
+        fullName: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        college: "K. K. Wagh Institute of Engineering Education & Research, Nashik",
+        department: finalDepartment,
+        year: finalYear,
+        upiId: formData.upiId.trim(),
+        comments: formData.comments.trim(),
+        paymentScreenshot: uploadedScreenshotUrl || screenshotPreview || "",
+      };
+
+      const res = await fetch("/api/c2c-register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      let data: any = null;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        const rawText = await res.text().catch(() => "");
+        console.warn("Non-JSON registration response:", rawText);
+        data = { error: rawText || "Submission failed. Please try again." };
+      }
+
+      if (res.ok && data?.success) {
+        setTicketId(data.ticketId || null);
+        setSubmitted(true);
+      } else {
+        setError(data?.error || data?.message || "Submission could not be recorded. Please try again.");
+      }
+    } catch (err: any) {
+      console.error("C2C 5.0 registration error:", err);
+      setError("Network connection issue. Please verify your internet connection or retry.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setSubmitted(false);
+    setTicketId(null);
+    setError(null);
+    setOtherDepartment("");
+    setOtherYear("");
+    setFormData(DEFAULT_FORM);
+    setScreenshotFile(null);
+    setScreenshotPreview(null);
+  };
+
+  const finalYearDisplay =
+    formData.year === "Other" ? otherYear || "Other" : formData.year;
+  const finalDeptDisplay =
+    formData.department === "Other" ? otherDepartment || "Other" : formData.department;
+
+  return (
+    <>
+      <SEO
+        title="From Campus to Corporate 5.0 Registration"
+        description="Register for From Campus to Corporate 5.0 — Flagship placement drive featuring Round 1 Apti & Coding (DSA), Round 2 GD, and Round 3 Technical & HR Interviews by CSI KKWIEER."
+        canonical="/c2c-register"
+        ogImage="/images/c2c.png"
+        keywords={[
+          "From Campus to Corporate 5.0",
+          "C2C 5.0 Registration",
+          "CSI KKWIEER",
+          "Placement Mock Drive",
+          "Coding DSA Assessment",
+          "Group Discussion GD",
+          "Technical HR Interview",
+          "KKWIEER Nashik",
+        ]}
+      />
+      <Head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+
+      <div className="min-h-screen bg-transparent flex flex-col font-sans text-slate-900 pb-12">
+        <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-5">
+          {/* Back Button Link */}
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-600 hover:text-[#1D68F2] mb-4 transition-colors font-sans"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Events</span>
+          </button>
+
+          {/* ── TOP BANNER CARD ── */}
+          <div className="bg-gradient-to-r from-[#0A192F] via-[#0D2447] to-[#0A192F] text-white rounded-2xl p-6 sm:p-8 mb-6 border border-slate-800/80 shadow-lg relative overflow-hidden">
+            <div className="absolute right-0 top-0 w-96 h-96 bg-[#1D68F2]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-widest text-blue-400 uppercase mb-1">
+                  K. K. Wagh Institute of Engineering Education &amp; Research, Nashik • CSI Students' Chapter Nashik 2026-27
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight font-display text-white">
+                  FROM CAMPUS TO CORPORATE <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">5.0</span>
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1">
+                  REGISTRATION FORM • CORPORATE READINESS &amp; PLACEMENT SERIES
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+                <span className="px-3.5 py-1.5 rounded-xl bg-blue-500/20 border border-blue-400/30 text-xs font-bold text-blue-200">
+                  FLAGSHIP EVENT
+                </span>
+                <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-xs font-bold text-emerald-300">
+                  REGISTRATION FEE: ₹50
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── TWO COLUMN LAYOUT: Form on Left (5 cols), Details on Right (7 cols) ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* ── LEFT COLUMN: Registration Form (5 cols) ── */}
+            <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-300 shadow-sm p-5 sm:p-6">
+              {submitted ? (
+                /* SUCCESS STATE */
+                <div className="py-6 text-center flex flex-col items-center">
+                  <div className="w-14 h-14 rounded-full bg-emerald-50 border-2 border-emerald-300 flex items-center justify-center text-emerald-600 mb-4">
+                    <CheckCircle2 className="w-8 h-8" />
+                  </div>
+                  <h2 className="text-xl font-bold text-[#0A192F] mb-1 font-display">
+                    REGISTRATION CONFIRMED
+                  </h2>
+                  <p className="text-xs font-mono font-bold text-[#1D68F2] mb-3">
+                    PASS ID: {ticketId || "C2C5-CONFIRMED"}
+                  </p>
+                  <p className="text-xs text-slate-600 max-w-md mx-auto mb-6 leading-relaxed font-sans">
+                    Thank you, <strong className="text-slate-900">{formData.fullName}</strong>. Your registration for{" "}
+                    <strong>From Campus to Corporate 5.0</strong> has been officially confirmed.
+                  </p>
+
+                  <div className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-left mb-6 text-xs text-slate-700 space-y-2 font-sans">
+                    <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                      <span className="font-semibold text-slate-500">NAME</span>
+                      <span className="font-bold text-slate-900">{formData.fullName}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                      <span className="font-semibold text-slate-500">INSTITUTE</span>
+                      <span className="font-bold text-slate-900 text-right max-w-[65%] truncate">
+                        KKWIEER, Nashik
+                      </span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                      <span className="font-semibold text-slate-500">DEPARTMENT</span>
+                      <span className="font-bold text-slate-900">{finalDeptDisplay}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                      <span className="font-semibold text-slate-500">ACADEMIC YEAR</span>
+                      <span className="font-bold text-slate-900">{finalYearDisplay}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                      <span className="font-semibold text-slate-500">EMAIL</span>
+                      <span className="font-bold text-slate-900">{formData.email}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                      <span className="font-semibold text-slate-500">PHONE</span>
+                      <span className="font-bold text-slate-900">{formData.phone}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                      <span className="font-semibold text-slate-500">UPI ID / UTR</span>
+                      <span className="font-bold text-slate-900">{formData.upiId}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-slate-500">PAYMENT PROOF</span>
+                      <span className="font-bold text-emerald-700">ATTACHED ✓</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3 w-full font-sans">
+                    <a
+                      href="https://chat.whatsapp.com/IOXB6jA3vtV7Bx0IY10KTb"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba56] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:shadow-lg"
+                    >
+                      <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                      </svg>
+                      <span>Join WhatsApp Group</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                    <Button
+                      onClick={() => router.push("/")}
+                      variant="outline"
+                      className="w-full py-2.5 rounded-xl border-slate-300 text-slate-700 font-bold text-xs uppercase tracking-wider"
+                    >
+                      Back to Home
+                    </Button>
+                  </div>
+
+                  <button
+                    onClick={resetForm}
+                    className="text-xs text-[#1D68F2] hover:underline font-bold mt-4 font-sans"
+                  >
+                    Register another student
+                  </button>
+                </div>
+              ) : (
+                /* FORM STATE */
+                <form onSubmit={handleSubmit} className="space-y-4 text-left font-sans">
+                  <div>
+                    <h2 className="text-sm font-bold text-[#0A192F] font-display tracking-wider uppercase mb-1 pb-2 border-b border-slate-200">
+                      CANDIDATE REGISTRATION
+                    </h2>
+                    <p className="text-[11px] text-slate-500 mb-4">
+                      Please enter your correct details for the official certificate &amp; batch allocation.
+                    </p>
+                  </div>
+
+                  {error && (
+                    <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2 font-sans">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                      <span>{error}</span>
+                    </div>
+                  )}
+
+                  {/* College Notice Badge (Fixed to KKWIEER as requested) */}
+                  <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-200 flex items-center gap-2.5 text-xs text-[#0A192F]">
+                    <Building2 className="w-4 h-4 text-[#1D68F2] shrink-0" />
+                    <div>
+                      <span className="font-bold text-[#1D68F2] uppercase text-[10px] block tracking-wider">
+                        INSTITUTE
+                      </span>
+                      <span className="font-semibold text-slate-800 text-[11px]">
+                        K. K. Wagh Institute of Engineering Education &amp; Research (KKWIEER)
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Full Name */}
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
+                      FULL NAME <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="fullName"
+                      required
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      placeholder="Name Surname"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                    />
+                  </div>
+
+                  {/* Email Address */}
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
+                      EMAIL ADDRESS <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="example@kkwagh.edu.in / gmail.com"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                    />
+                  </div>
+
+                  {/* Phone Number */}
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
+                      WHATSAPP NUMBER <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      required
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="+91 9876543210"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                    />
+                  </div>
+
+                  {/* Department & Academic Year Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Department */}
+                    <div>
+                      <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
+                        DEPARTMENT <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        name="department"
+                        value={formData.department}
+                        onChange={handleChange}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                      >
+                        <option value="">Select Department</option>
+                        <option value="Computer">Computer</option>
+                        <option value="Information Technology">IT</option>
+                        <option value="AIDS">AIDS</option>
+                        <option value="CSD">CSD</option>
+                        <option value="E&TC">E&amp;TC</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                        <option value="Chemical">Chemical</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Robotics & Automation">Robotics &amp; Automation</option>
+                        <option value="Other">Other</option>
+                      </select>
+                      {formData.department === "Other" && (
+                        <input
+                          type="text"
+                          placeholder="Enter your department"
+                          value={otherDepartment}
+                          onChange={(e) => setOtherDepartment(e.target.value)}
+                          className="mt-2 w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] text-slate-900"
+                        />
+                      )}
+                    </div>
+
+                    {/* Academic Year with dynamic Other option */}
+                    <div>
+                      <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
+                        ACADEMIC YEAR <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        name="year"
+                        value={formData.year}
+                        onChange={handleChange}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                      >
+                        <option value="First Year (FE)">First Year (FE)</option>
+                        <option value="Second Year (SE)">Second Year (SE)</option>
+                        <option value="Third Year (TE)">Third Year (TE)</option>
+                        <option value="Final Year (BE)">Final Year (BE)</option>
+                        <option value="Other">Other (Specify)</option>
+                      </select>
+                      {formData.year === "Other" && (
+                        <input
+                          type="text"
+                          placeholder="Specify year / course (e.g. MCA, ME)"
+                          value={otherYear}
+                          onChange={(e) => setOtherYear(e.target.value)}
+                          className="mt-2 w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] text-slate-900"
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* UPI ID / UTR */}
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
+                      UPI ID / TRANSACTION ID (UTR) <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="upiId"
+                      required
+                      value={formData.upiId}
+                      onChange={handleChange}
+                      placeholder="e.g. 408212345678 or student@okhdfcbank"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#1D68F2]/30 focus:border-[#1D68F2] focus:bg-white transition-all text-slate-900"
+                    />
+                    <p className="text-[10px] text-slate-500 mt-1 font-sans">
+                      Enter the 12-digit UTR/Ref number or UPI ID used to pay the ₹50 registration fee.
+                    </p>
+                  </div>
+
+                  {/* Payment Screenshot Upload */}
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0A192F] uppercase tracking-wider mb-1.5">
+                      PAYMENT SCREENSHOT <span className="text-red-500">*</span>
+                    </label>
+
+                    {!screenshotPreview ? (
+                      <label className="border-2 border-dashed border-slate-300 hover:border-[#1D68F2] bg-slate-50/70 hover:bg-slate-100/70 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all text-center group">
+                        <Upload className="w-5 h-5 text-slate-400 group-hover:text-[#1D68F2] mb-1.5 transition-colors" />
+                        <span className="text-xs font-semibold text-slate-700 font-sans">
+                          Upload Transaction Screenshot
+                        </span>
+                        <span className="text-[10px] text-slate-500 mt-0.5 font-sans">
+                          PNG, JPG or WEBP (Max 20MB)
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="hidden"
+                        />
+                      </label>
+                    ) : (
+                      <div className="border border-slate-300 rounded-xl p-3 bg-slate-50 flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-lg overflow-hidden border border-slate-200 bg-white shrink-0">
+                          <img
+                            src={screenshotPreview}
+                            alt="Payment Screenshot Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 text-emerald-700 font-semibold text-xs">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>Screenshot Attached</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 truncate mt-0.5 font-sans">
+                            {screenshotFile ? screenshotFile.name : "screenshot.jpg"}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemoveScreenshot}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                          title="Remove Screenshot"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="pt-2">
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full py-3 bg-[#1D68F2] hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 font-sans"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Processing Registration...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Submit C2C 5.0 Registration</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </div>
+
+            {/* ── RIGHT COLUMN: Payment Card + Event Details & Modules (7 cols) ── */}
+            <div className="lg:col-span-7 flex flex-col gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                {/* 1. PAYMENT QR CARD */}
+                <div className="md:col-span-5 bg-white rounded-2xl border border-slate-300 shadow-sm p-4 sm:p-5 flex flex-col items-center text-center">
+                  <h2 className="w-full text-xs sm:text-sm font-bold text-[#0A192F] font-display tracking-wider uppercase mb-3 pb-2 border-b border-slate-200 text-left">
+                    FEE PAYMENT
+                  </h2>
+
+                  <div className="w-full flex flex-col items-center gap-3 my-1">
+                    <div className="w-full max-w-[280px] sm:max-w-[310px] rounded-2xl border border-slate-800 bg-black p-2 flex items-center justify-center relative overflow-hidden shadow-lg">
+                      <img
+                        src="/images/payment-qr.png"
+                        alt="PhonePe Payment QR Code"
+                        className="w-full h-auto object-contain rounded-xl"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = "none";
+                          (e.currentTarget.nextElementSibling as HTMLElement).style.display = "flex";
+                        }}
+                      />
+                      <div className="absolute inset-0 hidden flex-col items-center justify-center text-slate-400 p-2 text-center">
+                        <QrCode className="w-12 h-12 opacity-30 mb-2" />
+                        <span className="text-xs font-sans font-semibold text-slate-500">Scan QR Code</span>
+                      </div>
+                    </div>
+
+                    <span className="inline-block bg-slate-100 text-slate-800 border border-slate-300 font-bold text-xs uppercase px-4 py-1.5 rounded-lg font-sans">
+                      REGISTRATION FEE: ₹50
+                    </span>
+
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-sans leading-snug text-center">
+                      Scan using PhonePe or any UPI app to pay ₹50 entry fee. Enter your UTR / UPI ID &amp; upload screenshot to complete registration.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 2. EVENT DETAILS & MODULES */}
+                <div className="md:col-span-7 bg-white rounded-2xl border border-slate-300 shadow-sm p-6 space-y-6">
+                  {/* Event Details */}
+                  <div>
+                    <h2 className="text-sm font-bold text-[#0A192F] font-display tracking-wider uppercase mb-3 pb-2 border-b border-slate-200">
+                      EVENT OVERVIEW
+                    </h2>
+
+                    <div className="divide-y divide-slate-100 text-xs font-sans">
+                      {EVENT_DETAILS.map(({ label, value }) => (
+                        <div key={label} className="py-2 flex justify-between items-center gap-2">
+                          <span className="font-semibold text-slate-500 tracking-wider text-[11px]">{label}</span>
+                          <span className="font-bold text-[#0A192F] text-right text-[11px]">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Highlights / Modules */}
+                  <div>
+                    <h3 className="text-xs font-bold text-[#0A192F] font-display tracking-wider uppercase mb-3 pb-2 border-b border-slate-200">
+                      SELECTION ROUNDS
+                    </h3>
+
+                    <div className="space-y-2.5 font-sans">
+                      {EVENT_ROUNDS.map(({ module, title, desc }) => (
+                        <div
+                          key={module}
+                          className="p-3 rounded-xl border border-slate-200/80 bg-slate-50/60"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider px-2 py-0.5 rounded bg-blue-100 shrink-0 font-sans">
+                              {module}
+                            </span>
+                            <h4 className="text-xs font-bold text-[#0A192F] font-sans truncate">{title}</h4>
+                          </div>
+                          <p className="text-[11px] text-slate-600 leading-snug">{desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
