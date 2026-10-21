@@ -127,32 +127,33 @@ export default async function handler(req, res) {
     return { success: false, id: null };
   };
 
-  // 2. Task: Forward to Google Apps Script Webhook (fire-and-forget — don't block response)
-  const fireGoogleSheetWebhook = () => {
-    if (!GOOGLE_WEBHOOK_URL) return;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
-    fetch(GOOGLE_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(registrationData),
-      redirect: "follow",
-      signal: controller.signal,
-    })
-      .then(() => clearTimeout(timeoutId))
-      .catch((err) => {
-        clearTimeout(timeoutId);
-        console.warn("Google webhook dispatch notice:", GOOGLE_WEBHOOK_URL, err.message);
+  // 2. Task: Forward to Google Apps Script Webhook (await to guarantee sheet row write before response ends)
+  const googleSheetTask = async () => {
+    if (!GOOGLE_WEBHOOK_URL) return { success: false };
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+      const response = await fetch(GOOGLE_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(registrationData),
+        redirect: "follow",
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
+      const ok = response.ok || response.status === 200 || response.status === 302;
+      return { success: ok };
+    } catch (err) {
+      console.warn("Google webhook dispatch notice:", GOOGLE_WEBHOOK_URL, err.message);
+      return { success: false };
+    }
   };
 
-  // Run MongoDB first, fire Google Sheet in background (non-blocking)
-  const mongoRes = await mongoTask();
-  fireGoogleSheetWebhook(); // fire-and-forget, does NOT block the response
-  const googleRes = { success: true }; // optimistic — webhook will sync async
+  // Run MongoDB and Google Sheets in parallel with await
+  const [mongoRes, googleRes] = await Promise.all([mongoTask(), googleSheetTask()]);
 
   const mongoSaved = mongoRes.success;
-  const googleSheetSynced = googleRes.success; // optimistic (webhook is async)
+  const googleSheetSynced = googleRes.success;
   const savedId = mongoRes.id;
 
   if (mongoSaved || googleSheetSynced) {
