@@ -79,9 +79,9 @@ export default function C2CRegisterPage() {
 
   const compressImage = (
     file: File,
-    maxWidth = 1200,
-    maxHeight = 1200,
-    quality = 0.82
+    maxWidth = 800,
+    maxHeight = 800,
+    quality = 0.72
   ): Promise<string> => {
     return new Promise((resolve) => {
       const reader = new FileReader();
