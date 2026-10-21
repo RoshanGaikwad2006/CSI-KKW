@@ -9,7 +9,6 @@ const uri =
 // (Can be updated via GOOGLE_SCRIPT_WEBAPP_URL env variable or directly attached later)
 const GOOGLE_WEBHOOK_URL =
   process.env.GOOGLE_SCRIPT_C2C_WEBAPP_URL ||
-  process.env.GOOGLE_SCRIPT_WEBAPP_URL ||
   "https://script.google.com/macros/s/AKfycbxgUXK-XualwOi5Blpq54OAHaqTAZJRm3ZaD32a-es_mUILIgt2uPJcTW_CW-96WcxU/exec";
 
 let client;
@@ -132,7 +131,7 @@ export default async function handler(req, res) {
     if (!GOOGLE_WEBHOOK_URL) return { success: false };
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
       const response = await fetch(GOOGLE_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -141,7 +140,8 @@ export default async function handler(req, res) {
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
-      return { success: response.ok || response.status === 200 || response.status === 302 };
+      const ok = response.ok || response.status === 200 || response.status === 302;
+      return { success: ok };
     } catch (err) {
       console.warn("Google webhook dispatch notice:", GOOGLE_WEBHOOK_URL, err.message);
       return { success: false };
