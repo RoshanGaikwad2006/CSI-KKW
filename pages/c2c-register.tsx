@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import SEO from "../src/components/SEO";
@@ -18,6 +18,34 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "../src/components/ui/button";
+
+// Direct client-side ImgBB uploader (bypasses server middleman for maximum speed)
+const uploadToImgBBDirect = async (base64DataUrl: string): Promise<string> => {
+  if (!base64DataUrl) return "";
+  try {
+    const IMGBB_KEY = "3b3fa0e62810a9f5d34208e9d5df6fb5";
+    const base64Data = base64DataUrl.replace(/^data:image\/\w+;base64,/, "");
+    const params = new URLSearchParams();
+    params.append("key", IMGBB_KEY);
+    params.append("image", base64Data);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 9000);
+    const res = await fetch("https://api.imgbb.com/1/upload", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    const data = await res.json();
+    if (data?.success && data?.data?.url) {
+      return data.data.url;
+    }
+  } catch (e) {
+    console.warn("Direct ImgBB upload notice:", e);
+  }
+  return base64DataUrl; // fallback to base64 if network fails
+};
 
 const DEFAULT_FORM = {
   fullName: "",
@@ -65,6 +93,8 @@ export default function C2CRegisterPage() {
   const [otherYear, setOtherYear] = useState("");
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
+  const uploadPromiseRef = useRef<Promise<string> | null>(null);
   const [ticketId, setTicketId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -133,10 +163,28 @@ export default function C2CRegisterPage() {
     try {
       const compressedDataUrl = await compressImage(file);
       setScreenshotPreview(compressedDataUrl);
+      setUploadedImageUrl("");
+      // Kick off background upload to ImgBB immediately while user fills other fields!
+      const p = uploadToImgBBDirect(compressedDataUrl).then((url) => {
+        if (url && url.startsWith("http")) {
+          setUploadedImageUrl(url);
+        }
+        return url;
+      });
+      uploadPromiseRef.current = p;
     } catch {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setScreenshotPreview(reader.result as string);
+        const res = reader.result as string;
+        setScreenshotPreview(res);
+        setUploadedImageUrl("");
+        const p = uploadToImgBBDirect(res).then((url) => {
+          if (url && url.startsWith("http")) {
+            setUploadedImageUrl(url);
+          }
+          return url;
+        });
+        uploadPromiseRef.current = p;
       };
       reader.readAsDataURL(file);
     }
@@ -146,6 +194,8 @@ export default function C2CRegisterPage() {
   const handleRemoveScreenshot = () => {
     setScreenshotFile(null);
     setScreenshotPreview(null);
+    setUploadedImageUrl("");
+    uploadPromiseRef.current = null;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -212,34 +262,23 @@ export default function C2CRegisterPage() {
           ? otherDepartment.trim() || "Other"
           : formData.department;
 
-      // Upload directly to ImgBB from the browser (no server middleman hop)
-      const uploadToImgBBDirect = async (): Promise<string> => {
-        if (!screenshotPreview) return "";
+      // Ensure we have the ImgBB uploaded URL (wait if in-flight upload still pending)
+      let finalScreenshotUrl = uploadedImageUrl;
+      if (!finalScreenshotUrl && uploadPromiseRef.current) {
         try {
-          const IMGBB_KEY = "3b3fa0e62810a9f5d34208e9d5df6fb5";
-          const base64Data = screenshotPreview.replace(/^data:image\/\w+;base64,/, "");
-          const params = new URLSearchParams();
-          params.append("key", IMGBB_KEY);
-          params.append("image", base64Data);
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 8000);
-          const res = await fetch("https://api.imgbb.com/1/upload", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: params.toString(),
-            signal: controller.signal,
-          });
-          clearTimeout(timeoutId);
-          const data = await res.json();
-          if (data?.success && data?.data?.url) return data.data.url;
-        } catch (e) {
-          console.warn("Direct ImgBB upload notice:", e);
+          finalScreenshotUrl = await uploadPromiseRef.current;
+        } catch {
+          finalScreenshotUrl = "";
         }
-        return screenshotPreview; // fallback: use base64 inline
-      };
+      }
+      if (!finalScreenshotUrl && screenshotPreview) {
+        finalScreenshotUrl = await uploadToImgBBDirect(screenshotPreview);
+      }
+      if (!finalScreenshotUrl) {
+        finalScreenshotUrl = screenshotPreview || "";
+      }
 
-      // Build base payload (use base64 as placeholder while upload runs in parallel)
-      const basePayload = {
+      const payload = {
         fullName: formData.fullName.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
@@ -248,18 +287,14 @@ export default function C2CRegisterPage() {
         year: finalYear,
         upiId: formData.upiId.trim(),
         comments: formData.comments.trim(),
-        paymentScreenshot: screenshotPreview || "",
+        paymentScreenshot: finalScreenshotUrl,
       };
 
-      // Run image upload and registration in parallel
-      const [_imgbbResult, res] = await Promise.all([
-        uploadToImgBBDirect(),
-        fetch("/api/c2c-register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(basePayload),
-        }),
-      ]);
+      const res = await fetch("/api/c2c-register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       let data: any = null;
       try {

@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { waitUntil } from "@vercel/functions";
 
 // MongoDB Atlas URI
 const uri =
@@ -127,33 +128,42 @@ export default async function handler(req, res) {
     return { success: false, id: null };
   };
 
-  // 2. Task: Forward to Google Apps Script Webhook (fire-and-forget — don't block response)
-  const fireGoogleSheetWebhook = () => {
+  // 2. Task: Forward to Google Apps Script Webhook (background via waitUntil — does not block response)
+  const fireGoogleSheetWebhook = async () => {
     if (!GOOGLE_WEBHOOK_URL) return;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
-    fetch(GOOGLE_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(registrationData),
-      redirect: "follow",
-      signal: controller.signal,
-    })
-      .then(() => clearTimeout(timeoutId))
-      .catch((err) => {
-        clearTimeout(timeoutId);
-        console.warn("Google webhook dispatch notice:", GOOGLE_WEBHOOK_URL, err.message);
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      await fetch(GOOGLE_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(registrationData),
+        redirect: "follow",
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
+    } catch (err) {
+      console.warn("Google webhook dispatch notice:", GOOGLE_WEBHOOK_URL, err.message);
+    }
   };
 
-  // Run MongoDB first, fire Google Sheet in background (non-blocking)
+  // Run MongoDB first (fast, ~200ms)
   const mongoRes = await mongoTask();
-  fireGoogleSheetWebhook(); // fire-and-forget, does NOT block the response
-  const googleRes = { success: true }; // optimistic — webhook will sync async
+
+  // Keep Vercel serverless Lambda alive in background to finish writing to Google Sheets!
+  try {
+    if (typeof waitUntil === "function") {
+      waitUntil(fireGoogleSheetWebhook());
+    } else {
+      fireGoogleSheetWebhook();
+    }
+  } catch (_e) {
+    fireGoogleSheetWebhook();
+  }
 
   const mongoSaved = mongoRes.success;
-  const googleSheetSynced = googleRes.success; // optimistic (webhook is async)
   const savedId = mongoRes.id;
+  const googleSheetSynced = true;
 
   if (mongoSaved || googleSheetSynced) {
     return res.status(200).json({
@@ -161,7 +171,7 @@ export default async function handler(req, res) {
       message: "Registration recorded successfully for From Campus to Corporate 5.0!",
       id: savedId,
       ticketId,
-      syncedToGoogle: googleSheetSynced,
+      syncedToGoogle: true,
     });
   }
 
