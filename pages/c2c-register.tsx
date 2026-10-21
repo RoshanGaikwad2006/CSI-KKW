@@ -212,34 +212,31 @@ export default function C2CRegisterPage() {
           ? otherDepartment.trim() || "Other"
           : formData.department;
 
-      // Upload directly to ImgBB from the browser (no server middleman hop)
-      const uploadToImgBBDirect = async (): Promise<string> => {
-        if (!screenshotPreview) return "";
-        try {
-          const IMGBB_KEY = "3b3fa0e62810a9f5d34208e9d5df6fb5";
-          const base64Data = screenshotPreview.replace(/^data:image\/\w+;base64,/, "");
-          const params = new URLSearchParams();
-          params.append("key", IMGBB_KEY);
-          params.append("image", base64Data);
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 8000);
-          const res = await fetch("https://api.imgbb.com/1/upload", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: params.toString(),
-            signal: controller.signal,
-          });
-          clearTimeout(timeoutId);
-          const data = await res.json();
-          if (data?.success && data?.data?.url) return data.data.url;
-        } catch (e) {
-          console.warn("Direct ImgBB upload notice:", e);
-        }
-        return screenshotPreview; // fallback: use base64 inline
-      };
+      let uploadedScreenshotUrl = "";
 
-      // Build base payload (use base64 as placeholder while upload runs in parallel)
-      const basePayload = {
+      // Upload Payment Screenshot via /api/upload-payment-ss (Vision Week approach)
+      if (screenshotPreview) {
+        try {
+          const uploadRes = await fetch("/api/upload-payment-ss", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: screenshotPreview }),
+          });
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json().catch(() => null);
+            if (uploadData && uploadData.success && uploadData.url) {
+              uploadedScreenshotUrl = uploadData.url;
+            }
+          } else {
+            const errText = await uploadRes.text().catch(() => "");
+            console.warn("Upload payment ss notice:", uploadRes.status, errText);
+          }
+        } catch (uploadErr) {
+          console.warn("Screenshot upload fallback notice:", uploadErr);
+        }
+      }
+
+      const payload = {
         fullName: formData.fullName.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
@@ -248,18 +245,14 @@ export default function C2CRegisterPage() {
         year: finalYear,
         upiId: formData.upiId.trim(),
         comments: formData.comments.trim(),
-        paymentScreenshot: screenshotPreview || "",
+        paymentScreenshot: uploadedScreenshotUrl || screenshotPreview || "",
       };
 
-      // Run image upload and registration in parallel
-      const [_imgbbResult, res] = await Promise.all([
-        uploadToImgBBDirect(),
-        fetch("/api/c2c-register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(basePayload),
-        }),
-      ]);
+      const res = await fetch("/api/c2c-register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       let data: any = null;
       try {
