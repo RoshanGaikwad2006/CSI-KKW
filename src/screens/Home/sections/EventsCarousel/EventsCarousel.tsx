@@ -31,13 +31,13 @@ export const staticUpcomingEvents: UpcomingEventItem[] = [
   {
     id: "campus-to-corporate-5",
     title: "From Campus to Corporate 5.0",
-    subtitle: "Placement Drive • Round 1: Apti & Coding (DSA) • Round 2: GD • Round 3: Technical + HR Interview",
+    subtitle: "Round 01: Aptitude & Technical Test • Round 02: Group Discussion • Round 03: Technical & HR Interview",
     category: "REGISTRATION OPEN",
-    day: "C2C",
-    month: "5.0",
-    dateRange: "Upcoming • KKWIEER, Nashik",
+    day: "27",
+    month: "OCT",
+    dateRange: "27 Oct 2026 • KKWIEER, Nashik",
     location: "KKWIEER Campus, Nashik",
-    image: "/images/c2c.png",
+    image: "/images/c2c-poster.png",
   },
   {
     id: "vision-week-2026",

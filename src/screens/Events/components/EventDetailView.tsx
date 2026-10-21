@@ -270,7 +270,7 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
                     From Campus to Corporate 5.0 Registrations Open!
                   </div>
                   <div className="text-xs text-blue-100/90 mt-0.5">
-                    3-Stage Placement Simulation: Round 1 Apti &amp; Coding (DSA) • Round 2 GD • Round 3 Technical + HR Interview.
+                    Date: 27 Oct 2026 • Round 01: Aptitude &amp; Technical Test • Round 02: Group Discussion • Round 03: Technical &amp; HR Interview.
                   </div>
                 </div>
                 <Link

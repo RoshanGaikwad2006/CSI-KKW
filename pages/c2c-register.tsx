@@ -32,6 +32,7 @@ const DEFAULT_FORM = {
 
 const EVENT_DETAILS = [
   { label: "EVENT", value: "From Campus to Corporate 5.0" },
+  { label: "DATE", value: "27 Oct 2026" },
   { label: "INSTITUTE", value: "KKWIEER, Nashik" },
   { label: "REGISTRATION FEE", value: "₹50 Only" },
   { label: "ORGANIZER", value: "CSI Students' Chapter Nashik 2026-27" },
@@ -39,19 +40,19 @@ const EVENT_DETAILS = [
 
 const EVENT_ROUNDS = [
   {
-    module: "Round 1",
-    title: "Aptitude & Coding (DSA)",
-    desc: "Quantitative & logical aptitude test combined with live Data Structures & Algorithms (DSA) problem-solving challenges.",
+    module: "Round 01",
+    title: "Aptitude & Technical Test",
+    desc: "Quantitative & logical aptitude test combined with technical core assessment & problem-solving.",
   },
   {
-    module: "Round 2",
-    title: "Group Discussion (GD)",
+    module: "Round 02",
+    title: "Group Discussion",
     desc: "Structured corporate GD evaluation focusing on communication skills, articulation, teamwork, and critical analysis.",
   },
   {
-    module: "Round 3",
-    title: "Technical & Personal HR Interview",
-    desc: "In-depth technical mock interview panel evaluating project work and fundamentals, followed by personal HR behavioral assessment.",
+    module: "Round 03",
+    title: "Technical & HR Interview",
+    desc: "Comprehensive technical interview panel evaluating core skills and projects, followed by HR behavioral assessment.",
   },
 ];
 
@@ -325,11 +326,14 @@ export default function C2CRegisterPage() {
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight font-display text-white">
                   FROM CAMPUS TO CORPORATE <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">5.0</span>
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1">
-                  REGISTRATION FORM • CORPORATE READINESS &amp; PLACEMENT SERIES
+                <p className="text-xs sm:text-sm text-blue-200/90 font-medium mt-1">
+                  LEARN • CONNECT • GROW • Bridging the gap between academic learning and the professional world.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+                <span className="px-3.5 py-1.5 rounded-xl bg-purple-500/20 border border-purple-400/30 text-xs font-bold text-purple-200">
+                  DATE: 27 OCT 2026
+                </span>
                 <span className="px-3.5 py-1.5 rounded-xl bg-blue-500/20 border border-blue-400/30 text-xs font-bold text-blue-200">
                   FLAGSHIP EVENT
                 </span>
@@ -743,6 +747,38 @@ export default function C2CRegisterPage() {
                           <p className="text-[11px] text-slate-600 leading-snug">{desc}</p>
                         </div>
                       ))}
+                    </div>
+
+                    {/* Key Highlights from Official Poster */}
+                    <div className="pt-3 border-t border-slate-200 space-y-2">
+                      <div className="grid grid-cols-2 gap-2 text-center font-sans">
+                        <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/90">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-[#0A192F]">HR Round</p>
+                          <p className="text-[9px] text-slate-500">Industry Evaluation</p>
+                        </div>
+                        <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/90">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-[#0A192F]">Internships</p>
+                          <p className="text-[9px] text-slate-500">Industry Openings</p>
+                        </div>
+                        <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/90">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-[#0A192F]">Networking</p>
+                          <p className="text-[9px] text-slate-500">Alumni &amp; Mentors</p>
+                        </div>
+                        <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/90">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-[#0A192F]">Placements</p>
+                          <p className="text-[9px] text-slate-500">Corporate Hiring</p>
+                        </div>
+                      </div>
+
+                      <a
+                        href="/images/c2c-poster.png"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#1D68F2] text-xs font-bold transition-colors"
+                      >
+                        <span>View Official Event Poster</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
                     </div>
                   </div>
                 </div>
