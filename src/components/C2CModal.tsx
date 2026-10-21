@@ -256,7 +256,7 @@ export const C2CModal: React.FC<C2CModalProps> = ({ isOpen, onClose }) => {
 
               <div className="flex flex-col gap-2.5 w-full">
                 <a
-                  href="https://chat.whatsapp.com/IOXB6jA3vtV7Bx0IY10KTb"
+                  href="https://chat.whatsapp.com/BigU9Yk9SoaBVYf76dCMTc"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba56] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md"
