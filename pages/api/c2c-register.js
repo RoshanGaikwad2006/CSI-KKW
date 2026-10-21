@@ -9,7 +9,7 @@ const uri =
 // (Can be updated via GOOGLE_SCRIPT_WEBAPP_URL env variable or directly attached later)
 const GOOGLE_WEBHOOK_URL =
   process.env.GOOGLE_SCRIPT_C2C_WEBAPP_URL ||
-  "https://script.google.com/macros/s/AKfycbxgUXK-XualwOi5Blpq54OAHaqTAZJRm3ZaD32a-es_mUILIgt2uPJcTW_CW-96WcxU/exec";
+  "https://script.google.com/macros/s/AKfycbxuUK0OoYark9vHRHvrVgwK3iUtH2F5oxoq5YyRhLGN2m_GjBNGgDQdTs2xuD4DCmdqug/exec";
 
 let client;
 let clientPromise;
