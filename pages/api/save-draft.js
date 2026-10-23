@@ -1,47 +1,65 @@
-const { MongoClient } = require('mongodb');
-
-const uri = "mongodb+srv://sarthakp8074_db_user:eIra0uMgdxNJea5x@cluster-csi.cz17liw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-CSI";
-const client = new MongoClient(uri);
+import { getTestDb } from "../../src/lib/testDb";
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { username, answers, flaggedQuestions, currentQuestion, timeSpent, violations, testStarted, questions } = req.body;
+  const {
+    username,
+    answers,
+    flaggedQuestions,
+    currentQuestion,
+    timeSpent,
+    violations,
+    testStarted,
+    questionIds,
+    questions,
+  } = req.body;
 
   if (!username) {
-    return res.status(400).json({ error: 'Username is required' });
+    return res.status(400).json({ error: "Username is required" });
   }
 
+  const cleanUser = String(username).trim();
+
   try {
-    await client.connect();
-    const db = client.db("test");
+    const db = await getTestDb();
     const drafts = db.collection("draft");
 
-    const draftData = {
-      username,
+    // Extract compact question IDs to prevent massive document bloat
+    const finalQuestionIds =
+      Array.isArray(questionIds) && questionIds.length > 0
+        ? questionIds
+        : Array.isArray(questions)
+        ? questions.map((q) => q._id || q.id).filter(Boolean)
+        : [];
+
+    const updateDoc = {
+      username: cleanUser,
       answers: answers || {},
       flaggedQuestions: flaggedQuestions || [],
       currentQuestion: currentQuestion || 0,
       timeSpent: timeSpent || 0,
       violations: violations || 0,
-      testStarted: testStarted || false,
-      questions: questions || [],
-      lastUpdated: new Date()
+      testStarted: Boolean(testStarted),
+      lastUpdated: new Date(),
     };
 
-    await drafts.replaceOne(
-      { username },
-      draftData,
+    if (finalQuestionIds.length > 0) {
+      updateDoc.questionIds = finalQuestionIds;
+    }
+
+    // Upsert draft cleanly with atomic update
+    await drafts.updateOne(
+      { username: cleanUser },
+      { $set: updateDoc },
       { upsert: true }
     );
-    
-    res.json({ success: true });
+
+    return res.status(200).json({ success: true });
   } catch (err) {
-    console.error('Save draft error:', err);
-    res.status(500).json({ error: 'Failed to save draft' });
-  } finally {
-    await client.close();
+    console.error("Save draft error:", err);
+    return res.status(500).json({ error: "Failed to save draft" });
   }
 }
