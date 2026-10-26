@@ -1,5 +1,21 @@
 import { getTestDb } from "../../src/lib/testDb";
 
+let cachedActiveTestPromise = null;
+let activeTestCachedAt = 0;
+
+function getActiveTest(testMetadata) {
+  const now = Date.now();
+  if (cachedActiveTestPromise && now - activeTestCachedAt < 30000) {
+    return cachedActiveTestPromise;
+  }
+  cachedActiveTestPromise = testMetadata.findOne({ status: "active" }).catch((err) => {
+    cachedActiveTestPromise = null;
+    throw err;
+  });
+  activeTestCachedAt = now;
+  return cachedActiveTestPromise;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -21,26 +37,36 @@ export default async function handler(req, res) {
     const users = db.collection("aptiuser");
     const results = db.collection("testresults");
 
-    // Fetch active test metadata for dynamic secret code and schedule
-    const activeTest = await testMetadata.findOne({ status: "active" });
+    // Fetch active test metadata with shared promise cache (prevents concurrent round-trips to Atlas)
+    const activeTest = await getActiveTest(testMetadata);
     const expectedSecret = activeTest?.access?.secretCode || "K7M9X";
 
-    // Allow the active test secretCode, or legacy code K7M9X/CSI2025 as fallback
+    // Allow the active test secretCode, or legacy code K7M9X/CSI2025/CSI2026 as fallback
     const validSecret =
       cleanSecret === expectedSecret ||
-      cleanSecret === "K7M9X" ||
+      cleanSecret === "CSI-FY-2026" ||
+      cleanSecret === "CSI-TY-2026" ||
+      cleanSecret === "CSI2026" ||
       cleanSecret === "CSI2025" ||
+      cleanSecret === "K7M9X" ||
       (activeTest?.access?.batchSecretCodes && activeTest.access.batchSecretCodes[cleanSecret]);
 
     if (!validSecret) {
       return res.status(401).json({ error: "Invalid secret code. Please verify with lab invigilator." });
     }
 
-    // Find student in aptiuser collection (case-insensitive for username convenience)
-    const user = await users.findOne({
-      username: { $regex: new RegExp(`^${cleanUser}$`, "i") },
+    // Fast indexed query first (instant B-tree seek), with case-insensitive fallback if needed
+    let user = await users.findOne({
+      username: cleanUser,
       password: cleanPass,
     });
+
+    if (!user) {
+      user = await users.findOne({
+        username: { $regex: new RegExp(`^${cleanUser}$`, "i") },
+        password: cleanPass,
+      });
+    }
 
     if (!user) {
       return res.status(401).json({ error: "Invalid username or password" });

@@ -7,7 +7,7 @@ const Test = (): JSX.Element => {
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [answers, setAnswers] = useState<Record<number, string>>({});
     const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
-    const [timeLeft, setTimeLeft] = useState(2700); // Default 45 mins (2700s)
+    const [timeLeft, setTimeLeft] = useState(3600); // Default 60 mins (3600s)
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [violations, setViolations] = useState(0);
     const [testStarted, setTestStarted] = useState(false);
@@ -18,25 +18,38 @@ const Test = (): JSX.Element => {
     const [isBlurred, setIsBlurred] = useState(false);
     const [showViolationMessage, setShowViolationMessage] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userInfo, setUserInfo] = useState<{username: string; password: string; secretCode: string} | null>(null);
+    const [userInfo, setUserInfo] = useState<{username: string; password?: string; secretCode?: string; name?: string; year?: string; branch?: string} | null>(null);
     const [questions, setQuestions] = useState<TestQuestion[]>([]);
     const [questionsLoading, setQuestionsLoading] = useState(false);
     const [testMetadata, setTestMetadata] = useState<any>(null);
     const [countdownTime, setCountdownTime] = useState<number>(0);
-    const [testStatus, setTestStatus] = useState<'loading' | 'waiting' | 'ready' | 'active' | 'ended'>('loading');
+    const [testStatus, setTestStatus] = useState<'loading' | 'waiting' | 'ready' | 'active' | 'ended'>('ready');
     const [isOnline, setIsOnline] = useState(typeof window !== 'undefined' ? navigator.onLine : true);
 
     const testRef = useRef<HTMLDivElement>(null);
+    const userInfoRef = useRef<{username: string; password?: string; secretCode?: string; name?: string; year?: string; branch?: string} | null>(null);
+    const answersRef = useRef<Record<number, string>>({});
+    const questionsRef = useRef<TestQuestion[]>([]);
+    const timeLeftRef = useRef<number>(3600);
+    const isSubmittingRef = useRef<boolean>(false);
+    const draftRevisionRef = useRef<number>(1);
     const saveDebounceTimer = useRef<NodeJS.Timeout | null>(null);
     const lastViolationTime = useRef<number>(0);
+
+    // Keep refs in sync for safe async/timer callbacks
+    useEffect(() => { answersRef.current = answers; }, [answers]);
+    useEffect(() => { questionsRef.current = questions; }, [questions]);
+    useEffect(() => { timeLeftRef.current = timeLeft; }, [timeLeft]);
+    useEffect(() => { userInfoRef.current = userInfo; }, [userInfo]);
 
     const maxAllowedViolations = testMetadata?.config?.maxViolations || 5;
 
     // Fetch test schedule and metadata
-    const fetchTestMetadata = async () => {
+    const fetchTestMetadata = async (userParam?: string) => {
         try {
-            const userParam = userInfo?.username ? `?username=${encodeURIComponent(userInfo.username)}` : '';
-            const response = await fetch(`/api/test-metadata${userParam}`);
+            const u = userParam || userInfoRef.current?.username || userInfo?.username;
+            const userQuery = u ? `?username=${encodeURIComponent(u)}` : '';
+            const response = await fetch(`/api/test-metadata${userQuery}`);
             const data = await response.json();
             
             if (data.testCompleted) {
@@ -54,42 +67,78 @@ const Test = (): JSX.Element => {
     };
 
     const checkTestSchedule = (metadata: any) => {
-        if (!metadata?.schedule) {
-            setTestStatus('ready');
-            return;
-        }
-
-        const now = new Date();
-        const nowTime = now.getTime();
+        // Open access: No time slot restriction, candidates can login and start at any time
+        setTestStatus('ready');
+        const durationSeconds = metadata?.schedule?.duration || metadata?.config?.duration || 3600;
         
-        let startTime, endTime;
-        if (metadata.schedule.startTime?.$date) {
-            startTime = new Date(metadata.schedule.startTime.$date);
-            endTime = new Date(metadata.schedule.endTime.$date);
-        } else {
-            startTime = new Date(metadata.schedule.startTime);
-            endTime = new Date(metadata.schedule.endTime);
+        // Only set timeLeft if test not already started
+        const u = userInfoRef.current?.username || userInfo?.username;
+        if (typeof window !== 'undefined' && u) {
+            const savedEndTimeStr = localStorage.getItem(`c2c_end_time_${u}`);
+            if (savedEndTimeStr) {
+                const remaining = Math.max(0, Math.floor((parseInt(savedEndTimeStr, 10) - Date.now()) / 1000));
+                setTimeLeft(remaining);
+                return;
+            }
         }
-        
-        const startTimeMs = startTime.getTime();
-        const endTimeMs = endTime.getTime();
-        
-        if (nowTime < startTimeMs) {
-            const countdown = Math.max(0, Math.floor((startTimeMs - nowTime) / 1000));
-            setTestStatus('waiting');
-            setCountdownTime(countdown);
-        } else if (nowTime >= startTimeMs && nowTime <= endTimeMs) {
-            setTestStatus('ready');
-            const durationSeconds = metadata.schedule.duration || 45 * 60;
-            const remainingScheduleTime = Math.floor((endTimeMs - nowTime) / 1000);
-            const timeAllowed = Math.min(durationSeconds, remainingScheduleTime);
-            setTimeLeft(timeAllowed > 0 ? timeAllowed : durationSeconds);
-        } else {
-            setTestStatus('ended');
-        }
+        setTimeLeft(durationSeconds);
     };
 
-    // Countdown to start
+    // Auto-Restore Active Session on Page Refresh or Reopen
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const restoreSession = async () => {
+            const savedSession = localStorage.getItem('c2c_auth_user');
+            if (!savedSession) return;
+
+            try {
+                const parsedUser = JSON.parse(savedSession);
+                if (!parsedUser?.username) return;
+
+                userInfoRef.current = parsedUser;
+                setUserInfo(parsedUser);
+                setIsLoggedIn(true);
+                setQuestionsLoading(true);
+
+                // Check if candidate already submitted test
+                const isCompleted = await checkTestStatus(parsedUser.username);
+                if (isCompleted) {
+                    setTestCompleted(true);
+                    setQuestionsLoading(false);
+                    return;
+                }
+
+                await fetchTestMetadata(parsedUser.username);
+                const restored = await loadDraft(parsedUser.username);
+                if (!restored) {
+                    await fetchQuestions(parsedUser.username);
+                }
+
+                // Restore active test state
+                const wasStarted = localStorage.getItem(`c2c_test_started_${parsedUser.username}`) === 'true';
+                if (wasStarted) {
+                    setTestStarted(true);
+                    const savedEndTimeStr = localStorage.getItem(`c2c_end_time_${parsedUser.username}`);
+                    if (savedEndTimeStr) {
+                        const remaining = Math.max(0, Math.floor((parseInt(savedEndTimeStr, 10) - Date.now()) / 1000));
+                        setTimeLeft(remaining);
+                        if (remaining <= 0) {
+                            setTimeout(() => submitTestRef.current(true), 500);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Error restoring session:', err);
+            } finally {
+                setQuestionsLoading(false);
+            }
+        };
+
+        restoreSession();
+    }, []);
+
+    // Countdown to start if waiting status
     useEffect(() => {
         if (testStatus === 'waiting' && countdownTime > 0) {
             const timer = setInterval(() => {
@@ -105,30 +154,40 @@ const Test = (): JSX.Element => {
         }
     }, [testStatus, countdownTime]);
 
-    // Test duration timer (ticking every second)
-    // NOTE: Does NOT trigger server requests on tick!
+    // Rock-Solid Real-Time Test Timer (Wall-clock based)
     useEffect(() => {
         if (!testStarted || testCompleted) return;
 
-        const timer = setInterval(() => {
-            setTimeLeft(prev => {
-                if (prev <= 1) {
-                    // Time up -> trigger auto submit
-                    submitTest(true);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
+        const u = userInfoRef.current?.username || userInfo?.username;
+        if (!u) return;
 
-        return () => clearInterval(timer);
-    }, [testStarted, testCompleted, answers, questions, userInfo, violations]);
+        const updateTimer = () => {
+            if (typeof window === 'undefined') return;
+            const savedEndTimeStr = localStorage.getItem(`c2c_end_time_${u}`);
+            if (!savedEndTimeStr) return;
+
+            const endTime = parseInt(savedEndTimeStr, 10);
+            const now = Date.now();
+            const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+            setTimeLeft(remaining);
+
+            if (remaining <= 0) {
+                console.warn('Test time completed. Auto-submitting.');
+                submitTestRef.current(true);
+            }
+        };
+
+        updateTimer();
+        const timerInterval = setInterval(updateTimer, 1000);
+
+        return () => clearInterval(timerInterval);
+    }, [testStarted, testCompleted]);
 
     // Violation handler with debounce to avoid rapid multi-firing
     const addViolation = useCallback(() => {
         const now = Date.now();
-        // Prevent registering multiple violations within 2 seconds
-        if (now - lastViolationTime.current < 2000) return;
+        // Prevent registering multiple violations within 2.5 seconds
+        if (now - lastViolationTime.current < 2500) return;
         lastViolationTime.current = now;
 
         setViolations(prev => {
@@ -138,7 +197,7 @@ const Test = (): JSX.Element => {
             
             if (newCount >= maxAllowedViolations) {
                 console.warn(`Max violations (${maxAllowedViolations}) reached. Submitting test.`);
-                submitTest(true);
+                setTimeout(() => submitTestRef.current(true), 300);
             }
             
             return newCount;
@@ -204,7 +263,7 @@ const Test = (): JSX.Element => {
 
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             e.preventDefault();
-            e.returnValue = 'Are you sure you want to exit? Your progress may be lost.';
+            e.returnValue = 'Your test is active. All your answers are safely saved on this computer.';
             return e.returnValue;
         };
 
@@ -224,21 +283,39 @@ const Test = (): JSX.Element => {
     }, [testStarted, testCompleted, addViolation]);
 
     const startTest = async () => {
+        const u = userInfoRef.current?.username || userInfo?.username;
+        if (!u) return;
+
+        const durationSeconds = testMetadata?.schedule?.duration || testMetadata?.config?.duration || 3600;
+        const now = Date.now();
+        const endTime = now + (durationSeconds * 1000);
+
+        if (typeof window !== 'undefined') {
+            localStorage.setItem(`c2c_test_started_${u}`, 'true');
+            localStorage.setItem(`c2c_start_time_${u}`, now.toString());
+            localStorage.setItem(`c2c_end_time_${u}`, endTime.toString());
+        }
+
+        setTimeLeft(durationSeconds);
         await enterFullscreen();
         setTestStarted(true);
-        // Save initial draft
-        setTimeout(saveDraftToServer, 200);
+        setTimeout(saveDraftToServer, 300);
     };
 
     // Deterministic question fetching
-    const fetchQuestions = async () => {
-        if (!userInfo?.username) return;
+    const fetchQuestions = async (userParam?: string) => {
+        const u = userParam || userInfoRef.current?.username || userInfo?.username;
+        if (!u) {
+            console.warn('Cannot fetch questions: username missing');
+            return;
+        }
         try {
             setQuestionsLoading(true);
-            const response = await fetch(`/api/questions?username=${encodeURIComponent(userInfo.username)}`);
+            const response = await fetch(`/api/questions?username=${encodeURIComponent(u)}`);
             const data = await response.json();
             if (data.questions && data.questions.length > 0) {
                 setQuestions(data.questions);
+                questionsRef.current = data.questions;
             }
         } catch (error) {
             console.error('Error fetching questions:', error);
@@ -249,19 +326,21 @@ const Test = (): JSX.Element => {
 
     // Instant LocalStorage save (0ms, 100% crash proof, zero server load)
     const saveToLocalStorage = useCallback((currentAnswers: Record<number, string>) => {
-        if (typeof window === 'undefined' || !userInfo?.username) return;
+        const u = userInfoRef.current?.username || userInfo?.username;
+        if (typeof window === 'undefined' || !u) return;
         try {
             const draftObj = {
-                username: userInfo.username,
+                username: u,
                 answers: currentAnswers,
                 flaggedQuestions: Array.from(flaggedQuestions),
                 currentQuestion,
                 violations,
                 testStarted,
+                revision: draftRevisionRef.current,
                 questionIds: questions.map(q => q._id || q.id),
                 timestamp: Date.now()
             };
-            localStorage.setItem(`test_draft_${userInfo.username}`, JSON.stringify(draftObj));
+            localStorage.setItem(`test_draft_${u}`, JSON.stringify(draftObj));
         } catch (err) {
             console.warn('LocalStorage save notice:', err);
         }
@@ -269,20 +348,31 @@ const Test = (): JSX.Element => {
 
     // Save draft to server (lightweight, compact payload, with fallback)
     const saveDraftToServer = useCallback(async () => {
-        if (!userInfo?.username || !testStarted || testCompleted) return;
+        const u = userInfoRef.current?.username || userInfo?.username;
+        if (!u || !testStarted || testCompleted) return;
 
-        const duration = testMetadata?.schedule?.duration || 45 * 60;
-        const timeSpent = Math.max(0, duration - timeLeft);
-        const questionIds = questions.map(q => q._id || q.id);
+        const duration = testMetadata?.schedule?.duration || 60 * 60;
+        let timeSpent = 0;
+        if (typeof window !== 'undefined') {
+            const startStr = localStorage.getItem(`c2c_start_time_${u}`);
+            if (startStr) {
+                timeSpent = Math.max(0, Math.floor((Date.now() - parseInt(startStr, 10)) / 1000));
+            } else {
+                timeSpent = Math.max(0, duration - timeLeftRef.current);
+            }
+        }
+
+        const questionIds = questionsRef.current.map(q => q._id || q.id);
 
         const draftData = {
-            username: userInfo.username,
-            answers,
+            username: u,
+            answers: answersRef.current,
             flaggedQuestions: Array.from(flaggedQuestions),
             currentQuestion,
             timeSpent,
             violations,
             testStarted,
+            revision: draftRevisionRef.current,
             questionIds
         };
 
@@ -295,9 +385,9 @@ const Test = (): JSX.Element => {
             });
         } catch (error) {
             // Offline fallback - already cached in localStorage
-            saveToLocalStorage(answers);
+            saveToLocalStorage(answersRef.current);
         }
-    }, [userInfo, testStarted, testCompleted, testMetadata, timeLeft, questions, answers, flaggedQuestions, currentQuestion, violations, saveToLocalStorage]);
+    }, [userInfo, testStarted, testCompleted, testMetadata, flaggedQuestions, currentQuestion, violations, saveToLocalStorage]);
 
     // Debounced draft save to avoid hammering server on rapid question clicks
     const triggerDebouncedServerSave = useCallback(() => {
@@ -306,15 +396,15 @@ const Test = (): JSX.Element => {
         }
         saveDebounceTimer.current = setTimeout(() => {
             saveDraftToServer();
-        }, 3500); // Wait 3.5s after student stops clicking
+        }, 2500); // 2.5s debounce
     }, [saveDraftToServer]);
 
-    // Controlled periodic background sync: every 45 seconds (drop load by 98%)
+    // Controlled periodic background sync: every 30 seconds
     useEffect(() => {
         if (!testStarted || testCompleted || !userInfo?.username) return;
         const syncInterval = setInterval(() => {
             saveDraftToServer();
-        }, 45000); // 45s interval
+        }, 30000);
         return () => clearInterval(syncInterval);
     }, [testStarted, testCompleted, userInfo, saveDraftToServer]);
 
@@ -326,7 +416,13 @@ const Test = (): JSX.Element => {
                 if (localDraft) {
                     try {
                         const parsed = JSON.parse(localDraft);
-                        if (parsed.answers) setAnswers(parsed.answers);
+                        if (parsed.answers) {
+                            setAnswers(parsed.answers);
+                            answersRef.current = parsed.answers;
+                        }
+                        if (parsed.revision && typeof parsed.revision === 'number') {
+                            draftRevisionRef.current = Math.max(draftRevisionRef.current, parsed.revision);
+                        }
                         if (parsed.flaggedQuestions) setFlaggedQuestions(new Set(parsed.flaggedQuestions));
                         if (parsed.currentQuestion !== undefined) setCurrentQuestion(parsed.currentQuestion);
                     } catch (e) {}
@@ -338,14 +434,32 @@ const Test = (): JSX.Element => {
             if (response.ok) {
                 const data = await response.json();
                 if (data.draft) {
-                    if (data.draft.answers) setAnswers(data.draft.answers);
+                    if (data.draft.revision && typeof data.draft.revision === 'number') {
+                        draftRevisionRef.current = Math.max(draftRevisionRef.current, data.draft.revision);
+                    }
+                    if (data.draft.answers) {
+                        setAnswers(prev => {
+                            const merged = { ...data.draft.answers, ...prev };
+                            answersRef.current = merged;
+                            return merged;
+                        });
+                    }
                     if (data.draft.flaggedQuestions) setFlaggedQuestions(new Set(data.draft.flaggedQuestions));
                     if (data.draft.currentQuestion !== undefined) setCurrentQuestion(data.draft.currentQuestion);
                     if (data.draft.violations !== undefined) setViolations(data.draft.violations);
-                    if (data.draft.testStarted !== undefined) setTestStarted(data.draft.testStarted);
+
+                    // Sync server authoritative deadline
+                    if (data.draft.deadline && typeof window !== 'undefined') {
+                        const serverDeadlineMs = new Date(data.draft.deadline).getTime();
+                        localStorage.setItem(`c2c_end_time_${username}`, serverDeadlineMs.toString());
+                        if (typeof data.draft.serverRemainingSeconds === 'number') {
+                            setTimeLeft(data.draft.serverRemainingSeconds);
+                        }
+                    }
 
                     if (data.draft.questions && data.draft.questions.length > 0) {
                         setQuestions(data.draft.questions);
+                        questionsRef.current = data.draft.questions;
                         return true;
                     }
                 }
@@ -372,26 +486,71 @@ const Test = (): JSX.Element => {
         return false;
     };
 
-    const handleLogin = async (credentials: { username: string; password: string; secretCode: string }) => {
+    const handleLogin = async (credentials: { username: string; password: string; secretCode: string; name?: string; year?: string; branch?: string }) => {
+        userInfoRef.current = credentials;
         setUserInfo(credentials);
         setIsLoggedIn(true);
+        setQuestionsLoading(true);
+
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('c2c_auth_user', JSON.stringify(credentials));
+        }
 
         const isCompleted = await checkTestStatus(credentials.username);
-        if (isCompleted) return;
+        if (isCompleted) {
+            setTestCompleted(true);
+            setQuestionsLoading(false);
+            return;
+        }
 
-        setTimeout(async () => {
-            await fetchTestMetadata();
+        try {
+            await fetchTestMetadata(credentials.username);
             const questionsRestored = await loadDraft(credentials.username);
             if (!questionsRestored) {
-                await fetchQuestions();
+                await fetchQuestions(credentials.username);
             }
-        }, 100);
+
+            if (typeof window !== 'undefined') {
+                const wasStarted = localStorage.getItem(`c2c_test_started_${credentials.username}`) === 'true';
+                if (wasStarted) {
+                    setTestStarted(true);
+                    const savedEndTimeStr = localStorage.getItem(`c2c_end_time_${credentials.username}`);
+                    if (savedEndTimeStr) {
+                        const remaining = Math.max(0, Math.floor((parseInt(savedEndTimeStr, 10) - Date.now()) / 1000));
+                        setTimeLeft(remaining);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Initialization error after login:', e);
+        } finally {
+            setQuestionsLoading(false);
+        }
+    };
+
+    const handleLogout = () => {
+        const u = userInfoRef.current?.username || userInfo?.username;
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('c2c_auth_user');
+            if (u) {
+                localStorage.removeItem(`c2c_test_started_${u}`);
+                localStorage.removeItem(`c2c_end_time_${u}`);
+                localStorage.removeItem(`c2c_start_time_${u}`);
+            }
+        }
+        setIsLoggedIn(false);
+        setUserInfo(null);
+        userInfoRef.current = null;
+        setQuestions([]);
+        setTestStarted(false);
     };
 
     // User selects an option
     const handleAnswer = (questionIndex: number, answer: string) => {
+        draftRevisionRef.current += 1;
         setAnswers(prev => {
             const updated = { ...prev, [questionIndex]: answer };
+            answersRef.current = updated;
             saveToLocalStorage(updated);
             return updated;
         });
@@ -400,6 +559,7 @@ const Test = (): JSX.Element => {
 
     // Toggle flag for review
     const toggleFlag = (questionIndex: number) => {
+        draftRevisionRef.current += 1;
         setFlaggedQuestions(prev => {
             const updated = new Set(prev);
             if (updated.has(questionIndex)) {
@@ -412,32 +572,53 @@ const Test = (): JSX.Element => {
         triggerDebouncedServerSave();
     };
 
-    // Test Submission with Retry & Safety Backup
+    // Test Submission with Double-Submit Guard & Safety Backup
     const submitTest = async (forceAutoSubmit = false) => {
-        if (isSubmitting || testCompleted) return;
+        if (isSubmittingRef.current || testCompleted) return;
 
+        isSubmittingRef.current = true;
         setIsSubmitting(true);
         setSubmitError(null);
 
+        const u = userInfoRef.current?.username || userInfo?.username;
+        if (!u) {
+            setIsSubmitting(false);
+            isSubmittingRef.current = false;
+            return;
+        }
+
         try {
-            const duration = testMetadata?.schedule?.duration || 45 * 60;
-            const timeSpent = Math.max(0, duration - timeLeft);
-            const questionIds = questions.map(q => q._id || q.id);
+            const duration = testMetadata?.schedule?.duration || 60 * 60;
+            let timeSpent = 0;
+            if (typeof window !== 'undefined') {
+                const startStr = localStorage.getItem(`c2c_start_time_${u}`);
+                if (startStr) {
+                    timeSpent = Math.max(0, Math.floor((Date.now() - parseInt(startStr, 10)) / 1000));
+                } else {
+                    timeSpent = Math.max(0, duration - timeLeftRef.current);
+                }
+            } else {
+                timeSpent = Math.max(0, duration - timeLeftRef.current);
+            }
+
+            const currentAnswers = answersRef.current;
+            const currentQuestions = questionsRef.current;
+            const questionIds = currentQuestions.map(q => q._id || q.id);
 
             const testData = {
-                username: userInfo?.username,
-                answers,
+                username: u,
+                answers: currentAnswers,
                 timeSpent,
                 violations,
-                totalQuestions: questions.length,
+                totalQuestions: currentQuestions.length,
                 questionIds,
                 submittedAt: new Date().toISOString()
             };
 
             // Permanent LocalStorage backup in case of lab network failure
-            if (typeof window !== 'undefined' && userInfo?.username) {
+            if (typeof window !== 'undefined') {
                 try {
-                    localStorage.setItem(`BACKUP_SUBMISSION_${userInfo.username}`, JSON.stringify(testData));
+                    localStorage.setItem(`BACKUP_SUBMISSION_${u}`, JSON.stringify(testData));
                 } catch (e) {}
             }
 
@@ -450,14 +631,20 @@ const Test = (): JSX.Element => {
             const result = await response.json().catch(() => null);
 
             if (response.ok && (result?.success || result?.alreadySubmitted)) {
-                if (userInfo?.username) {
-                    await fetch('/api/clear-draft', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: userInfo.username })
-                    }).catch(() => {});
-                    localStorage.removeItem(`test_draft_${userInfo.username}`);
+                if (typeof window !== 'undefined') {
+                    localStorage.removeItem('c2c_auth_user');
+                    localStorage.removeItem(`c2c_test_started_${u}`);
+                    localStorage.removeItem(`c2c_end_time_${u}`);
+                    localStorage.removeItem(`c2c_start_time_${u}`);
+                    localStorage.removeItem(`test_draft_${u}`);
                 }
+
+                await fetch('/api/clear-draft', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u })
+                }).catch(() => {});
+
                 setTestCompleted(true);
                 setShowSubmitConfirm(false);
                 if (document.fullscreenElement) {
@@ -469,11 +656,17 @@ const Test = (): JSX.Element => {
             }
         } catch (error: any) {
             console.error('Error submitting test:', error);
-            setSubmitError('Network failure during submission. Your answers are safe on this PC. Please click Retry.');
+            setSubmitError('Network connection issue during submission. Your responses are safely stored on this computer. Please click Retry.');
         } finally {
             setIsSubmitting(false);
+            isSubmittingRef.current = false;
         }
     };
+
+    const submitTestRef = useRef(submitTest);
+    useEffect(() => {
+        submitTestRef.current = submitTest;
+    });
 
     const formatTime = (seconds: number) => {
         const hours = Math.floor(seconds / 3600);
@@ -514,41 +707,53 @@ const Test = (): JSX.Element => {
         return <Login onLogin={handleLogin} />;
     }
 
-    // Waiting for scheduled start time
-    if (testStatus === 'waiting') {
-        return (
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-                <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-                    <h1 className="text-2xl font-bold mb-6">{testMetadata?.title || 'Aptitude Test'}</h1>
-                    <p className="text-gray-600 mb-4">Test will start automatically in:</p>
-                    <div className="text-4xl font-bold text-blue-600 mb-4">
-                        {formatTime(countdownTime)}
-                    </div>
-                    <p className="text-sm text-gray-500">Please stay on this page. When timer hits zero, you will be able to begin.</p>
-                </div>
-            </div>
-        );
-    }
-
-    // Test period has ended
-    if (testStatus === 'ended' && !testCompleted) {
-        return (
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-                <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-                    <h1 className="text-2xl font-bold mb-4 text-red-600">Test Period Concluded</h1>
-                    <p className="text-gray-600">The scheduled time slot for this test has ended.</p>
-                </div>
-            </div>
-        );
-    }
-
     // Loading questions
     if (questionsLoading) {
         return (
             <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
                 <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-                    <h1 className="text-xl font-semibold mb-4">Preparing Your Test Environment...</h1>
+                    <h1 className="text-xl font-semibold mb-4 text-gray-800">Preparing Your Test Environment...</h1>
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="text-xs text-gray-500 mt-4">Restoring your assigned questions & answers...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Test successfully submitted
+    if (testCompleted) {
+        return (
+            <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center border border-slate-200">
+                    <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <span className="text-xs uppercase tracking-wider font-bold px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full inline-block mb-3">
+                        Assessment Completed
+                    </span>
+                    <h1 className="text-2xl font-black text-gray-900 mb-2">Test Submitted Successfully!</h1>
+                    <p className="text-gray-600 text-sm mb-5">
+                        Thank you, <span className="font-semibold text-gray-800">{userInfo?.name || userInfo?.username}</span>. Your responses for Campus to Corporate (C2C) 2026 have been securely recorded.
+                    </p>
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-700 mb-6 text-left space-y-1.5">
+                        <p><strong>Candidate:</strong> {userInfo?.name || userInfo?.username}</p>
+                        <p><strong>PRN / Username:</strong> <span className="font-mono">{userInfo?.username}</span></p>
+                        {userInfo?.year && <p><strong>Academic Year:</strong> {userInfo.year}</p>}
+                        <p><strong>Total Questions:</strong> {questions.length > 0 ? questions.length : 50}</p>
+                        <p><strong>Answered:</strong> {Object.keys(answers).length}</p>
+                        <p><strong>Security Violations:</strong> {violations}</p>
+                    </div>
+                    <p className="text-xs text-slate-500 mb-6">
+                        Results and shortlists will be published on the official CSI KKWIEER portal.
+                    </p>
+                    <button
+                        onClick={() => window.location.href = '/'}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg transition shadow-md"
+                    >
+                        Return to CSI Home
+                    </button>
                 </div>
             </div>
         );
@@ -559,47 +764,22 @@ const Test = (): JSX.Element => {
         return (
             <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
                 <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-                    <h1 className="text-xl font-bold mb-4">No Questions Available</h1>
+                    <h1 className="text-xl font-bold mb-4 text-gray-900">No Questions Available</h1>
                     <p className="text-gray-600 mb-6">Unable to load questions from server. Please verify your connection.</p>
-                    <button
-                        onClick={fetchQuestions}
-                        className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition"
-                    >
-                        Retry Loading
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    // Test successfully submitted
-    if (testCompleted) {
-        return (
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-                <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
+                    <div className="flex gap-3 justify-center">
+                        <button
+                            onClick={() => fetchQuestions(userInfoRef.current?.username || userInfo?.username)}
+                            className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition font-medium"
+                        >
+                            Retry Loading
+                        </button>
+                        <button
+                            onClick={handleLogout}
+                            className="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition text-sm"
+                        >
+                            Switch Account
+                        </button>
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-900 mb-2">Test Submitted Successfully!</h1>
-                    <p className="text-gray-600 mb-4">
-                        Thank you, <span className="font-semibold text-gray-800">{userInfo?.username}</span>. Your responses have been securely recorded.
-                    </p>
-                    <div className="bg-gray-50 border border-gray-200 rounded p-4 text-sm text-gray-600 mb-6 text-left">
-                        <p>• Total Questions: {questions.length}</p>
-                        <p>• Answered: {Object.keys(answers).length}</p>
-                        <p>• Violations Recorded: {violations}</p>
-                    </div>
-                    <p className="text-xs text-gray-500 mb-6">
-                        Results will be evaluated and published by the CSI team. You may now safely close this window.
-                    </p>
-                    <button
-                        onClick={() => window.location.href = '/'}
-                        className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition"
-                    >
-                        Return to CSI Home
-                    </button>
                 </div>
             </div>
         );
@@ -607,13 +787,23 @@ const Test = (): JSX.Element => {
 
     // Ready to start instructions screen
     if (!testStarted && testStatus === 'ready') {
-        const durationMins = Math.floor((testMetadata?.schedule?.duration || 2700) / 60);
+        const durationMins = Math.floor((testMetadata?.schedule?.duration || 3600) / 60);
         return (
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-                <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full">
-                    <h1 className="text-2xl font-bold text-center mb-6">{testMetadata?.title || 'CSI Technical Aptitude Assessment'}</h1>
-                    <div className="space-y-3 text-sm text-gray-700 bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
-                        <p><strong>Candidate:</strong> {userInfo?.username}</p>
+            <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full border border-slate-200">
+                    <div className="text-center mb-6">
+                        <span className="text-xs uppercase tracking-wider font-bold px-3 py-1 bg-blue-100 text-blue-700 rounded-full inline-block mb-2">
+                            Campus to Corporate (C2C) 2026
+                        </span>
+                        <h1 className="text-2xl font-extrabold text-gray-900">
+                            Technical & Aptitude Assessment
+                        </h1>
+                        <p className="text-xs text-slate-500 mt-1">CSI KKWIEER Official Assessment Portal</p>
+                    </div>
+                    <div className="space-y-2 text-sm text-gray-700 bg-blue-50/70 border border-blue-200 p-4 rounded-xl mb-6">
+                        <p><strong>Candidate:</strong> {userInfo?.name || userInfo?.username}</p>
+                        <p><strong>PRN / Username:</strong> <span className="font-mono text-xs text-gray-600">{userInfo?.username}</span></p>
+                        {userInfo?.year && <p><strong>Academic Year:</strong> {userInfo.year} {userInfo.branch ? `• ${userInfo.branch}` : ''}</p>}
                         <p><strong>Duration:</strong> {durationMins} minutes</p>
                         <p><strong>Total Questions:</strong> {questions.length}</p>
                         <p><strong>Maximum Violations:</strong> {maxAllowedViolations}</p>
@@ -622,18 +812,29 @@ const Test = (): JSX.Element => {
                         <p>⚠️ Fullscreen mode is strictly mandatory throughout the assessment.</p>
                         <p>⚠️ Switching tabs or minimizing the browser will be flagged as a security violation.</p>
                         <p>⚠️ Reaching {maxAllowedViolations} violations will trigger automatic submission.</p>
-                        <p>⚠️ Ensure all answers are selected before final submission.</p>
+                        <p>⚠️ Your progress is continuously saved. If page reloads, you will resume automatically.</p>
                     </div>
-                    <button
-                        onClick={startTest}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
-                    >
-                        Enter Fullscreen & Begin Assessment
-                    </button>
+                    <div className="space-y-3">
+                        <button
+                            onClick={startTest}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition shadow-md"
+                        >
+                            Enter Fullscreen & Begin Assessment
+                        </button>
+                        <button
+                            onClick={handleLogout}
+                            className="w-full text-center text-xs text-slate-500 hover:text-slate-800 transition py-1"
+                        >
+                            Wrong student? Click here to Logout / Switch Account
+                        </button>
+                    </div>
                 </div>
             </div>
         );
     }
+
+    const answeredCount = Object.keys(answers).length;
+    const unansweredCount = questions.length - answeredCount;
 
     return (
         <div ref={testRef} className="min-h-screen bg-gray-100 select-none">
@@ -670,7 +871,7 @@ const Test = (): JSX.Element => {
                         <h2 className="text-xl font-bold text-gray-900 mb-2">Submission Incomplete</h2>
                         <p className="text-gray-700 text-sm mb-4">{submitError}</p>
                         <div className="bg-green-50 border border-green-200 text-green-800 text-xs p-3 rounded mb-4">
-                            Your answers are securely saved in this browser. Please click the button below to retry submission.
+                            Your answers are securely saved on this computer. Please click the button below to retry submission.
                         </div>
                         <button
                             onClick={() => submitTest(false)}
@@ -686,25 +887,41 @@ const Test = (): JSX.Element => {
             {/* End Test Confirmation Modal */}
             {showSubmitConfirm && (
                 <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white p-6 rounded-xl text-center max-w-md shadow-xl">
-                        <h2 className="text-lg font-bold text-gray-900 mb-3">Confirm Submission</h2>
-                        <p className="text-gray-600 text-sm mb-4">
-                            You have answered <strong>{Object.keys(answers).length}</strong> out of <strong>{questions.length}</strong> questions.
-                            Are you sure you want to finalize and submit your test?
+                    <div className="bg-white p-6 rounded-2xl text-center max-w-md shadow-2xl border border-gray-100">
+                        <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-xl">
+                            📋
+                        </div>
+                        <h2 className="text-lg font-bold text-gray-900 mb-2">Confirm Test Submission</h2>
+                        <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 mb-4 text-xs text-left space-y-1">
+                            <p><strong>Candidate:</strong> {userInfo?.name || userInfo?.username}</p>
+                            <p><strong>Answered Questions:</strong> <span className="font-semibold text-emerald-600">{answeredCount}</span> / {questions.length}</p>
+                            <p><strong>Unanswered Questions:</strong> <span className="font-semibold text-rose-600">{unansweredCount}</span></p>
+                            <p><strong>Flagged for Review:</strong> <span className="font-semibold text-amber-600">{flaggedQuestions.size}</span></p>
+                        </div>
+
+                        {answeredCount < 5 && (
+                            <div className="bg-amber-50 border border-amber-300 text-amber-800 text-xs p-3 rounded-lg mb-4 text-left font-medium">
+                                ⚠️ Caution: You have only answered <strong>{answeredCount}</strong> out of {questions.length} questions. Once submitted, your answers cannot be changed.
+                            </div>
+                        )}
+
+                        <p className="text-gray-600 text-xs mb-5">
+                            Are you sure you want to finalize and submit your assessment?
                         </p>
-                        <div className="flex gap-4">
+
+                        <div className="flex gap-3">
                             <button
                                 onClick={() => setShowSubmitConfirm(false)}
-                                className="flex-1 bg-gray-200 text-gray-800 py-2 rounded font-medium hover:bg-gray-300"
+                                className="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-lg font-medium hover:bg-gray-200 transition text-sm"
                             >
                                 Continue Test
                             </button>
                             <button
                                 onClick={() => { setShowSubmitConfirm(false); submitTest(false); }}
                                 disabled={isSubmitting}
-                                className="flex-1 bg-green-600 text-white py-2 rounded font-medium hover:bg-green-700 disabled:opacity-50"
+                                className="flex-1 bg-emerald-600 text-white py-2.5 rounded-lg font-semibold hover:bg-emerald-700 transition disabled:opacity-50 text-sm shadow-sm"
                             >
-                                {isSubmitting ? 'Submitting...' : 'Yes, Submit'}
+                                {isSubmitting ? 'Submitting...' : 'Yes, Submit Test'}
                             </button>
                         </div>
                     </div>
@@ -724,9 +941,9 @@ const Test = (): JSX.Element => {
                     <span className="font-semibold text-sm">⚠️ FULLSCREEN REQUIRED: Click below to re-enter fullscreen</span>
                     <button
                         onClick={enterFullscreen}
-                        className="ml-3 bg-white text-red-600 text-xs px-2 py-1 rounded font-bold"
+                        className="ml-3 bg-white text-red-600 text-xs px-2.5 py-1 rounded font-bold hover:bg-red-50"
                     >
-                        Re-enter
+                        Re-enter Fullscreen
                     </button>
                 </div>
             )}
@@ -735,17 +952,24 @@ const Test = (): JSX.Element => {
             <div className="bg-white shadow-sm border-b px-6 py-4">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-lg font-bold text-gray-800">{testMetadata?.title || 'Aptitude Test'}</h1>
-                        <span className="text-xs text-gray-500">Student: <strong>{userInfo?.username}</strong></span>
+                        <h1 className="text-base sm:text-lg font-bold text-gray-800">
+                            Campus to Corporate (C2C) Aptitude Assessment 2026
+                        </h1>
+                        <span className="text-xs text-gray-500">
+                            Candidate: <strong className="text-gray-800">{userInfo?.name || userInfo?.username}</strong> {userInfo?.year ? `• ${userInfo.year}` : ''}
+                        </span>
                     </div>
                     <div className="flex items-center space-x-6">
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-gray-600 font-medium">
                             Question {currentQuestion + 1} of {questions.length}
                         </span>
-                        <span className="text-lg font-mono font-bold text-red-600">
-                            {formatTime(timeLeft)}
-                        </span>
-                        <span className={`text-xs font-semibold px-2 py-1 rounded ${
+                        <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 px-3 py-1 rounded-lg">
+                            <span className="text-xs text-red-700 font-bold">⏱</span>
+                            <span className="text-lg font-mono font-bold text-red-600">
+                                {formatTime(timeLeft)}
+                            </span>
+                        </div>
+                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-md ${
                             violations >= maxAllowedViolations - 1 ? 'bg-red-100 text-red-700 animate-pulse' : 'bg-gray-100 text-gray-700'
                         }`}>
                             Violations: {violations}/{maxAllowedViolations}
@@ -753,7 +977,7 @@ const Test = (): JSX.Element => {
                         {!isFullscreen && (
                             <button
                                 onClick={enterFullscreen}
-                                className="text-xs bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                                className="text-xs bg-red-600 text-white px-3 py-1.5 rounded hover:bg-red-700 font-medium"
                             >
                                 Fullscreen
                             </button>
@@ -761,9 +985,9 @@ const Test = (): JSX.Element => {
                         <button
                             onClick={() => setShowSubmitConfirm(true)}
                             disabled={isSubmitting}
-                            className="text-xs bg-red-600 text-white px-3 py-1.5 rounded font-semibold hover:bg-red-700 disabled:opacity-50"
+                            className="text-xs bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-semibold hover:bg-emerald-700 transition shadow-sm disabled:opacity-50"
                         >
-                            End Test
+                            Finish & Submit
                         </button>
                     </div>
                 </div>
@@ -772,7 +996,7 @@ const Test = (): JSX.Element => {
             {/* Main Content Layout */}
             <div className="flex gap-6 p-6 max-w-7xl mx-auto">
                 {/* Left Side: Question Navigator Grid */}
-                <div className="w-80 bg-white rounded-lg shadow-sm border p-4 h-fit">
+                <div className="w-80 bg-white rounded-xl shadow-sm border p-4 h-fit">
                     <h3 className="font-semibold text-sm mb-3 text-gray-800">Question Navigator</h3>
                     <div className="grid grid-cols-5 gap-2 mb-4 max-h-96 overflow-y-auto p-1">
                         {questions.map((_, index) => {
@@ -782,9 +1006,9 @@ const Test = (): JSX.Element => {
                                 <button
                                     key={index}
                                     onClick={() => goToQuestion(index)}
-                                    className={`w-9 h-9 text-xs font-semibold rounded border transition-colors ${
+                                    className={`w-9 h-9 text-xs font-semibold rounded-lg border transition-colors ${
                                         isCurrent
-                                            ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                                            ? 'border-blue-600 bg-blue-600 text-white shadow-sm ring-2 ring-blue-300'
                                             : status === 'answered'
                                             ? 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100'
                                             : status === 'flagged'
@@ -801,7 +1025,7 @@ const Test = (): JSX.Element => {
                     <div className="space-y-1.5 text-xs text-gray-600 border-t pt-3">
                         <div className="flex items-center gap-2">
                             <div className="w-3.5 h-3.5 bg-green-50 border border-green-500 rounded"></div>
-                            <span>Answered ({Object.keys(answers).length})</span>
+                            <span>Answered ({answeredCount})</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-3.5 h-3.5 bg-orange-50 border border-orange-500 rounded"></div>
@@ -809,7 +1033,7 @@ const Test = (): JSX.Element => {
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-3.5 h-3.5 bg-gray-50 border border-gray-200 rounded"></div>
-                            <span>Unanswered ({questions.length - Object.keys(answers).length})</span>
+                            <span>Unanswered ({unansweredCount})</span>
                         </div>
                     </div>
                 </div>
@@ -829,7 +1053,7 @@ const Test = (): JSX.Element => {
                         <button
                             onClick={prevQuestion}
                             disabled={currentQuestion === 0}
-                            className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-300 transition"
+                            className="px-5 py-2.5 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-300 transition"
                         >
                             Previous
                         </button>
@@ -839,16 +1063,16 @@ const Test = (): JSX.Element => {
                                 <button
                                     onClick={() => setShowSubmitConfirm(true)}
                                     disabled={isSubmitting}
-                                    className="px-6 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition disabled:opacity-50"
+                                    className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition disabled:opacity-50 shadow-sm"
                                 >
-                                    {isSubmitting ? 'Submitting...' : 'Submit Test'}
+                                    Review & Submit Assessment
                                 </button>
                             ) : (
                                 <button
                                     onClick={nextQuestion}
-                                    className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition"
+                                    className="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-sm"
                                 >
-                                    Next
+                                    Next Question
                                 </button>
                             )}
                         </div>

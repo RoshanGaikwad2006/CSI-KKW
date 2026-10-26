@@ -25,6 +25,36 @@ export default async function handler(req, res) {
       return res.status(200).json({ draft: null });
     }
 
+    // Verify draft category integrity
+    const usersCol = db.collection("aptiuser");
+    let student = await usersCol.findOne({ username: cleanUser });
+    if (!student) {
+      student = await usersCol.findOne({
+        username: { $regex: new RegExp(`^${cleanUser}$`, "i") },
+      });
+    }
+
+    const lowerUser = cleanUser.toLowerCase();
+    const isSampleCandidate =
+      student?.category === "SAMPLE_TY_FINAL" ||
+      student?.isCommittee ||
+      lowerUser.startsWith("csi_") ||
+      lowerUser.startsWith("dummy_ty_") ||
+      lowerUser.startsWith("dummy_final_") ||
+      lowerUser.startsWith("test_ty_") ||
+      lowerUser === "roshan_ty_admin";
+
+    const expectedCategory = isSampleCandidate ? "SAMPLE_TY_FINAL" : student?.category || "FY_SY";
+    const expectedCount = isSampleCandidate ? 25 : 50;
+
+    if (
+      draft.category !== expectedCategory ||
+      (Array.isArray(draft.questionIds) && draft.questionIds.length !== expectedCount)
+    ) {
+      await drafts.deleteOne({ username: cleanUser });
+      return res.status(200).json({ draft: null });
+    }
+
     // If draft contains questionIds, populate genuine questions without correctAnswer
     let restoredQuestions = [];
     if (Array.isArray(draft.questionIds) && draft.questionIds.length > 0) {
@@ -51,8 +81,27 @@ export default async function handler(req, res) {
         .filter(Boolean);
     }
 
+    // Fetch active test metadata for duration
+    const metaCol = db.collection("testmetadata");
+    const activeTest = await metaCol.findOne({ status: "active" });
+    const duration = activeTest?.schedule?.duration || activeTest?.config?.duration || 3600;
+
+    const serverNow = new Date();
+    let deadline = null;
+    let serverRemainingSeconds = duration;
+
+    if (draft.startTime || draft.createdAt) {
+      const startTime = new Date(draft.startTime || draft.createdAt);
+      deadline = new Date(startTime.getTime() + duration * 1000).toISOString();
+      serverRemainingSeconds = Math.max(0, Math.floor((new Date(deadline).getTime() - serverNow.getTime()) / 1000));
+    }
+
     const responseDraft = {
       ...draft,
+      revision: typeof draft.revision === "number" ? draft.revision : 1,
+      serverTime: serverNow.toISOString(),
+      deadline,
+      serverRemainingSeconds,
       questions: restoredQuestions.length > 0 ? restoredQuestions : draft.questions || [],
     };
 

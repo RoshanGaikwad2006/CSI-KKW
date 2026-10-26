@@ -9,8 +9,8 @@ export default function TestPage() {
   return (
     <>
       <SEO
-        title="Student Assessment Portal"
-        description="CSI KKWIEER Student Technical Assessment and Screening Portal."
+        title="Campus to Corporate (C2C) Aptitude Assessment | CSI KKWIEER"
+        description="Official Campus to Corporate (C2C) Technical and Aptitude Assessment Portal."
         noindex={true}
       />
       <Test />
