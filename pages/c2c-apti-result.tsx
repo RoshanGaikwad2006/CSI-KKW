@@ -29,7 +29,7 @@ interface CandidateResult {
   name: string;
   email: string;
   year: string;
-  normalizedCategory: "FY" | "SY" | "TY" | "Final Year" | string;
+  normalizedCategory: "FY" | "SY" | "TY" | "Final Year" | "MCA" | string;
   branch: string;
   lab: string;
   score: number;
@@ -59,6 +59,7 @@ interface DashboardStats {
   SY: YearStat;
   TY: YearStat;
   "Final Year": YearStat;
+  MCA?: YearStat;
 }
 
 const STORAGE_AUTH_KEY = "csi_c2c_admin_token";
@@ -74,7 +75,7 @@ export default function C2CAptiResultPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState<"ALL" | "FY" | "SY" | "TY" | "Final Year">("ALL");
+  const [activeTab, setActiveTab] = useState<"ALL" | "FY" | "SY" | "TY" | "Final Year" | "MCA">("ALL");
   const [sortBy, setSortBy] = useState<"rank" | "time" | "violations" | "recent">("rank");
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateResult | null>(null);
@@ -175,8 +176,16 @@ export default function C2CAptiResultPage() {
     return results
       .filter((r) => {
         // Year filter
-        if (activeTab !== "ALL" && r.normalizedCategory !== activeTab) {
-          return false;
+        if (activeTab !== "ALL") {
+          if (activeTab === "MCA") {
+            const isMcaCandidate =
+              r.normalizedCategory === "MCA" ||
+              String(r.branch || "").toUpperCase().includes("MCA") ||
+              String(r.year || "").toUpperCase().includes("MCA");
+            if (!isMcaCandidate) return false;
+          } else if (r.normalizedCategory !== activeTab) {
+            return false;
+          }
         }
 
         // Search term
@@ -379,7 +388,7 @@ export default function C2CAptiResultPage() {
 
             {/* Quick KPI Stats Cards */}
             {stats && (
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
                 <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium text-slate-400">Total Submissions</span>
@@ -435,6 +444,17 @@ export default function C2CAptiResultPage() {
 
                 <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4">
                   <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-slate-400">MCA</span>
+                    <span className="rounded bg-pink-950 px-1.5 py-0.5 text-[10px] font-bold text-pink-400">MCA</span>
+                  </div>
+                  <p className="mt-2 text-2xl font-bold text-pink-400">{stats.MCA?.count || 0}</p>
+                  <p className="mt-1 text-[11px] text-slate-500">
+                    Avg: {stats.MCA?.avg || 0} &bull; Top: {stats.MCA?.highest || 0}
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4">
+                  <div className="flex items-center justify-between">
                     <span className="text-xs font-medium text-slate-400">Top Test Score</span>
                     <Award className="h-4 w-4 text-amber-400" />
                   </div>
@@ -448,14 +468,15 @@ export default function C2CAptiResultPage() {
 
             {/* 4-Tier Filtering Bar + Search + Sorting */}
             <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4 backdrop-blur-md lg:flex-row lg:items-center lg:justify-between">
-              {/* Year Filter Tabs: FY, SY, TY, Final Year */}
+              {/* Year Filter Tabs: FY, SY, TY, Final Year, MCA */}
               <div className="flex flex-wrap gap-2">
                 {[
                   { id: "ALL", label: "All Candidates", count: results.length },
-                  { id: "FY", label: "First Year (FY)", count: stats?.FY.count || 0 },
-                  { id: "SY", label: "Second Year (SY)", count: stats?.SY.count || 0 },
-                  { id: "TY", label: "Third Year (TY)", count: stats?.TY.count || 0 },
-                  { id: "Final Year", label: "Final Year", count: stats?.["Final Year"].count || 0 },
+                  { id: "FY", label: "First Year (FY)", count: stats?.FY?.count || 0 },
+                  { id: "SY", label: "Second Year (SY)", count: stats?.SY?.count || 0 },
+                  { id: "TY", label: "Third Year (TY)", count: stats?.TY?.count || 0 },
+                  { id: "Final Year", label: "Final Year", count: stats?.["Final Year"]?.count || 0 },
+                  { id: "MCA", label: "MCA", count: stats?.MCA?.count || 0 },
                 ].map((tab) => {
                   const isActive = activeTab === tab.id;
                   return (
@@ -568,6 +589,8 @@ export default function C2CAptiResultPage() {
                             ? "bg-purple-950/80 text-purple-300 border-purple-800/40"
                             : candidate.normalizedCategory === "SY"
                             ? "bg-emerald-950/80 text-emerald-300 border-emerald-800/40"
+                            : candidate.normalizedCategory === "MCA"
+                            ? "bg-pink-950/80 text-pink-300 border-pink-800/40"
                             : "bg-sky-950/80 text-sky-300 border-sky-800/40";
 
                         return (

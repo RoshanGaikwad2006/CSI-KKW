@@ -87,17 +87,15 @@ export default async function handler(req, res) {
         student?.category === "SAMPLE_TY_FINAL" ||
         student?.isCommittee ||
         lowerUser.startsWith("csi_") ||
-        lowerUser.startsWith("dummy_ty_") ||
-        lowerUser.startsWith("dummy_final_") ||
-        lowerUser.startsWith("test_ty_") ||
         lowerUser === "roshan_ty_admin"
       ) {
         targetCategory = "SAMPLE_TY_FINAL";
       } else if (student && student.category) {
         targetCategory = student.category;
-      } else if (student && student.year) {
-        const yr = String(student.year).trim().toUpperCase();
-        const isTyOrFinal =
+      } else if (student && (student.year || student.department)) {
+        const yr = String(student.year || "").trim().toUpperCase();
+        const dept = String(student.department || student.branch || "").trim().toUpperCase();
+        const isTyOrFinalOrMca =
           yr.includes("TY") ||
           yr.includes("THIRD") ||
           yr.includes("TE") ||
@@ -105,9 +103,11 @@ export default async function handler(req, res) {
           yr.includes("FOURTH") ||
           yr.includes("BE") ||
           yr.includes("BTECH") ||
-          yr.includes("4");
+          yr.includes("4") ||
+          yr.includes("MCA") ||
+          dept.includes("MCA");
 
-        targetCategory = isTyOrFinal ? "TY_FINAL" : "FY_SY";
+        targetCategory = isTyOrFinalOrMca ? "TY_FINAL" : "FY_SY";
       }
     }
 

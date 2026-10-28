@@ -76,7 +76,14 @@ export default async function handler(req, res) {
       const user = userMap.get(uKey) || {};
 
       const rawYear = item.year || user.year || "FY";
-      const normalizedYear = normalizeYearCategory(rawYear);
+      const branch = item.branch || user.branch || item.department || user.department || "General";
+      const isMca =
+        String(branch).toUpperCase().includes("MCA") ||
+        String(rawYear).toUpperCase().includes("MCA") ||
+        String(item.department || "").toUpperCase().includes("MCA") ||
+        String(user.department || "").toUpperCase().includes("MCA");
+
+      const normalizedYear = isMca ? "MCA" : normalizeYearCategory(rawYear);
 
       const score = typeof item.score === "number" ? item.score : 0;
       const total = item.totalQuestions || 50;
@@ -187,6 +194,7 @@ export default async function handler(req, res) {
       SY: calculateYearStats("SY"),
       TY: calculateYearStats("TY"),
       "Final Year": calculateYearStats("Final Year"),
+      MCA: calculateYearStats("MCA"),
     };
 
     return res.status(200).json({
