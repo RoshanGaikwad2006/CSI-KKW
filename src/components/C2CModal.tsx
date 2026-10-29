@@ -196,7 +196,7 @@ export const C2CModal: React.FC<C2CModalProps> = ({ isOpen, onClose }) => {
               CAMPUS TO CORPORATE 5.0
             </span>
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold tracking-wider uppercase border border-emerald-400/20">
-              FEE: ₹50
+              EVENT CONCLUDED
             </span>
           </div>
 

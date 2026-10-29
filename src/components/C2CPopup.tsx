@@ -79,7 +79,7 @@ export const C2CPopup: React.FC<C2CPopupProps> = ({
             <span>CSI KKWIEER Flagship Conclave</span>
           </div>
           <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-            FEE: ₹50
+            EVENT CONCLUDED
           </span>
         </div>
 
@@ -111,7 +111,7 @@ export const C2CPopup: React.FC<C2CPopupProps> = ({
             onClick={handleRegister}
             className="w-full sm:w-auto py-2 px-5 rounded-xl bg-[#1D68F2] hover:bg-blue-600 text-white font-extrabold text-xs tracking-wider uppercase transition-all duration-200 hover:scale-[1.02] shadow-lg shadow-blue-500/25 active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
           >
-            <span>REGISTER NOW</span>
+            <span>VIEW RECAP</span>
             <ArrowRight className="w-3.5 h-3.5 text-white" />
           </button>
         </div>

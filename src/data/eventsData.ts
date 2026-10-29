@@ -38,7 +38,7 @@ export const eventsData: EventItem[] = [
     title: "From Campus to Corporate 5.0",
     subtitle: "Learn / Connect / Grow • Bridging the gap between academic learning and the professional world",
     category: "workshops",
-    categoryBadge: "REGISTRATION OPEN",
+    categoryBadge: "CONCLUDED",
     dateBadge: {
       month: "OCT",
       day: "27",
@@ -54,7 +54,7 @@ export const eventsData: EventItem[] = [
     attendees: 150,
     expectedAttendees: "150+ Attendees",
     featured: true,
-    registrationClosed: false,
+    registrationClosed: true,
     tags: ["Campus to Corporate", "Placements", "Mock Drives", "Technical Rounds", "HR Round", "Mentorship", "KKWIEER"],
     whatToExpect: [
       {

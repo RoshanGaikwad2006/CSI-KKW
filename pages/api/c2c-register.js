@@ -35,6 +35,11 @@ export const config = {
 };
 
 export default async function handler(req, res) {
+  return res.status(403).json({
+    success: false,
+    error: "From Campus to Corporate 5.0 has concluded. Registrations are closed.",
+    closed: true,
+  });
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed. Use POST." });
   }

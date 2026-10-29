@@ -32,7 +32,7 @@ export const staticUpcomingEvents: UpcomingEventItem[] = [
     id: "campus-to-corporate-5",
     title: "From Campus to Corporate 5.0",
     subtitle: "Round 01: Aptitude & Technical Test • Round 02: Group Discussion • Round 03: Technical & HR Interview",
-    category: "REGISTRATION OPEN",
+    category: "CONCLUDED",
     day: "27",
     month: "OCT",
     dateRange: "27 Oct 2026 • KKWIEER, Nashik",
@@ -237,7 +237,7 @@ export const EventsCarousel: React.FC<EventsCarouselProps> = ({
                   <div className="flex items-center">
                     {event.id === "campus-to-corporate-5" ? (
                       <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-xs">
-                        <span>Register Now</span>
+                        <span>View Recap</span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </span>
                     ) : event.id === "vision-week-2026" ? (

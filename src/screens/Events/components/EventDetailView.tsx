@@ -267,7 +267,7 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
                 <div>
                   <div className="font-bold text-sm sm:text-base flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-emerald-400" />
-                    From Campus to Corporate 5.0 Registrations Open!
+                    From Campus to Corporate 5.0 • Concluded Successfully!
                   </div>
                   <div className="text-xs text-blue-100/90 mt-0.5">
                     Date: 27 Oct 2026 • Round 01: Aptitude &amp; Technical Test • Round 02: Group Discussion • Round 03: Technical &amp; HR Interview.
@@ -277,7 +277,7 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
                   href="/c2c-register"
                   className="px-4 py-2 rounded-xl bg-white text-[#1D68F2] hover:bg-blue-50 text-xs font-bold whitespace-nowrap shadow-sm transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
                 >
-                  <span>Open Full Form</span>
+                  <span>View Event Recap</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
