@@ -405,7 +405,7 @@ export const EventDetailView: React.FC<EventDetailViewProps> = ({
                             : "bg-slate-100 hover:bg-slate-200 text-slate-600"
                         }`}
                       >
-                        {day === "All" ? `All Days (${event.photos?.length})` : day}
+                        {day === "All" ? `All Photos (${event.photos?.length})` : day}
                       </button>
                     ))}
                   </div>

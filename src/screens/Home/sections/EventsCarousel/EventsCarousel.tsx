@@ -31,12 +31,12 @@ export const staticUpcomingEvents: UpcomingEventItem[] = [
   {
     id: "campus-to-corporate-5",
     title: "From Campus to Corporate 5.0",
-    subtitle: "Round 01: Aptitude & Technical Test • Round 02: Group Discussion • Round 03: Technical & HR Interview",
+subtitle: "3-Tier Recruitment Simulation • Aptitude & Coding, GD & Corporate Interviews",
+    dateRange: "27 – 29 Oct 2026 • KKWIEER, Nashik",
     category: "CONCLUDED",
     day: "27",
     month: "OCT",
-    dateRange: "27 Oct 2026 • KKWIEER, Nashik",
-    location: "KKWIEER Campus, Nashik",
+        location: "KKWIEER Campus, Nashik",
     image: "/images/c2c-poster.png",
   },
   {

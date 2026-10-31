@@ -1,3 +1,4 @@
+import { c2cGalleryPhotos } from "../../data/c2cPhotosData";
 import { useEffect, useMemo, useState } from "react";
 import type React from "react";
 import { Navbar } from "../../components/ui/navbar";
@@ -47,6 +48,17 @@ type Event = {
 };
 
 const EVENTS: Event[] = [
+    {
+        id: "campus-to-corporate-5",
+        name: "From Campus to Corporate 5.0",
+        date: "27th – 29th October 2026",
+        location: "K. K. Wagh Campus, Nashik",
+        category: "Placement Drive",
+        description: "Flagship 3-Tier Recruitment Simulation: Round 01 Aptitude & Coding, Round 02 Group Discussion (GD), and Round 03 Corporate HR & Technical Interviews by IT Vedant, Sumago Infotech & Xmega Technologies",
+        coverImage: "/api/event-image?id=1dEwZehpmgBVKa2zAw0VkJDAB2ZR9Bt9v",
+        photoCount: 133,
+        participants: 180
+    },
     {
         id: "vision-week-2026",
         name: "Vision Week 2.0 (2026)",
@@ -163,6 +175,9 @@ const EVENTS: Event[] = [
 ];
 
 const EVENT_PHOTOS: EventPhoto[] = [
+    // Campus to Corporate 5.0 (C2C 5.0) photos
+    ...c2cGalleryPhotos,
+
     // Vision Week 2.0 (2026) photos
     // Day 1: AI Tools Masterclass with Tejas Adhiya
     { id: 291, src: "/images/events/vision-week/day1/day1-keynote-kickoff.webp", title: "Day 1: Keynote Kick-off with Tejas Adhiya (100+ Participants)", eventId: "vision-week-2026", eventName: "Vision Week 2.0 (2026)", date: "26 September 2026", category: "Workshop", description: "Tejas Adhiya • 7x Hackathon Winner & Universal AI Univ President" },
@@ -247,7 +262,7 @@ const EVENT_PHOTOS: EventPhoto[] = [
     { id: 11, src: "/images/csi_img2.png", title: "Counselor Award", eventId: "counselor-award", eventName: "Counselor Award", date: "December 2015", category: "Award" }
 ];
 
-const CATEGORIES = ["All", "Workshop", "Seminar", "Ceremony", "Networking", "Activity", "Award"] as const;
+const CATEGORIES = ["All", "Placement Drive", "Workshop", "Seminar", "Ceremony", "Networking", "Activity", "Award"] as const;
 
 const Gallery = (): JSX.Element => {
     const router = useRouter();

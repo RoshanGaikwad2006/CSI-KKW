@@ -1,3 +1,5 @@
+import { c2cEventPhotos } from "./c2cPhotosData";
+
 export interface EventItem {
   id: string | number;
   title: string;
@@ -44,37 +46,38 @@ export const eventsData: EventItem[] = [
       day: "27",
       year: "2026",
     },
-    dateRange: "27 Oct 2026 • KKWIEER, Nashik",
+    dateRange: "27 – 29 Oct 2026 • KKWIEER, Nashik",
     time: "9:00 AM – 5:00 PM",
     location: "KKWIEER Campus, Nashik",
-    venueFull: "Multiple Campus Labs, KKWIEER, Nashik",
+    venueFull: "Multiple Campus Labs, JVN Hall & Seminar Halls, KKWIEER, Nashik",
     description:
-      "Bridging the gap between academic learning and the professional world. Learn / Connect / Grow with From Campus to Corporate 5.0, organized by CSI Students' Chapter Nashik 2026-27 at KKWIEER. Featuring 3 realistic hiring stages: Round 01 Aptitude & Technical Test, Round 02 Group Discussion, and Round 03 Technical & HR Interview.",
+      "Bridging the gap between academic learning and the professional world. Learn / Connect / Grow with From Campus to Corporate 5.0, organized by CSI Students' Chapter Nashik 2026-27 at KKWIEER. Featuring 3 realistic hiring stages: Round 01 Aptitude & Coding Test, Round 02 Group Discussion (GD), and Round 03 Technical & HR Interviews conducted by industry recruiters from IT Vedant, Sumago Infotech, and Xmega Technologies, followed by a grand Valedictory & Felicitation ceremony.",
     image: "/images/c2c-poster.png",
-    attendees: 150,
-    expectedAttendees: "150+ Attendees",
+    attendees: 180,
+    expectedAttendees: "180+ Candidates",
     featured: true,
     registrationClosed: true,
-    tags: ["Campus to Corporate", "Placements", "Mock Drives", "Technical Rounds", "HR Round", "Mentorship", "KKWIEER"],
+tags: ["Campus to Corporate", "Placements", "Mock Drives", "Technical Rounds", "HR Round", "Mentorship", "KKWIEER", "Flagship"],
+    photos: c2cEventPhotos,
     whatToExpect: [
       {
-        title: "Round 01: Aptitude & Technical Test",
-        desc: "Quantitative and logical aptitude test alongside technical core assessment.",
+        title: "Round 01: Aptitude & Coding Test",
+        desc: "Quantitative and logical aptitude test alongside hands-on programming assessment.",
         icon: "sessions",
       },
       {
-        title: "Round 02: Group Discussion",
+        title: "Round 02: Group Discussion (GD)",
         desc: "Structured corporate GD evaluation focusing on communication, teamwork & articulation.",
         icon: "talks",
       },
       {
-        title: "Round 03: Technical & HR Interview",
-        desc: "Comprehensive panel interview followed by executive HR behavioral assessment.",
+        title: "Round 03: Company Technical & HR Interviews",
+        desc: "Comprehensive panel interviews by industry leaders: IT Vedant, Sumago Infotech, and Xmega Technologies.",
         icon: "drive",
       },
       {
-        title: "Placement & Internship Opportunities",
-        desc: "Direct corporate networking, verified CSI certificate, and placement opportunities.",
+        title: "Valedictory & Corporate Felicitation",
+        desc: "Direct corporate networking, verified CSI certificate, and placement offers.",
         icon: "cert",
       },
     ],
