@@ -14,7 +14,7 @@ export interface MomentPhoto {
 export const momentsData: MomentPhoto[] = [
   {
     id: 1,
-    src: "/api/event-image?id=1dEwZehpmgBVKa2zAw0VkJDAB2ZR9Bt9v",
+    src: "/api/event-image?id=1ovz3d0uETlt3GKFQdFS7w2TvK8u_FtRH",
     title: "From Campus to Corporate 5.0 Mock Drive",
     category: "Mock Drive",
     date: "October 2026",

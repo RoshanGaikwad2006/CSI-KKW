@@ -55,7 +55,7 @@ const EVENTS: Event[] = [
         location: "K. K. Wagh Campus, Nashik",
         category: "Workshop",
         description: "Flagship 3-Tier Recruitment Simulation: Round 01 Aptitude & Coding, Round 02 Group Discussion (GD), and Round 03 Corporate HR & Technical Interviews by IT Vedant, Sumago Infotech & Xmega Technologies",
-        coverImage: "/api/event-image?id=1dEwZehpmgBVKa2zAw0VkJDAB2ZR9Bt9v",
+        coverImage: "/api/event-image?id=1ovz3d0uETlt3GKFQdFS7w2TvK8u_FtRH",
         photoCount: 15,
         participants: 180
     },
