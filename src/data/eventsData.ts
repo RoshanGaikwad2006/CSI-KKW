@@ -57,7 +57,7 @@ export const eventsData: EventItem[] = [
     expectedAttendees: "180+ Candidates",
     featured: true,
     registrationClosed: true,
-tags: ["Campus to Corporate", "Placements", "Mock Drives", "Technical Rounds", "HR Round", "Mentorship", "KKWIEER", "Flagship"],
+    tags: ["Campus to Corporate", "Placements", "Technical Rounds", "HR Round", "Mentorship", "KKWIEER", "Flagship"],
     photos: c2cEventPhotos,
     whatToExpect: [
       {

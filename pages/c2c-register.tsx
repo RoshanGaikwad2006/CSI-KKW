@@ -306,7 +306,7 @@ export default function C2CRegisterPage() {
           "From Campus to Corporate 5.0",
           "C2C 5.0 Registration",
           "CSI KKWIEER",
-          "Placement Mock Drive",
+          "Recruitment Simulation",
           "Coding DSA Assessment",
           "Group Discussion GD",
           "Technical HR Interview",
