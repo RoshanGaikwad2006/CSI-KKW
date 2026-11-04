@@ -53,10 +53,10 @@ const EVENTS: Event[] = [
         name: "From Campus to Corporate 5.0",
         date: "27th – 29th October 2026",
         location: "K. K. Wagh Campus, Nashik",
-        category: "Placement Drive",
+        category: "Workshop",
         description: "Flagship 3-Tier Recruitment Simulation: Round 01 Aptitude & Coding, Round 02 Group Discussion (GD), and Round 03 Corporate HR & Technical Interviews by IT Vedant, Sumago Infotech & Xmega Technologies",
         coverImage: "/api/event-image?id=1dEwZehpmgBVKa2zAw0VkJDAB2ZR9Bt9v",
-        photoCount: 133,
+        photoCount: 15,
         participants: 180
     },
     {
@@ -262,7 +262,7 @@ const EVENT_PHOTOS: EventPhoto[] = [
     { id: 11, src: "/images/csi_img2.png", title: "Counselor Award", eventId: "counselor-award", eventName: "Counselor Award", date: "December 2015", category: "Award" }
 ];
 
-const CATEGORIES = ["All", "Placement Drive", "Workshop", "Seminar", "Ceremony", "Networking", "Activity", "Award"] as const;
+const CATEGORIES = ["All", "Workshop", "Seminar", "Ceremony", "Networking", "Activity", "Award"] as const;
 
 const Gallery = (): JSX.Element => {
     const router = useRouter();
@@ -557,9 +557,11 @@ const Gallery = (): JSX.Element => {
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                                                 {/* Category badge */}
-                                                <div className="absolute top-3 left-3 px-3 py-1 bg-white/90 backdrop-blur-sm text-blue-700 text-xs font-semibold rounded-full border border-blue-200/50">
-                                                    {event.category}
-                                                </div>
+                                                {event.category && event.id !== "campus-to-corporate-5" && (
+                                                    <div className="absolute top-3 left-3 px-3 py-1 bg-white/90 backdrop-blur-sm text-blue-700 text-xs font-semibold rounded-full border border-blue-200/50">
+                                                        {event.category}
+                                                    </div>
+                                                )}
 
                                                 {/* View photos button */}
                                                 <div className="absolute top-3 right-3 w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
